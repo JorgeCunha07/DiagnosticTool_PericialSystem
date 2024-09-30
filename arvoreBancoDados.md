@@ -153,4 +153,34 @@
     - **Componentes:**
       - Bateria (Ah): 70 - 80
       - Líquido de Arrefecimento (litros): 7 - 9
-      - Óleo
+      - Óleo do Motor (litros): 4.5 - 5
+      - Fluido de Travão (litros): 0.7 - 1
+      - Fluido de Transmissão (litros): 2 - 2.5
+      - Motor de Arranque (kW): 1.6
+  - **2.0 BlueHDi**
+    - **Componentes:**
+      - Bateria (Ah): 75 - 85
+      - Líquido de Arrefecimento (litros): 7.5 - 9.5
+      - Óleo do Motor (litros): 5 - 5.5
+      - Fluido de Travão (litros): 0.8 - 1
+      - Fluido de Transmissão (litros): 2.2 - 2.8
+      - Motor de Arranque (kW): 1.7
+
+#### 508 II
+- **Motores:**
+  - **1.6 PureTech**
+    - **Componentes:**
+      - Bateria (Ah): 70 - 80
+      - Líquido de Arrefecimento (litros): 7 - 9
+      - Óleo do Motor (litros): 4.5 - 5
+      - Fluido de Travão (litros): 0.7 - 1
+      - Fluido de Transmissão (litros): 2 - 2.5
+      - Motor de Arranque (kW): 1.6
+  - **1.5 BlueHDi**
+    - **Componentes:**
+      - Bateria (Ah): 75 - 85
+      - Líquido de Arrefecimento (litros): 7.5 - 9.5
+      - Óleo do Motor (litros): 5 - 5.5
+      - Fluido de Travão (litros): 0.8 - 1
+      - Fluido de Transmissão (litros): 2.2 - 2.8
+      - Motor de Arranque (kW): 1.7
