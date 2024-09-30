@@ -1,0 +1,144 @@
+@startuml
+title Workflow de Detecção de Carro, Modelo e Motor (2010+) - Opel e Peugeot
+
+start
+
+:O carro é da marca Opel ou Peugeot?;
+if (Opel) then (Sim)
+  :Qual o modelo do Opel (2010+)?;
+  if (Astra J) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.4 Turbo) then (Sim)
+      :Motor detectado: 1.4 Turbo (Opel Astra J);
+      stop
+    elseif (1.6 CDTi) then (Sim)
+      :Motor detectado: 1.6 CDTi (Opel Astra J);
+      stop
+    elseif (2.0 CDTi) then (Sim)
+      :Motor detectado: 2.0 CDTi (Opel Astra J);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  elseif (Corsa E) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.2 Ecotec) then (Sim)
+      :Motor detectado: 1.2 Ecotec (Opel Corsa E);
+      stop
+    elseif (1.4 Ecotec) then (Sim)
+      :Motor detectado: 1.4 Ecotec (Opel Corsa E);
+      stop
+    elseif (1.4 Turbo) then (Sim)
+      :Motor detectado: 1.4 Turbo (Opel Corsa E);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  elseif (Insignia B) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.5 Turbo) then (Sim)
+      :Motor detectado: 1.5 Turbo (Opel Insignia B);
+      stop
+    elseif (2.0 CDTi) then (Sim)
+      :Motor detectado: 2.0 CDTi (Opel Insignia B);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  elseif (Crossland X) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.2 Turbo) then (Sim)
+      :Motor detectado: 1.2 Turbo (Opel Crossland X);
+      stop
+    elseif (1.5 Diesel) then (Sim)
+      :Motor detectado: 1.5 Diesel (Opel Crossland X);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  elseif (Grandland X) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.2 Turbo) then (Sim)
+      :Motor detectado: 1.2 Turbo (Opel Grandland X);
+      stop
+    elseif (1.6 Hybrid) then (Sim)
+      :Motor detectado: 1.6 Hybrid (Opel Grandland X);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  else
+    :Modelo Opel (2010+) não identificado;
+    stop
+  endif
+elseif (Peugeot) then (Sim)
+  :Qual o modelo do Peugeot (2010+)?;
+  if (208 II) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.2 PureTech) then (Sim)
+      :Motor detectado: 1.2 PureTech (Peugeot 208 II);
+      stop
+    elseif (1.5 BlueHDi) then (Sim)
+      :Motor detectado: 1.5 BlueHDi (Peugeot 208 II);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  elseif (308 II) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.2 PureTech) then (Sim)
+      :Motor detectado: 1.2 PureTech (Peugeot 308 II);
+      stop
+    elseif (1.6 BlueHDi) then (Sim)
+      :Motor detectado: 1.6 BlueHDi (Peugeot 308 II);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  elseif (3008 II) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.6 PureTech) then (Sim)
+      :Motor detectado: 1.6 PureTech (Peugeot 3008 II);
+      stop
+    elseif (2.0 BlueHDi) then (Sim)
+      :Motor detectado: 2.0 BlueHDi (Peugeot 3008 II);
+      stop
+    elseif (1.6 Hybrid4) then (Sim)
+      :Motor detectado: 1.6 Hybrid4 (Peugeot 3008 II);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  elseif (508 II) then (Sim)
+    :Qual o tipo de motor?;
+    if (1.6 PureTech) then (Sim)
+      :Motor detectado: 1.6 PureTech (Peugeot 508 II);
+      stop
+    elseif (1.5 BlueHDi) then (Sim)
+      :Motor detectado: 1.5 BlueHDi (Peugeot 508 II);
+      stop
+    elseif (1.6 Hybrid) then (Sim)
+      :Motor detectado: 1.6 Hybrid (Peugeot 508 II);
+      stop
+    else
+      :Motor não identificado;
+      stop
+    endif
+  else
+    :Modelo Peugeot (2010+) não identificado;
+    stop
+  endif
+else
+  :Marca não identificada;
+  stop
+endif
+
+@enduml
