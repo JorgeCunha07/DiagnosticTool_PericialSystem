@@ -113,3 +113,22 @@ Opel,Grandland X,1.6 Hybrid,Óleo do Motor (litros),4,4.5
 Opel,Grandland X,1.6 Hybrid,Fluido de Travão (litros),0.7,1
 Opel,Grandland X,1.6 Hybrid,Fluido de Transmissão (litros),2,2.5
 Opel,Grandland X,1.6 Hybrid,Motor de Arranque (kW),1.6,1.6
+Opel,Astra J,1.4 Turbo,Bloco de Motor,85,105
+Opel,Astra J,1.6 CDTi,Bloco de Motor,85,110
+Opel,Astra J,2.0 CDTi,Bloco de Motor,85,110
+Opel,Corsa E,1.2 Ecotec,Bloco de Motor,85,105
+Opel,Corsa E,1.4 Ecotec,Bloco de Motor,85,110
+Opel,Insignia B,1.5 Turbo,Bloco de Motor,85,105
+Opel,Insignia B,2.0 CDTi,Bloco de Motor,85,110
+Opel,Crossland X,1.2 Turbo,Bloco de Motor,85,105
+Opel,Crossland X,1.5 Diesel,Bloco de Motor,85,110
+Opel,Grandland X,1.2 Turbo,Bloco de Motor,85,105
+Opel,Grandland X,1.6 Hybrid,Bloco de Motor,85,110
+Peugeot,208 II,1.2 PureTech,Bloco de Motor,85,105
+Peugeot,208 II,1.5 BlueHDi,Bloco de Motor,85,110
+Peugeot,308 II,1.2 PureTech,Bloco de Motor,85,105
+Peugeot,308 II,1.6 BlueHDi,Bloco de Motor,85,110
+Peugeot,3008 II,1.6 PureTech,Bloco de Motor,85,105
+Peugeot,3008 II,2.0 BlueHDi,Bloco de Motor,85,110
+Peugeot,508 II,1.6 PureTech,Bloco de Motor,85,105
+Peugeot,508 II,1.5 BlueHDi,Bloco de Motor,85,110

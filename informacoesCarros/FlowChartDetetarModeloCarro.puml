@@ -1,9 +1,9 @@
 @startuml
-title Workflow de Detecção de Carro, Modelo e Motor (2010+) - Opel e Peugeot
+title Workflow de Deteção de Carro, Modelo e Motor (2010+) - Opel e Peugeot
 
 start
 
-:O carro é da marca Opel ou Peugeot?;
+:O carro é da marca ?;
 if (Opel) then (Sim)
   :Qual o modelo do Opel (2010+)?;
   if (Astra J) then (Sim)
