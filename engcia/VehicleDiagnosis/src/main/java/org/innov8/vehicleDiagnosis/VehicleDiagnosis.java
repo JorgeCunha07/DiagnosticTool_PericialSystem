@@ -34,7 +34,6 @@ public class VehicleDiagnosis {
     }
 
     private static void runEngine() {
-    // private static void runEngine(Evidence evidence) {
         try {
             VehicleDiagnosis.justifications = new TreeMap<Integer, Justification>();
 
@@ -61,7 +60,7 @@ public class VehicleDiagnosis {
 
                     //LOG.info(">>>" + conclusion.toString());
 
-                    //System.out.println(Haemorrhage.justifications);
+                    //System.out.println(VehicleDiagnosis.justifications);
                     How how = new How(VehicleDiagnosis.justifications);
                     System.out.println(how.getHowExplanation(conclusion.getId()));
 
