@@ -14,14 +14,13 @@
 */
 
 package org.innov8;
-// package must be defined in packages from kmodule.xml file
 
-//list any import classes here.
 import org.innov8.model.Evidence;
 import org.innov8.model.Hypothesis;
 import org.innov8.model.Conclusion;
+import org.innov8.model.Fact;
 
-//declare any global variables here
+import function org.innov8.view.UI.answer;
 
 query "Conclusions"
 	$conclusion : Conclusion()
@@ -29,24 +28,24 @@ end
 
 rule "r1"
 	when
-		Evidence(carIssue == "yes" )
+		eval(answer(Evidence(getCAR_ISSUE == "yes" )))
 	then
-		Hypothesis h = new Hypothesis("upper type");
+		Hypothesis h = new Hypothesis("car_issue", "type1");
 		insert(h);
 end
 
 rule "r2"
 	when
-		Evidence(carIssue == "no" )
+		eval(answer(Evidence(getCAR_ISSUE == "no" ) ))
 	then
-		Hypothesis h = new Hypothesis("lower type");
+		Hypothesis h = new Hypothesis("car_issue", "type2");
 		insert(h);
 end
 
 rule "r3"
 	when
-		Hypothesis( description == "upper type")
-		Evidence(carTurnsOn == "yes")
+		Hypothesis( description == "car_issue", value == "type1")
+		eval(answer(Evidence(getCarTurnsOn == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
 		insert(c);
@@ -54,8 +53,8 @@ end
 
 rule "r4"
 	when
-		Hypothesis( description == "upper type")
-		Evidence(batteryCheck == "yes")
+		Hypothesis( description == "car_issue", value == "type1")
+		eval(answer(Evidence(getBatteryCheck == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
 		insert(c);
@@ -63,8 +62,8 @@ end
 
 rule "r5"
 	when
-		Hypothesis( description == "upper type")
-		Evidence(startingMotor == "yes")
+		Hypothesis( description == "car_issue", value == "type1")
+		eval(answer(Evidence(getStartingMotor == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_STARTING_MOTOR);
 		insert(c);
@@ -72,8 +71,8 @@ end
 
 rule "r6"
 	when
-		Hypothesis( description == "lower type")
-		Evidence(ignitionSystem == "yes")
+		Hypothesis( description == "car_issue", value == "type2")
+		eval(answer(Evidence(getIgnitionSystem == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_IGNITION_SYSTEM);
 		insert(c);
@@ -81,8 +80,9 @@ end
 
 rule "r7"
 	when
-		Hypothesis( description == "lower type")
-		Evidence(securitySystem == "yes", alarmBlocked == "yes")
+		Hypothesis( description == "car_issue", value == "type2")
+		eval(answer(Evidence(getSecuritySystem() == "yes")))
+		eval(answer(Evidence(getAlarmBlocked() == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.SECURITY_SYSTEM_ACTIVATED);
 		insert(c);
@@ -90,8 +90,8 @@ end
 
 rule "r8"
 	when
-		Hypothesis( description == "lower type")
-		Evidence(faultyRadiator == "yes", faultyFan == "yes")
+		Hypothesis( description == "car_issue", value == "type2")
+		eval(answer(Evidence(getFaultyRadiator() == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_RADIATOR_OR_FAN);
 		insert(c);
@@ -99,8 +99,8 @@ end
 
 rule "r9"
 	when
-		Hypothesis( description == "lower type")
-		Evidence(coolingSystemLeaks == "yes")
+		Hypothesis( description == "car_issue", value == "type2")
+		eval(answer(Evidence(getCoolingSystemLeaks() == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.COOLING_SYSTEM_LEAKING);
 		insert(c);
@@ -108,8 +108,8 @@ end
 
 rule "r10"
 	when
-		Hypothesis( description == "lower type")
-		Evidence(faultyThermostat == "yes")
+		Hypothesis( description == "car_issue", value == "type2")
+		eval(answer(Evidence(getFaultyThermostat() == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_THERMOSTAT);
 		insert(c);
@@ -117,8 +117,8 @@ end
 
 rule "r11"
 	when
-		Hypothesis( description == "lower type")
-		Evidence(fuelSystemIssue == "yes")
+		Hypothesis( description == "car_issue", value == "type2")
+		eval(answer(Evidence(getFuelSystemIssue() == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_FUEL_SYSTEM);
 		insert(c);
@@ -126,8 +126,8 @@ end
 
 rule "r12"
 	when
-		Hypothesis( description == "lower type")
-		Evidence(fuelInjectionSystem == "yes")
+		Hypothesis( description == "car_issue", value == "type2")
+		eval(answer(Evidence(getFuelInjectionSystem() == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_INJECTION_SYSTEM);
 		insert(c);
@@ -140,4 +140,8 @@ rule "unknown"
 		Conclusion c = new Conclusion(Conclusion.UNKNOWN);
 		insert(c);
 end
+
+//query "evidence"(String ev, String v)
+//	e : Evidence( evidence == ev, value == v )
+//end
 
