@@ -18,7 +18,6 @@ package org.innov8.vehicleDiagnosis;
 import lombok.Getter;
 
 @Getter
-@Deprecated
 public class Measurement {
     private String id;
     private String val;
