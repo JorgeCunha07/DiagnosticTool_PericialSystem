@@ -1,0 +1,167 @@
+% Factos para carros
+carro(1, 'Opel', 'Astra J', '1.4 Turbo').
+carro(2, 'Opel', 'Astra J', '1.6 CDTi').
+carro(3, 'Opel', 'Astra J', '2.0 CDTi').
+carro(4, 'Opel', 'Corsa E', '1.2 Ecotec').
+carro(5, 'Opel', 'Corsa E', '1.4 Ecotec').
+carro(6, 'Opel', 'Insignia B', '1.5 Turbo').
+carro(7, 'Opel', 'Insignia B', '2.0 CDTi').
+carro(8, 'Opel', 'Crossland X', '1.2 Turbo').
+carro(9, 'Opel', 'Crossland X', '1.5 Diesel').
+carro(10, 'Opel', 'Grandland X', '1.2 Turbo').
+carro(11, 'Opel', 'Grandland X', '1.6 Hybrid').
+carro(12, 'Peugeot', '208 II', '1.2 PureTech').
+carro(13, 'Peugeot', '208 II', '1.5 BlueHDi').
+carro(14, 'Peugeot', '308 II', '1.2 PureTech').
+carro(15, 'Peugeot', '308 II', '1.6 BlueHDi').
+carro(16, 'Peugeot', '3008 II', '1.6 PureTech').
+carro(17, 'Peugeot', '3008 II', '2.0 BlueHDi').
+carro(18, 'Peugeot', '508 II', '1.6 PureTech').
+carro(19, 'Peugeot', '508 II', '1.5 BlueHDi').
+
+% Factos para bateria
+bateria(1, 60, 70).
+bateria(2, 65, 75).
+bateria(3, 70, 80).
+bateria(4, 50, 60).
+bateria(5, 55, 65).
+bateria(6, 70, 80).
+bateria(7, 75, 85).
+bateria(8, 60, 70).
+bateria(9, 65, 75).
+bateria(10, 70, 80).
+bateria(11, 70, 80).
+bateria(12, 50, 60).
+bateria(13, 55, 65).
+bateria(14, 60, 70).
+bateria(15, 65, 75).
+bateria(16, 70, 80).
+bateria(17, 75, 85).
+bateria(18, 70, 80).
+bateria(19, 75, 85).
+
+% Factos para líquido de arrefecimento
+liquido_arrefecimento(1, 5.5, 7).
+liquido_arrefecimento(2, 6, 8).
+liquido_arrefecimento(3, 6.5, 9).
+liquido_arrefecimento(4, 5.5, 7).
+liquido_arrefecimento(5, 6, 8).
+liquido_arrefecimento(6, 7, 9).
+liquido_arrefecimento(7, 7.5, 9.5).
+liquido_arrefecimento(8, 6, 8).
+liquido_arrefecimento(9, 6.5, 8.5).
+liquido_arrefecimento(10, 6, 8).
+liquido_arrefecimento(11, 6.5, 8.5).
+liquido_arrefecimento(12, 6.5, 8).
+liquido_arrefecimento(13, 6.5, 8.5).
+liquido_arrefecimento(14, 6, 8).
+liquido_arrefecimento(15, 6.5, 8).
+liquido_arrefecimento(16, 7, 9).
+liquido_arrefecimento(17, 7.5, 9.5).
+liquido_arrefecimento(18, 7, 9).
+liquido_arrefecimento(19, 7.5, 9.5).
+
+% Factos para óleo do motor
+oleo_motor(1, 4, 4.5).
+oleo_motor(2, 4.5, 5).
+oleo_motor(3, 5, 5.5).
+oleo_motor(4, 3.5, 4).
+oleo_motor(5, 4, 4.5).
+oleo_motor(6, 4.5, 5).
+oleo_motor(7, 5, 5.5).
+oleo_motor(8, 3.5, 4).
+oleo_motor(9, 4, 4.5).
+oleo_motor(10, 3.5, 4).
+oleo_motor(11, 4, 4.5).
+oleo_motor(12, 3.5, 4).
+oleo_motor(13, 4, 4.5).
+oleo_motor(14, 4, 4.5).
+oleo_motor(15, 4, 4.5).
+oleo_motor(16, 4.5, 5).
+oleo_motor(17, 5, 5.5).
+oleo_motor(18, 4.5, 5).
+oleo_motor(19, 5, 5.5).
+
+% Factos para fluido de travão
+fluido_travao(1, 0.5, 1).
+fluido_travao(2, 0.6, 1).
+fluido_travao(3, 0.7, 1).
+fluido_travao(4, 0.5, 0.8).
+fluido_travao(5, 0.5, 0.9).
+fluido_travao(6, 0.7, 1).
+fluido_travao(7, 0.8, 1).
+fluido_travao(8, 0.6, 0.9).
+fluido_travao(9, 0.6, 1).
+fluido_travao(10, 0.6, 0.9).
+fluido_travao(11, 0.7, 1).
+fluido_travao(12, 0.5, 0.8).
+fluido_travao(13, 0.6, 0.9).
+fluido_travao(14, 0.6, 0.9).
+fluido_travao(15, 0.7, 1).
+fluido_travao(16, 0.7, 1).
+fluido_travao(17, 0.8, 1).
+fluido_travao(18, 0.7, 1).
+fluido_travao(19, 0.8, 1).
+
+% Factos para fluido de transmissão
+fluido_transmissao(1, 1.8, 2.5).
+fluido_transmissao(2, 2, 2.5).
+fluido_transmissao(3, 2, 2.5).
+fluido_transmissao(4, 1.6, 2.3).
+fluido_transmissao(5, 1.8, 2.4).
+fluido_transmissao(6, 2, 2.5).
+fluido_transmissao(7, 2.2, 2.8).
+fluido_transmissao(8, 1.8, 2.5).
+fluido_transmissao(9, 2, 2.5).
+fluido_transmissao(10, 1.8, 2.5).
+fluido_transmissao(11, 2, 2.5).
+fluido_transmissao(12, 1.6, 2.2).
+fluido_transmissao(13, 1.8, 2.4).
+fluido_transmissao(14, 1.8, 2.3).
+fluido_transmissao(15, 2, 2.5).
+fluido_transmissao(16, 2, 2.5).
+fluido_transmissao(17, 2.2, 2.8).
+fluido_transmissao(18, 2, 2.5).
+fluido_transmissao(19, 2.2, 2.8).
+
+% Factos para motor de arranque
+motor_arranque(1, 1.2, 1.2).
+motor_arranque(2, 1.4, 1.4).
+motor_arranque(3, 1.6, 1.6).
+motor_arranque(4, 1.1, 1.1).
+motor_arranque(5, 1.3, 1.3).
+motor_arranque(6, 1.5, 1.5).
+motor_arranque(7, 1.7, 1.7).
+motor_arranque(8, 1.3, 1.3).
+motor_arranque(9, 1.4, 1.4).
+motor_arranque(10, 1.3, 1.3).
+motor_arranque(11, 1.6, 1.6).
+motor_arranque(12, 1.2, 1.2).
+motor_arranque(13, 1.4, 1.4).
+motor_arranque(14, 1.3, 1.3).
+motor_arranque(15, 1.5, 1.5).
+motor_arranque(16, 1.6, 1.6).
+motor_arranque(17, 1.7, 1.7).
+motor_arranque(18, 1.6, 1.6).
+motor_arranque(19, 1.7, 1.7).
+
+% Factos para bloco de motor
+bloco_motor(1, 85, 105).
+bloco_motor(2, 85, 110).
+bloco_motor(3, 85, 110).
+bloco_motor(4, 85, 105).
+bloco_motor(5, 85, 110).
+bloco_motor(6, 85, 105).
+bloco_motor(7, 85, 110).
+bloco_motor(8, 85, 105).
+bloco_motor(9, 85, 110).
+bloco_motor(10, 85, 105).
+bloco_motor(11, 85, 110).
+bloco_motor(12, 85, 105).
+bloco_motor(13, 85, 110).
+bloco_motor(14, 85, 105).
+bloco_motor(15, 85, 110).
+bloco_motor(16, 85, 105).
+bloco_motor(17, 85, 110).
+bloco_motor(18, 85, 105).
+bloco_motor(19, 85, 110).
