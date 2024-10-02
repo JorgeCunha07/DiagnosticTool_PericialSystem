@@ -13,8 +13,12 @@
  * limitations under the License.
 */
 
-package org.innov8;
+package org.innov8.vehicleDiagnosis;
 
+import lombok.Getter;
+
+@Getter
+@Deprecated
 public class Measurement {
     private String id;
     private String val;
@@ -23,14 +27,6 @@ public class Measurement {
         super();
         this.id = id;
         this.val = val;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getVal() {
-        return val;
     }
 
     @Override

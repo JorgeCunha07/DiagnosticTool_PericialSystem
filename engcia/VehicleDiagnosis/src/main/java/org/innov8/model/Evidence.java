@@ -10,7 +10,7 @@ import java.lang.String;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Evidence {
+public class Evidence extends Fact{
 
     // O carro apresenta algum problema
     private String carIssue;
@@ -58,5 +58,13 @@ public class Evidence {
 
     // Verificar sistema de ignição (Velas de ignição defeituosas?)
     private String faultySparkPlug;
+
+    private String evidence;
+    private String value;
+
+    public Evidence(String ev, String v) {
+        evidence = ev;
+        value = v;
+    }
 
 }

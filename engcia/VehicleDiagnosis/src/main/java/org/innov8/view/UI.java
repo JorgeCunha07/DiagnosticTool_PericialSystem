@@ -1,14 +1,14 @@
 package org.innov8.view;
 
 import org.innov8.vehicleDiagnosis.VehicleDiagnosis;
+import org.innov8.model.Evidence;
+
 import org.kie.api.runtime.ClassObjectFilter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
-
-import org.innov8.model.Evidence;
 
 public class UI {
     private static BufferedReader br;

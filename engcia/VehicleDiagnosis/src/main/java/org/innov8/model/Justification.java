@@ -1,8 +1,11 @@
 package org.innov8.model;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class Justification {
     private String rule;
     private List<Fact> lhs;
@@ -14,15 +17,4 @@ public class Justification {
         this.conclusion = conclusion;
     }
 
-    public String getRuleName() {
-        return this.rule;
-    }
-
-    public List<Fact> getLhs() {
-        return this.lhs;
-    }
-
-    public Fact getConclusion() {
-        return this.conclusion;
-    }
 }

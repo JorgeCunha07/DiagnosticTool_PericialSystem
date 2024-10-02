@@ -1,6 +1,5 @@
 package org.innov8.vehicleDiagnosis;
 
-import org.innov8.model.Evidence;
 import org.innov8.model.Conclusion;
 import org.innov8.model.Justification;
 

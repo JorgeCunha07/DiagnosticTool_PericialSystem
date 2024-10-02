@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.innov8.vehicleDiagnosis.Measurement;
 import org.junit.Test;
 import org.kie.api.KieBase;
 import org.kie.api.KieServices;

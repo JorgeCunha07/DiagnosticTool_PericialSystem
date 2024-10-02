@@ -1,5 +1,8 @@
 package org.innov8.model;
 
+import lombok.Getter;
+
+@Getter
 public class Fact {
 
     static private int lastId = 0;
@@ -10,7 +13,4 @@ public class Fact {
         this.id = lastId;
     }
 
-    public int getId() {
-        return this.id;
-    }
 }
