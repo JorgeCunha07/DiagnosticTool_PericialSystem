@@ -1,5 +1,3 @@
-/engcia/VehicleDiagnosis/target/classes/org/innov8/model/Conclusion.class
-
 # Default ignored files
 /shelf/
 /workspace.xml
@@ -36,17 +34,6 @@
 hs_err_pid*
 replay_pid*
 
-##############################
-## Java
-##############################
-.mtj.tmp/
-*.class
-*.jar
-*.war
-*.ear
-*.nar
-hs_err_pid*
-replay_pid*
 
 ##############################
 ## Maven
@@ -87,7 +74,7 @@ out/
 ## Eclipse
 ##############################
 .settings/
-bin/
+#bin/
 tmp/
 .metadata
 .classpath
@@ -104,7 +91,7 @@ local.properties
 ## NetBeans
 ##############################
 nbproject/private/
-build/
+#build/
 nbbuild/
 dist/
 nbdist/
@@ -122,7 +109,3 @@ nb-configuration.xml
 ##############################
 .DS_Store
 
-##############################
-## Miscellaneous
-##############################
-*.log
