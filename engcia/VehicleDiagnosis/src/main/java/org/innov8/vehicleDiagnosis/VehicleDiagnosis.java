@@ -1,7 +1,9 @@
-package org.innov8;
+package org.innov8.vehicleDiagnosis;
 
-import org.innov8.model.Evidences;
 import org.innov8.model.Conclusion;
+import org.innov8.model.Justification;
+
+import org.innov8.view.UI;
 
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
@@ -13,37 +15,38 @@ import org.kie.api.runtime.rule.ViewChangedEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.lang.String;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class VehicleDiagnosis {
-    static final Logger LOG = LoggerFactory.getLogger(VehicleDiagnosis.class);
+
+    public static KieSession KS;
+    public static BufferedReader BR;
+    public static TrackingAgendaEventListener agendaEventListener;
+    public static Map<Integer, Justification> justifications;
 
     public static final void main(String[] args) {
-        Evidences evidences = new Evidences();
-        evidences.setCoolingSystemLeaks("no");
-        evidences.setTurnsOnAndShutsdown("no");
-        evidences.setFaultyThermostat("no");
-        evidences.setCarIssue("yes");
-        evidences.setEngineOverheats("no");
-        evidences.setIgnitionSystem("no");
-        evidences.setFaultyRadiator("no");
-        evidences.setFuelInjectionSystem("no");
-        evidences.setStartingMotor("no");
-        evidences.setBatteryCheck("no");
-        evidences.setCarTurnsOn("yes");
-        evidences.setFuelSystemIssue("no");
-        evidences.setSecuritySystem("no");
-
-        runEngine(evidences);
+        UI.uiInit();
+        runEngine();
+        UI.uiClose();
     }
 
-    private static void runEngine(Evidences evidences) {
+    private static void runEngine() {
+    // private static void runEngine(Evidence evidence) {
         try {
+            VehicleDiagnosis.justifications = new TreeMap<Integer, Justification>();
+
             // load up the knowledge base
             KieServices ks = KieServices.Factory.get();
             KieContainer kContainer = ks.getKieClasspathContainer();
             final KieSession kSession = kContainer.newKieSession("ksession-rules");
             // session name defined in kmodule.xml"
+
+            VehicleDiagnosis.KS = kSession;
+            VehicleDiagnosis.agendaEventListener = new TrackingAgendaEventListener();
+            kSession.addEventListener(agendaEventListener);
 
             // Query listener
             ViewChangedEventListener listener = new ViewChangedEventListener() {
@@ -54,8 +57,13 @@ public class VehicleDiagnosis {
                 @Override
                 public void rowInserted(Row row) {
                     Conclusion conclusion = (Conclusion) row.get("$conclusion");
-                    //System.out.println(">>>" + conclusion.toString());
-                    LOG.info(">>>" + conclusion.toString());
+                    System.out.println(">>>" + conclusion.toString());
+
+                    //LOG.info(">>>" + conclusion.toString());
+
+                    //System.out.println(Haemorrhage.justifications);
+                    How how = new How(VehicleDiagnosis.justifications);
+                    System.out.println(how.getHowExplanation(conclusion.getId()));
 
                     // stop inference engine after as soon as got a conclusion
                     kSession.halt();
@@ -69,7 +77,8 @@ public class VehicleDiagnosis {
             };
             LiveQuery query = kSession.openLiveQuery("Conclusions", null, listener);
 
-            kSession.insert(evidences);
+            // TODO Rever se isso eh necessario
+            // kSession.insert(evidence);
 
             kSession.fireAllRules();
             // kSession.fireUntilHalt();

@@ -1,6 +1,11 @@
 package org.innov8.model;
 
-public class Hypothesis {
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class Hypothesis extends Fact {
     private String description;
 
     public Hypothesis(String description) {
@@ -8,11 +13,4 @@ public class Hypothesis {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

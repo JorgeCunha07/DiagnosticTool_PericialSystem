@@ -1,6 +1,12 @@
 package org.innov8.model;
 
-public class Conclusion {
+import lombok.Getter;
+import lombok.Setter;
+import org.innov8.vehicleDiagnosis.VehicleDiagnosis;
+
+@Setter
+@Getter
+public class Conclusion extends Fact {
 
     // Diagnóstico: Bateria com defeito ou sem carga;
     // Solução: Substituir ou recarregar a bateria;
@@ -34,10 +40,8 @@ public class Conclusion {
     // Solução: Reabastecer ou substituir a bomba de combustível;
     public static final String FAULTY_FUEL_SYSTEM = "Falta de combustível ou bomba de combustível com defeito | Reabastecer ou substituir a bomba de combustível";
 
-    // Verificar sistema de injeção de combustível;
-    //          if (Injeção de combustível com defeito?) then (Sim)
-    //            :Diagnóstico: Injeção de combustível com defeito;
-    //            :Solução: Limpar ou substituir injetores;
+    // Diagnóstico: Injeção de combustível com defeito;
+    // Solução: Limpar ou substituir injetores;
     public static final String FAULTY_INJECTION_SYSTEM = "Injeção de combustível com defeito | Limpar ou substituir injetores";
 
     // Diagnóstico: Verificação adicional necessária;
@@ -48,19 +52,12 @@ public class Conclusion {
     private String description;
 
     public Conclusion(String description) {
-        super();
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+        VehicleDiagnosis.agendaEventListener.addRhs(this);
     }
 
     public String toString() {
         return "Diagnosis | Solution: " + description;
     }
+
 }
