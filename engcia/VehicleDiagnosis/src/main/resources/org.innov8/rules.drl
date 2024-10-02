@@ -1,0 +1,143 @@
+/*
+ * Copyright 2015 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
+package org.innov8;
+// package must be defined in packages from kmodule.xml file
+
+//list any import classes here.
+import org.innov8.model.Evidences;
+import org.innov8.model.Hypothesis;
+import org.innov8.model.Conclusion;
+
+//declare any global variables here
+
+query "Conclusions"
+	$conclusion : Conclusion()
+end
+
+rule "r1"
+	when
+		Evidences(carIssue == "yes" )
+	then
+		Hypothesis h = new Hypothesis("upper type");
+		insert(h);
+end
+
+rule "r2"
+	when
+		Evidences(carIssue == "no" )
+	then
+		Hypothesis h = new Hypothesis("lower type");
+		insert(h);
+end
+
+rule "r3"
+	when
+		Hypothesis( description == "upper type")
+		Evidences(carTurnsOn == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
+		insert(c);
+end
+
+rule "r4"
+	when
+		Hypothesis( description == "upper type")
+		Evidences(batteryCheck == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
+		insert(c);
+end
+
+rule "r5"
+	when
+		Hypothesis( description == "upper type")
+		Evidences(startingMotor == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_STARTING_MOTOR);
+		insert(c);
+end
+
+rule "r6"
+	when
+		Hypothesis( description == "lower type")
+		Evidences(ignitionSystem == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_IGNITION_SYSTEM);
+		insert(c);
+end
+
+rule "r7"
+	when
+		Hypothesis( description == "lower type")
+		Evidences(securitySystem == "yes", alarmBlocked == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.SECURITY_SYSTEM_ACTIVATED);
+		insert(c);
+end
+
+rule "r8"
+	when
+		Hypothesis( description == "lower type")
+		Evidences(faultyRadiator == "yes", faultyFan == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_RADIATOR_OR_FAN);
+		insert(c);
+end
+
+rule "r9"
+	when
+		Hypothesis( description == "lower type")
+		Evidences(coolingSystemLeaks == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.COOLING_SYSTEM_LEAKING);
+		insert(c);
+end
+
+rule "r10"
+	when
+		Hypothesis( description == "lower type")
+		Evidences(faultyThermostat == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_THERMOSTAT);
+		insert(c);
+end
+
+rule "r11"
+	when
+		Hypothesis( description == "lower type")
+		Evidences(fuelSystemIssue == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_FUEL_SYSTEM);
+		insert(c);
+end
+
+rule "r12"
+	when
+		Hypothesis( description == "lower type")
+		Evidences(fuelInjectionSystem == "yes")
+	then
+		Conclusion c = new Conclusion(Conclusion.FAULTY_INJECTION_SYSTEM);
+		insert(c);
+end
+
+rule "unknown"
+	when
+		not Conclusion()
+	then
+		Conclusion c = new Conclusion(Conclusion.UNKNOWN);
+		insert(c);
+end
+
