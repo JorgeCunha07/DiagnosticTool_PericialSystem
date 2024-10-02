@@ -1,5 +1,7 @@
 package org.innov8.model;
 
+import org.innov8.vehicleDiagnosis.VehicleDiagnosis;
+
 public class Conclusion {
 
     // Diagnóstico: Bateria com defeito ou sem carga;
@@ -48,8 +50,11 @@ public class Conclusion {
     private String description;
 
     public Conclusion(String description) {
-        super();
+//        super();
+//        this.description = description;
+
         this.description = description;
+        VehicleDiagnosis.agendaEventListener.addRhs(this);
     }
 
     public String getDescription() {
@@ -63,4 +68,5 @@ public class Conclusion {
     public String toString() {
         return "Diagnosis | Solution: " + description;
     }
+
 }
