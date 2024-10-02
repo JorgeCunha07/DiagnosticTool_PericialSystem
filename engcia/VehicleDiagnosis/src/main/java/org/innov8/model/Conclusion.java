@@ -57,7 +57,7 @@ public class Conclusion extends Fact {
     }
 
     public String toString() {
-        return "Diagnosis | Solution: " + description;
+        return "Conclusion: " + description;
     }
 
 }
