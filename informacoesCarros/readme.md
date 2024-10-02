@@ -25,8 +25,7 @@ Manual do Proprietário Peugeot -> https://www.peugeot.pt/
 
 
 As informações sobre as temperaturas normais de operação do motor, a potência dos motores de arranque e outros 
-detalhes técnicos foram retiradas de bases de dados automotivas online e fóruns de especialistas. Estas fontes fornecem insights detalhados sobre o comportamento normal dos motores de veículos, especialmente em termos de temperatura e desempenho.
-
+detalhes técnicos foram retiradas de bases de dados automotivas online e fóruns de especialistas.
 
 ## Fontes:
 
@@ -37,6 +36,7 @@ CarData -> https://cars-data.com/
 AutoData -> https://www.autodata-group.com/uk/
 
 Manuais -> https://public-servicebox.opel.com/
+
 Fórum de Mecânicos da Carros
 
 
