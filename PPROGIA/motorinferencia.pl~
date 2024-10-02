@@ -240,8 +240,7 @@ formata(Nivel):-
 retirar_facto(K):-
 	retract(facto(K,_)),
 	findall(K1,(justifica(K1,_,L),member(K,L)),LK1),
-	retirar_lista_factos(LK1),
-	atualiza_ultimo_facto.
+	retirar_lista_factos(LK1).
 
 retirar_lista_factos([ ]).
 retirar_lista_factos([K1|LK1]):-
