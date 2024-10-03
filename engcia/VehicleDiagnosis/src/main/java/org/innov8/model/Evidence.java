@@ -12,8 +12,6 @@ import java.lang.String;
 @NoArgsConstructor
 public class Evidence extends Fact{
 
-    // TODO mudar nomes das variaveis para uppercase
-
     // O carro apresenta algum problema
     public static final String CAR_ISSUE = "O carro apresenta algum problema";
 
