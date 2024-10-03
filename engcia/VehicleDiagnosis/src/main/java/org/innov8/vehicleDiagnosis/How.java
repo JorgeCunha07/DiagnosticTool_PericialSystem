@@ -26,7 +26,7 @@ public class How {
             sb.append(j.getConclusion() + " was obtained by rule " + j.getRule() + " because");
             sb.append('\n');
             int l = level + 1;
-            for (Fact f : j.getLhs()) {
+            for (Fact f : j.getType1()) {
                 sb.append(getIdentation(l));
                 sb.append(f);
                 sb.append('\n');

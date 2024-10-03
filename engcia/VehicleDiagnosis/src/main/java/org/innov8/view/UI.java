@@ -44,7 +44,7 @@ public class UI {
                 VehicleDiagnosis.agendaEventListener.addType1(evidence);
                 return true;
             } else {
-                // Clear LHS conditions set if a condition is false (conjunctive rules)
+                // Clear Type1 conditions set if a condition is false (conjunctive rules)
                 VehicleDiagnosis.agendaEventListener.resetType1();
                 return false;
             }
@@ -59,7 +59,7 @@ public class UI {
             VehicleDiagnosis.agendaEventListener.addType1(e);
             return true;
         } else {
-            // Clear LHS conditions set if a condition is false (conjunctive rules)
+            // Clear Type1 conditions set if a condition is false (conjunctive rules)
             VehicleDiagnosis.agendaEventListener.resetType1();
             return false;
         }
