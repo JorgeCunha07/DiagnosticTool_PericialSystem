@@ -1,3 +1,49 @@
+:-dynamic facto/2,ultimo_facto/1.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Metaconhecimento
+
+facto_dispara_regras(problemas(_, sim), [1]).
+facto_dispara_regras(problemas(_, nao), [2]).
+facto_dispara_regras(liga(_, sim), [3]).
+facto_dispara_regras(liga(_, nao), [4]).
+%vai abaixo
+%carga_bateria
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ultimo_facto(3).
+% por fazer
+% ultima_regra(8).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%  Se o carro apresenta algum problema então temos de verificar Se o carro liga
+regra 1
+	se [problemas(Veículo,sim)]
+	entao [cria_facto(diagnostico(Veículo,'Nenhum problema identificado'))] e 
+	entao [cria_facto(solucao(Veículo,'Continuar com o plano de manutencao'))].
+
+%  Se o carro NAO apresenta algum problema então não tem problemas
+regra 2
+	se [problemas(Veículo,nao)]
+	entao [cria_facto(proximo_teste(Veículo, liga))].
+
+% Se o carro liga vamos verificar se o carro vai abaixo
+regra 3
+	se [liga(Veículo,sim)]
+	entao [cria_facto(proximo_teste(Veículo, vai_abaixo))].
+
+% Se o carro NAO liga vamos verificar a bateria
+regra 4
+	se [liga(Veículo,nao)]
+	entao [cria_facto(proximo_teste(Veículo, carga_bateria))].
+
+facto(1, problemas(meu_veiculo, nao)).
+facto(2, liga(meu_veiculo, nao)).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Factos para carros
 carro(1, 'Opel', 'Astra J', '1.4 Turbo').
 carro(2, 'Opel', 'Astra J', '1.6 CDTi').
