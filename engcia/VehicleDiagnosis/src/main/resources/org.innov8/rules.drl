@@ -45,7 +45,7 @@ end
 rule "r3"
 	when
 		Hypothesis( description == "car_issue", value == "type1")
-		eval(answer(Evidence(getCarTurnsOn == "yes")))
+		eval(answer(Evidence(getCAR_TURNS_ON == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
 		insert(c);
@@ -54,7 +54,7 @@ end
 rule "r4"
 	when
 		Hypothesis( description == "car_issue", value == "type1")
-		eval(answer(Evidence(getBatteryCheck == "yes")))
+		eval(answer(Evidence(getBATTERY_CHECK == "yes")))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
 		insert(c);
