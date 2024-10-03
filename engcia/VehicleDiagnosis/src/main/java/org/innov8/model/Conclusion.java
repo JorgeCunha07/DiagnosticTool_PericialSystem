@@ -53,7 +53,7 @@ public class Conclusion extends Fact {
 
     public Conclusion(String description) {
         this.description = description;
-        VehicleDiagnosis.agendaEventListener.addRhs(this);
+        VehicleDiagnosis.agendaEventListener.addType2(this);
     }
 
     public String toString() {

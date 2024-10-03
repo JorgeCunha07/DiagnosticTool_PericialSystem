@@ -8,31 +8,29 @@ import org.kie.api.runtime.rule.Match;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Map;
-
 import org.innov8.model.Fact;
 import org.innov8.model.Justification;
 
 @SuppressWarnings("restriction")
 public class TrackingAgendaEventListener extends DefaultAgendaEventListener {
     private List<Match> matchList = new ArrayList<Match>();
-    private List<Fact> lhs = new ArrayList<Fact>();
-    private List<Fact> rhs = new ArrayList<Fact>();
+    private List<Fact> type1 = new ArrayList<Fact>();
+    private List<Fact> type2 = new ArrayList<Fact>();
 
-    public void resetLhs() {
-        lhs.clear();
+    public void resetType1() {
+        type1.clear();
     }
 
-    public void addLhs(Fact f) {
-        lhs.add(f);
+    public void addType1(Fact f) {
+        type1.add(f);
     }
 
-    public void resetRhs() {
-        rhs.clear();
+    public void resetType2() {
+        type2.clear();
     }
 
-    public void addRhs(Fact f) {
-        rhs.add(f);
+    public void addType2(Fact f) {
+        type2.add(f);
     }
 
     @Override
@@ -55,29 +53,29 @@ public class TrackingAgendaEventListener extends DefaultAgendaEventListener {
         Rule rule = event.getMatch().getRule();
         String ruleName = rule.getName();
 
-        //System.out.println("LHS:");
+        //System.out.println("Type1:");
         List <Object> list = event.getMatch().getObjects();
         for (Object e : list) {
             if (e instanceof Fact) {
-                lhs.add((Fact)e);
+                type1.add((Fact)e);
             }
         }
 
         /*
-        for (Fact f : lhs) {
+        for (Fact f : type1) {
             //System.out.println(f.getId() + ":" + f);
         }
         */
 
-        //System.out.println("RHS:");
-        for (Fact f: rhs) {
+        //System.out.println("Type 2:");
+        for (Fact f: type2) {
             //System.out.println(f.getId() + ":" + f);
-            Justification j = new Justification(ruleName, lhs, f);
+            Justification j = new Justification(ruleName, type1, f);
             VehicleDiagnosis.justifications.put(f.getId(), j);
         }
 
-        resetLhs();
-        resetRhs();
+        resetType1();
+        resetType2();
 
         /*
         matchList.add(event.getMatch());

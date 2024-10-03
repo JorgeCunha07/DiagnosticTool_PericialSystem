@@ -41,11 +41,11 @@ public class UI {
         }
         if (questionFound) {
             if (evidence.getValue().compareTo(v) == 0) {
-                VehicleDiagnosis.agendaEventListener.addLhs(evidence);
+                VehicleDiagnosis.agendaEventListener.addType1(evidence);
                 return true;
             } else {
                 // Clear LHS conditions set if a condition is false (conjunctive rules)
-                VehicleDiagnosis.agendaEventListener.resetLhs();
+                VehicleDiagnosis.agendaEventListener.resetType1();
                 return false;
             }
         }
@@ -56,11 +56,11 @@ public class UI {
         VehicleDiagnosis.KS.insert(e);
 
         if (value.compareTo(v) == 0) {
-            VehicleDiagnosis.agendaEventListener.addLhs(e);
+            VehicleDiagnosis.agendaEventListener.addType1(e);
             return true;
         } else {
             // Clear LHS conditions set if a condition is false (conjunctive rules)
-            VehicleDiagnosis.agendaEventListener.resetLhs();
+            VehicleDiagnosis.agendaEventListener.resetType1();
             return false;
         }
     }

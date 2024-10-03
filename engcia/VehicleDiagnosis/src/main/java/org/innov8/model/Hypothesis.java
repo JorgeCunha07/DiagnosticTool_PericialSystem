@@ -14,7 +14,7 @@ public class Hypothesis extends Fact {
     public Hypothesis(String description, String value) {
         this.description = description;
         this.value = value;
-        VehicleDiagnosis.agendaEventListener.addRhs(this);
+        VehicleDiagnosis.agendaEventListener.addType2(this);
     }
 
     public String toString() {
