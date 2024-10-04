@@ -6,13 +6,13 @@ start
 :O carro apresenta algum problema?;
 if (Sim) then (Sim)
   :O carro  liga?;
-  if (Não) then (Não)
+  if () then (Não)
     :Verificar a bateria;
     if (Bateria fraca ou sem carga?) then (Sim)
       :Diagnóstico: Bateria com defeito ou sem carga;
       :Solução: Substituir ou recarregar a bateria;
       stop
-    else (Sim)
+    else (Não)
       :Verificar o motor de arranque;
       if (Motor de arranque com defeito?) then (Sim)
         :Diagnóstico: Falha no motor de arranque;
@@ -45,7 +45,7 @@ if (Sim) then (Sim)
         endif
       endif
     endif
-  else (Não)
+  else (Sim)
     :O carro liga mas vai abaixo?;
     if (Sim) then (Sim)
       :Verificar sobreaquecimento do motor;
@@ -166,14 +166,14 @@ if (Sim) then (Sim)
           :Verificar suspensão e rodas;
           if (Barulho na suspensão ou rodas?) then (Sim)
             :Verificar rolamentos de roda;
-            if (Rolamentos desgastados?) then (Sim)
-              :Diagnóstico: Rolamentos desgastados;
+            if (Rolamentos gastos?) then (Sim)
+              :Diagnóstico: Rolamentos gastos;
               :Solução: Substituir rolamentos;
               stop
             else (Não)
               :Verificar amortecedores e molas;
-              if (Amortecedores ou molas desgastados?) then (Sim)
-                :Diagnóstico: Amortecedores desgastados;
+              if (Amortecedores ou molas gastos?) then (Sim)
+                :Diagnóstico: Amortecedores gastos;
                 :Solução: Substituir amortecedores;
                 stop
               else (Não)
@@ -197,8 +197,8 @@ if (Sim) then (Sim)
             stop
           else (Não)
             :Verificar discos de travão;
-            if (Discos de travão desgastados?) then (Sim)
-              :Diagnóstico: Discos de travão desgastados;
+            if (Discos de travão gastos?) then (Sim)
+              :Diagnóstico: Discos de travão gastos;
               :Solução: Substituir discos de travão;
               stop
             else (Não)
