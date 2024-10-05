@@ -20,24 +20,23 @@ ultimo_facto(3).
 
 %  Se o carro apresenta algum problema então temos de verificar Se o carro liga
 regra 1
-	se [problemas(Veículo,sim)]
-	entao [cria_facto(diagnostico(Veículo,'Nenhum problema identificado'))] e 
-	entao [cria_facto(solucao(Veículo,'Continuar com o plano de manutencao'))].
+	se [problemas(Veiculo,sim)]
+	entao [cria_facto(diagnostico(Veiculo,'Nenhum problema identificado'))].
 
 %  Se o carro NAO apresenta algum problema então não tem problemas
 regra 2
-	se [problemas(Veículo,nao)]
-	entao [cria_facto(proximo_teste(Veículo, liga))].
+	se [problemas(Veiculo,nao)]
+	entao [cria_facto(proximo_teste(Veiculo, liga))].
 
 % Se o carro liga vamos verificar se o carro vai abaixo
 regra 3
-	se [liga(Veículo,sim)]
-	entao [cria_facto(proximo_teste(Veículo, vai_abaixo))].
+	se [liga(Veiculo,sim)]
+	entao [cria_facto(proximo_teste(Veiculo, vai_abaixo))].
 
 % Se o carro NAO liga vamos verificar a bateria
 regra 4
-	se [liga(Veículo,nao)]
-	entao [cria_facto(proximo_teste(Veículo, carga_bateria))].
+	se [liga(Veiculo,nao)]
+	entao [cria_facto(proximo_teste(Veiculo, carga_bateria))].
 
 facto(1, problemas(meu_veiculo, nao)).
 facto(2, liga(meu_veiculo, nao)).
