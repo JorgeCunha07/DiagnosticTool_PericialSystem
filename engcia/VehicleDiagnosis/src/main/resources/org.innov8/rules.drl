@@ -28,7 +28,7 @@ end
 
 rule "r1"
 	when
-		eval(answer(Evidence.CAR_ISSUE == "yes" ))
+		eval(answer(Evidence.CAR_ISSUE, "yes" ))
 	then
 		Hypothesis h = new Hypothesis("car_issue", "type1");
 		insert(h);
@@ -36,7 +36,7 @@ end
 
 rule "r2"
 	when
-		eval(answer(Evidence.CAR_ISSUE == "no" ))
+		eval(answer(Evidence.CAR_ISSUE, "no" ))
 	then
 		Hypothesis h = new Hypothesis("car_issue", "type2");
 		insert(h);
@@ -45,7 +45,7 @@ end
 rule "r3"
 	when
 		Hypothesis( description == "car_issue", value == "type1")
-		eval(answer(Evidence.CAR_TURNS_ON == "yes"))
+		eval(answer(Evidence.CAR_TURNS_ON, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
 		insert(c);
@@ -54,7 +54,7 @@ end
 rule "r4"
 	when
 		Hypothesis( description == "car_issue", value == "type1")
-		eval(answer(Evidence.BATTERY_CHECK == "yes"))
+		eval(answer(Evidence.BATTERY_CHECK, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_BATTERY_OR_NO_CHARGE);
 		insert(c);
@@ -63,7 +63,7 @@ end
 rule "r5"
 	when
 		Hypothesis( description == "car_issue", value == "type1")
-		eval(answer(Evidence.STARTING_MOTOR == "yes"))
+		eval(answer(Evidence.STARTING_MOTOR, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_STARTING_MOTOR);
 		insert(c);
@@ -72,7 +72,7 @@ end
 rule "r6"
 	when
 		Hypothesis( description == "car_issue", value == "type2")
-		eval(answer(Evidence.IGNITION_SYSTEM == "yes"))
+		eval(answer(Evidence.IGNITION_SYSTEM, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_IGNITION_SYSTEM);
 		insert(c);
@@ -81,8 +81,8 @@ end
 rule "r7"
 	when
 		Hypothesis( description == "car_issue", value == "type2")
-		eval(answer(Evidence.SECURITY_SYSTEM == "yes"))
-		eval(answer(Evidence.ALARM_BLOCKED == "yes"))
+		eval(answer(Evidence.SECURITY_SYSTEM, "yes"))
+		eval(answer(Evidence.ALARM_BLOCKED, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.SECURITY_SYSTEM_ACTIVATED);
 		insert(c);
@@ -91,7 +91,8 @@ end
 rule "r8"
 	when
 		Hypothesis( description == "car_issue", value == "type2")
-		eval(answer(Evidence.FAULTY_RADIATOR == "yes"))
+		eval(answer(Evidence.FAULTY_RADIATOR, "yes"))
+		eval(answer(Evidence.FAULTY_FAN, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_RADIATOR_OR_FAN);
 		insert(c);
@@ -100,7 +101,7 @@ end
 rule "r9"
 	when
 		Hypothesis( description == "car_issue", value == "type2")
-		eval(answer(Evidence.COOLING_SYSTEM_LEAKS == "yes"))
+		eval(answer(Evidence.COOLING_SYSTEM_LEAKS, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.COOLING_SYSTEM_LEAKING);
 		insert(c);
@@ -109,7 +110,7 @@ end
 rule "r10"
 	when
 		Hypothesis( description == "car_issue", value == "type2")
-		eval(answer(Evidence.FAULTY_THERMOSTAT == "yes"))
+		eval(answer(Evidence.FAULTY_THERMOSTAT, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_THERMOSTAT);
 		insert(c);
@@ -118,7 +119,7 @@ end
 rule "r11"
 	when
 		Hypothesis( description == "car_issue", value == "type2")
-		eval(answer(Evidence.FUEL_SYSTEM_ISSUE == "yes"))
+		eval(answer(Evidence.FUEL_SYSTEM_ISSUE, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_FUEL_SYSTEM);
 		insert(c);
@@ -127,7 +128,7 @@ end
 rule "r12"
 	when
 		Hypothesis( description == "car_issue", value == "type2")
-		eval(answer(Evidence.FUEL_INJECTION_SYSTEM == "yes"))
+		eval(answer(Evidence.FUEL_INJECTION_SYSTEM, "yes"))
 	then
 		Conclusion c = new Conclusion(Conclusion.FAULTY_INJECTION_SYSTEM);
 		insert(c);
