@@ -9,7 +9,7 @@
 :-op(500,fy,nao).
 :-op(600,xfy,e).
 
-:-dynamic justifica/3.
+:-dynamic facto/2, justifica/3.
 
 
 carrega_bc:-
@@ -21,6 +21,66 @@ arranca_motor:-	facto(N,Facto),
 		facto_dispara_regras1(Facto, LRegras),
 		dispara_regras(N, Facto, LRegras),
 		ultimo_facto(N).
+
+%%%%%%%%%%%
+
+:- dynamic facto/2.
+
+% Predicado para diagnosticar e verificar problemas
+diagnostico :-
+    % Primeira fase de diagnóstico para problemas tipo "tem_problemas"
+    diag_tem_problemas,
+    % Tenta arrancar o motor após a primeira fase de diagnóstico
+    arranca_motor,
+    % Entra em um ciclo para tratar de problemas gerais
+    repeat,
+        (diag_problemas, not(diagnostico_finalizado) -> fail ; !),
+    % Verifica se um próximo teste é necessário após o ciclo
+    verificar_proximo_teste.
+
+% Trata casos "tem_problemas"
+diag_tem_problemas :-
+    forall(facto(Id, tem_problemas(Veiculo, Problema)),
+           perguntar_problema_responder(Id, Veiculo, Problema)).
+
+% Trata casos "problemas_teste"
+diag_problemas :-
+    findall(Id, facto(Id, problemas_teste(_, _)), Ids),
+    maplist(tratar_problema, Ids).
+
+% Tratamento individual de cada problema
+tratar_problema(Id) :-
+    facto(Id, problemas_teste(Veiculo, Problema)),
+    perguntar_problema_responder(Id, Veiculo, Problema).
+
+% Pergunta ao usuário e cria resposta como novo fato
+perguntar_problema_responder(Id, Veiculo, Problema) :-
+    perguntar_problema(Veiculo, Problema, Resposta),
+    NovoId is Id + 1,
+    criar_novo_fato(NovoId, Problema, Veiculo, Resposta),
+    % Checa se resposta é 'sim' para potencialmente agendar um próximo teste
+    (Resposta == 'sim' -> sugerir_proximo_teste(Veiculo, Problema) ; true).
+
+% Criar um novo fato com a resposta
+criar_novo_fato(NovoId, Problema, Veiculo, Resposta) :-
+    Term =.. [Problema, Veiculo, Resposta],
+    assertz(facto(NovoId, Term)),
+    format('Novo fato criado: facto(~d, ~w(~w, ~w)).~n', [NovoId, Problema, Veiculo, Resposta]).
+
+% Sugere um próximo teste baseado no veículo e no problema diagnosticado
+sugerir_proximo_teste(Veiculo, Problema) :-
+    format('Foi concluído o facto nº ~d -> proximo_teste(~w, ~w)~n', [Id, Veiculo, Problema]),
+    assertz(facto(Id, proximo_teste(Veiculo, Problema))).
+
+% Verifica se um próximo teste está agendado e o executa
+verificar_proximo_teste :-
+    (facto(_, proximo_teste(Veiculo, Teste)) ->
+        format('Executando próximo teste: ~w no ~w~n', [Teste, Veiculo])
+    ;   write('Nenhum próximo teste agendado.~n')).
+
+
+%%%%%%%%%%%
+
 
 facto_dispara_regras1(Facto, LRegras):-
 	facto_dispara_regras(Facto, LRegras),
@@ -240,7 +300,8 @@ formata(Nivel):-
 retirar_facto(K):-
 	retract(facto(K,_)),
 	findall(K1,(justifica(K1,_,L),member(K,L)),LK1),
-	retirar_lista_factos(LK1).
+	retirar_lista_factos(LK1),
+	atualiza_ultimo_facto.
 
 retirar_lista_factos([ ]).
 retirar_lista_factos([K1|LK1]):-

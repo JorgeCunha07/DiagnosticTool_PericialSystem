@@ -9,7 +9,7 @@
 :-op(500,fy,nao).
 :-op(600,xfy,e).
 
-:-dynamic justifica/3.
+:-dynamic facto/2, justifica/3.
 
 
 carrega_bc:-
@@ -21,6 +21,67 @@ arranca_motor:-	facto(N,Facto),
 		facto_dispara_regras1(Facto, LRegras),
 		dispara_regras(N, Facto, LRegras),
 		ultimo_facto(N).
+
+%%%%%%%%%%%
+% Predicado para diagnosticar e verificar problemas
+diagnostico :-
+    % Primeira fase de diagnóstico para problemas tipo "tem_problemas"
+    diag_tem_problemas,
+    % Tenta arrancar o motor após a primeira fase de diagnóstico
+    arranca_motor,
+    % Entra em um ciclo para tratar de problemas gerais
+    repeat,
+        % Executa diagnósticos enquanto houver problemas; termina se não encontrar mais ou se um diagnóstico final for alcançado
+        (diag_problemas, not(diagnostico_finalizado) -> fail ; !).
+
+% Verifica se um diagnóstico final foi alcançado
+diagnostico_finalizado :-
+    % Verifica se há algum fato de diagnóstico
+    facto(_, diagnostico(_)),
+    !.
+
+% Verifica se ainda existem problemas para testar
+problemas_pendentes :-
+    % Verifica se há algum fato de problemas_teste não tratado
+    facto(_, problemas_teste(_, _)),
+    !.
+
+% Trata casos "tem_problemas"
+diag_tem_problemas :-
+    forall(facto(Id, tem_problemas(Veiculo, Problema)),
+           perguntar_problema_responder(Id, Veiculo, Problema)).
+
+% Trata casos "problemas_teste"
+diag_problemas :-
+    % Busca fatos de problemas ainda não diagnosticados
+    findall(Id, facto(Id, problemas_teste(_, _)), Ids),
+    % Trata cada problema encontrado
+    maplist(tratar_problema, Ids).
+
+% Tratamento individual de cada problema
+tratar_problema(Id) :-
+    facto(Id, problemas_teste(Veiculo, Problema)),
+    perguntar_problema_responder(Id, Veiculo, Problema).
+
+% Pergunta ao user e cria resposta como novo fato
+perguntar_problema_responder(Id, Veiculo, Problema) :-
+    perguntar_problema(Veiculo, Problema, Resposta),
+    NovoId is Id + 1,
+    criar_novo_fato(NovoId, Problema, Veiculo, Resposta).
+
+% Pergunta sobre um problema específico
+perguntar_problema(Veiculo, Problema, Resposta) :-
+    format('O ~w está com o problema: ~w? (sim/nao) ', [Veiculo, Problema]),
+    read(Resposta).
+
+% Criar um novo fato com a resposta
+criar_novo_fato(NovoId, Problema, Veiculo, Resposta) :-
+    Term =.. [Problema, Veiculo, Resposta],  % Constrói o termo com dois argumentos separados
+    assertz(facto(NovoId, Term)),
+    format('Novo fato criado: facto(~d, ~w(~w, ~w)).~n', [NovoId, Problema, Veiculo, Resposta]).
+
+%%%%%%%%%%%
+
 
 facto_dispara_regras1(Facto, LRegras):-
 	facto_dispara_regras(Facto, LRegras),
