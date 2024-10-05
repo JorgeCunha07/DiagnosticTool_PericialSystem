@@ -49,7 +49,7 @@ public class UI {
                 return false;
             }
         }
-        System.out.print(ev + "? ");
+        System.out.print(ev + "? [yes/no] ");
         String value = readLine();
 
         Evidence e = new Evidence(ev, value);
