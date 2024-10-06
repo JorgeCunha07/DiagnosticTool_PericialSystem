@@ -3,4 +3,7 @@
   <kbase name="rules" packages="org.dei">
     <ksession name="ksession-rules"/>
   </kbase>
+  <kbase name="diagnostic" packages="org.dei.diagnostic">
+    <ksession name="ksession-diagnostic"/>
+  </kbase>
 </kmodule>

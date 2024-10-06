@@ -1,0 +1,65 @@
+package org.dei.diagnostic;
+
+import org.dei.facts.Resposta;
+import org.dei.facts.model.Carro;
+import org.dei.facts.model.Componente;
+import java.util.List;
+import java.util.ArrayList;
+
+global org.dei.facts.model.Carro selectedCar;  // The selected car from previous interaction
+
+// Rule 01: Start Diagnostic
+rule "D01: Start Diagnostic"
+    when
+        $resposta : Resposta(estado == "iniciarDiagnostico")
+    then
+        System.out.println("Iniciando diagnóstico para o seu carro.");
+        $resposta.setEstado("perguntarSintoma");
+        update($resposta);
+end
+
+// Rule 02: Ask for Symptom
+rule "D02: Ask for Symptom"
+    when
+        $resposta : Resposta(estado == "perguntarSintoma", texto == "")
+    then
+        System.out.println("Qual é o sintoma ou problema que você está enfrentando?");
+        // Waits for user input
+end
+
+// Rule 03: Process Symptom and Provide Diagnosis
+rule "D03: Process Symptom"
+    when
+        $resposta : Resposta(estado == "perguntarSintoma", $texto : texto != null && texto != "")
+        $carro : Carro() from selectedCar
+    then
+        // Simple example: Check if the symptom matches known issues
+        if ($texto.toLowerCase().contains("aquecimento")) {
+            System.out.println("Possível causa: Problema no sistema de arrefecimento.");
+            System.out.println("Componentes a verificar:");
+            for (Componente comp : $carro.getComponentes()) {
+                if (comp.getNome().toLowerCase().contains("arrefecimento")) {
+                    System.out.println("- " + comp.getNome());
+                }
+            }
+        } else if ($texto.toLowerCase().contains("freio")) {
+            System.out.println("Possível causa: Desgaste nas pastilhas de freio.");
+            System.out.println("Componentes a verificar:");
+            // List relevant components
+        } else {
+            System.out.println("Sintoma não reconhecido. Recomenda-se uma inspeção detalhada.");
+        }
+
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule 04: Conclude Diagnostic
+rule "D04: Conclude Diagnostic"
+    when
+        $resposta : Resposta(estado == "diagnosticoConcluido")
+    then
+        System.out.println("Diagnóstico concluído. Obrigado por utilizar nosso serviço.");
+        $resposta.setEstado("finalizado");
+        update($resposta);
+end

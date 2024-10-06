@@ -72,8 +72,8 @@ public class Main {
                 System.out.println("Modelo: " + selectedCar.getModelo().getNome());
                 System.out.println("Motor: " + selectedCar.getMotor().getNome());
 
-                // Exemplo: utilizar o carro selecionado em outro método
-                // processarCarroSelecionado(selectedCar);
+                // Begin diagnostic process
+                iniciarDiagnostico(selectedCar);
             } else {
                 System.out.println("Nenhum carro foi selecionado.");
             }
@@ -85,10 +85,49 @@ public class Main {
         }
     }
 
-    // Exemplo de método que recebe o carro selecionado
-    public static void processarCarroSelecionado(Carro carro) {
-        // Lógica para processar o carro selecionado
-        System.out.println("Processando o carro selecionado...");
-        // ...
+    // New method to handle diagnostic
+    public static void iniciarDiagnostico(Carro selectedCar) {
+        try {
+            // Create a new KieSession for diagnostic rules
+            KieServices ks = KieServices.Factory.get();
+            KieContainer kc = ks.getKieClasspathContainer();
+            KieSession diagSession = kc.newKieSession("ksession-diagnostic");
+
+            // Set the selected car as a global variable
+            diagSession.setGlobal("selectedCar", selectedCar);
+
+            // Create a new Resposta object for the diagnostic session
+            Resposta diagResposta = new Resposta();
+            diagResposta.setEstado("iniciarDiagnostico");
+            diagResposta.setTexto("");
+
+            FactHandle respostaHandle = diagSession.insert(diagResposta);
+
+            Scanner scanner = new Scanner(System.in);
+
+            while (!"finalizado".equals(diagResposta.getEstado())) {
+                diagSession.fireAllRules();
+
+                String estado = diagResposta.getEstado();
+                String texto = diagResposta.getTexto();
+
+                if (estado != null && estado.equals("perguntarSintoma") && (texto == null || texto.isEmpty())) {
+                    System.out.print("Digite sua resposta: ");
+                    String input = scanner.nextLine();
+                    diagResposta.setTexto(input);
+
+                    if (respostaHandle != null) {
+                        diagSession.update(respostaHandle, diagResposta);
+                    } else {
+                        respostaHandle = diagSession.insert(diagResposta);
+                    }
+                }
+            }
+
+            diagSession.dispose();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
