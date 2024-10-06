@@ -3,9 +3,6 @@ package org.dei.facts;
 public class Resposta {
     private String texto;
 
-    public Resposta() {
-        this.texto = null;
-    }
 
     public String getTexto() {
         return texto;
