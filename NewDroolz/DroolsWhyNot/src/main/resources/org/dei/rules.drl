@@ -8,78 +8,82 @@ import org.dei.facts.model.Motor;
 import org.dei.facts.model.Componente;
 import java.util.List;
 
-global java.util.List carros;  // List of Carro objects
+global java.util.List carros;  // Lista de objetos Carro
 global java.util.List<String> triggeredRules;
 global org.slf4j.Logger LOG;
 
 // Rule 01: Pergunta Marca do Carro
 rule "R01: Pergunta Marca do Carro"
     when
-        $resposta : Resposta(texto == null || texto == "")
+        $resposta : Resposta(estado == null || estado == "")
     then
         System.out.println("Qual é a marca do carro?");
+        $resposta.setEstado("aguardandoMarca");
+        update($resposta);
 end
 
 // Rule 02: Verifica Marca Selecionada
 rule "R02: Verifica Marca Selecionada"
     when
-        $resposta : Resposta(texto != null && texto != "" && texto != "modelo" && texto != "motor" && texto != "finalizado")
-        $marca : String() from $resposta.getTexto()  // Marca fornecida pelo usuário
-        $carro : Carro( marca.getNome() == $marca ) from carros
+        $resposta : Resposta(estado == "aguardandoMarca", $texto : texto != null && texto != "")
+        $carro : Carro(marca.getNome() == $texto) from carros
     then
-        System.out.println("Marca selecionada: " + $marca);
+        System.out.println("Marca selecionada: " + $texto);
         System.out.println("Modelos disponíveis: ");
         for (ModeloCarro modelo : $carro.getMarca().getModelos()) {
             System.out.println(modelo.getNome());
         }
-        // Limpar a resposta para a próxima pergunta
-        $resposta.setTexto("modelo");
+        $resposta.setEstado("aguardandoModelo");
+        $resposta.setTexto(""); // Limpa o texto para a próxima entrada
+        update($resposta);
 end
 
 // Rule 03: Pergunta Modelo do Carro
 rule "R03: Pergunta Modelo do Carro"
     when
-        $resposta : Resposta(texto == "modelo")
+        $resposta : Resposta(estado == "aguardandoModelo", texto == "")
     then
         System.out.println("Qual é o modelo do carro?");
+        // Aguarda a entrada do usuário
 end
 
 // Rule 04: Verifica Modelo Selecionado
 rule "R04: Verifica Modelo Selecionado"
     when
-        $resposta : Resposta(texto != null && texto != "modelo" && texto != "motor" && texto != "finalizado")
-        $modelo : String() from $resposta.getTexto()  // Modelo fornecido pelo usuário
-        $carro : Carro( modelo.getNome() == $modelo ) from carros
+        $resposta : Resposta(estado == "aguardandoModelo", $texto : texto != null && texto != "")
+        $carro : Carro(modelo.getNome() == $texto) from carros
     then
-        System.out.println("Modelo selecionado: " + $modelo);
+        System.out.println("Modelo selecionado: " + $texto);
         System.out.println("Motores disponíveis: ");
         for (Motor motor : $carro.getModelo().getMotores()) {
             System.out.println(motor.getNome());
         }
-        // Limpar a resposta para a próxima pergunta
-        $resposta.setTexto("motor");
+        $resposta.setEstado("aguardandoMotor");
+        $resposta.setTexto(""); // Limpa o texto para a próxima entrada
+        update($resposta);
 end
 
 // Rule 05: Pergunta Motor do Carro
 rule "R05: Pergunta Motor do Carro"
     when
-        $resposta : Resposta(texto == "motor")
+        $resposta : Resposta(estado == "aguardandoMotor", texto == "")
     then
         System.out.println("Qual é o motor do carro?");
+        // Aguarda a entrada do usuário
 end
 
 // Rule 06: Verifica Motor Selecionado
 rule "R06: Verifica Motor Selecionado"
     when
-        $resposta : Resposta(texto != null && texto != "motor" && texto != "finalizado")
-        $motor : String() from $resposta.getTexto()  // Motor fornecido pelo usuário
-        $carro : Carro( motor.getNome() == $motor ) from carros
+        $resposta : Resposta(estado == "aguardandoMotor", $texto : texto != null && texto != "")
+        $carro : Carro(motor.getNome() == $texto) from carros
     then
-        System.out.println("Motor selecionado: " + $motor);
+        System.out.println("Motor selecionado: " + $texto);
         System.out.println("Componentes disponíveis: ");
         for (Componente componente : $carro.getComponentes()) {
             System.out.println(componente.getNome() + " (Min: " + componente.getValorMinimo() + ", Max: " + componente.getValorMaximo() + ")");
         }
-        // Finalizar
-        $resposta.setTexto("finalizado");
+        $resposta.setEstado("finalizado");
+        $resposta.setTexto(""); // Limpa o texto
+        update($resposta);
 end
