@@ -1,10 +1,10 @@
 package org.dei;
 
+import org.dei.facts.Resposta;
+import org.dei.facts.model.Carro;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.dei.facts.Resposta;
-import org.dei.facts.model.Carro;
 import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +25,8 @@ public class Main {
             }
 
             Resposta resposta = new Resposta();
-            resposta.setEstado(""); // Initialize estado to an empty string
-            resposta.setTexto("");  // Initialize texto to an empty string
+            resposta.setEstado(""); // Inicializa o estado com uma string vazia
+            resposta.setTexto("");  // Inicializa o texto com uma string vazia
 
             // Configurar KieServices e KieSession
             KieServices ks = KieServices.Factory.get();
@@ -38,10 +38,10 @@ public class Main {
             kSession.setGlobal("triggeredRules", new ArrayList<String>());
             kSession.setGlobal("LOG", LoggerFactory.getLogger(Main.class));
 
-            // Capturar respostas do usuário
-            // Exemplo simplificado
+            // Inserir o objeto resposta na sessão
+            FactHandle respostaHandle = kSession.insert(resposta);
+
             Scanner scanner = new Scanner(System.in);
-            kSession.insert(resposta);
 
             while (!"finalizado".equals(resposta.getEstado())) {
                 kSession.fireAllRules();
@@ -54,18 +54,41 @@ public class Main {
                     String input = scanner.nextLine();
                     resposta.setTexto(input);
 
-                    FactHandle respostaHandle = kSession.getFactHandle(resposta);
+                    // Atualiza o objeto resposta na sessão
                     if (respostaHandle != null) {
                         kSession.update(respostaHandle, resposta);
                     } else {
-                        kSession.insert(resposta);
+                        respostaHandle = kSession.insert(resposta);
                     }
                 }
             }
 
+            // Após a interação, você pode acessar o carro selecionado
+            Carro selectedCar = resposta.getCarroSelecionado();
+            if (selectedCar != null) {
+                // Armazena o carro selecionado em uma variável para uso posterior
+                System.out.println("Carro selecionado:");
+                System.out.println("Marca: " + selectedCar.getMarca().getNome());
+                System.out.println("Modelo: " + selectedCar.getModelo().getNome());
+                System.out.println("Motor: " + selectedCar.getMotor().getNome());
+
+                // Exemplo: utilizar o carro selecionado em outro método
+                // processarCarroSelecionado(selectedCar);
+            } else {
+                System.out.println("Nenhum carro foi selecionado.");
+            }
+
+            kSession.dispose();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // Exemplo de método que recebe o carro selecionado
+    public static void processarCarroSelecionado(Carro carro) {
+        // Lógica para processar o carro selecionado
+        System.out.println("Processando o carro selecionado...");
+        // ...
     }
 }
