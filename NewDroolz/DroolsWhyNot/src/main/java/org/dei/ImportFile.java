@@ -77,10 +77,6 @@ public class ImportFile {
     }
 
     private static Carro obterOuCriarCarro(Marca marca, ModeloCarro modeloCarro, Motor motor, List<Carro> carros) {
-        if (marca == null || modeloCarro == null || motor == null) {
-            throw new RuntimeException("Erro: marca, modeloCarro ou motor é null");
-        }
-
         return carros.stream()
                 .filter(c -> c.getMarca().equals(marca) && c.getModelo().equals(modeloCarro) && c.getMotor().equals(motor))
                 .findFirst()
@@ -90,4 +86,5 @@ public class ImportFile {
                     return novoCarro;
                 });
     }
+
 }

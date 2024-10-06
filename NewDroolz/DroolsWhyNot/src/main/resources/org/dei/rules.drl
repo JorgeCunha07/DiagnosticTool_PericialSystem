@@ -23,7 +23,7 @@ end
 // Rule 02: Verifica Marca Selecionada
 rule "R02: Verifica Marca Selecionada"
     when
-        $resposta : Resposta(texto != null && texto != "")
+        $resposta : Resposta(texto != null && texto != "" && texto != "modelo" && texto != "motor" && texto != "finalizado")
         $marca : String() from $resposta.getTexto()  // Marca fornecida pelo usuário
         $carro : Carro( marca.getNome() == $marca ) from carros
     then
@@ -32,14 +32,14 @@ rule "R02: Verifica Marca Selecionada"
         for (ModeloCarro modelo : $carro.getMarca().getModelos()) {
             System.out.println(modelo.getNome());
         }
+        // Limpar a resposta para a próxima pergunta
+        $resposta.setTexto("modelo");
 end
 
 // Rule 03: Pergunta Modelo do Carro
 rule "R03: Pergunta Modelo do Carro"
     when
-        $resposta : Resposta(texto != null && texto != "")
-        $marca : String() from $resposta.getTexto()  // Marca fornecida pelo usuário
-        $carro : Carro( marca.getNome() == $marca ) from carros
+        $resposta : Resposta(texto == "modelo")
     then
         System.out.println("Qual é o modelo do carro?");
 end
@@ -47,7 +47,7 @@ end
 // Rule 04: Verifica Modelo Selecionado
 rule "R04: Verifica Modelo Selecionado"
     when
-        $resposta : Resposta(texto != null && texto != "")
+        $resposta : Resposta(texto != null && texto != "modelo" && texto != "motor" && texto != "finalizado")
         $modelo : String() from $resposta.getTexto()  // Modelo fornecido pelo usuário
         $carro : Carro( modelo.getNome() == $modelo ) from carros
     then
@@ -56,14 +56,14 @@ rule "R04: Verifica Modelo Selecionado"
         for (Motor motor : $carro.getModelo().getMotores()) {
             System.out.println(motor.getNome());
         }
+        // Limpar a resposta para a próxima pergunta
+        $resposta.setTexto("motor");
 end
 
 // Rule 05: Pergunta Motor do Carro
 rule "R05: Pergunta Motor do Carro"
     when
-        $resposta : Resposta(texto != null && texto != "")
-        $modelo : String() from $resposta.getTexto()  // Modelo fornecido pelo usuário
-        $carro : Carro( modelo.getNome() == $modelo ) from carros
+        $resposta : Resposta(texto == "motor")
     then
         System.out.println("Qual é o motor do carro?");
 end
@@ -71,7 +71,7 @@ end
 // Rule 06: Verifica Motor Selecionado
 rule "R06: Verifica Motor Selecionado"
     when
-        $resposta : Resposta(texto != null && texto != "")
+        $resposta : Resposta(texto != null && texto != "motor" && texto != "finalizado")
         $motor : String() from $resposta.getTexto()  // Motor fornecido pelo usuário
         $carro : Carro( motor.getNome() == $motor ) from carros
     then
@@ -80,4 +80,6 @@ rule "R06: Verifica Motor Selecionado"
         for (Componente componente : $carro.getComponentes()) {
             System.out.println(componente.getNome() + " (Min: " + componente.getValorMinimo() + ", Max: " + componente.getValorMaximo() + ")");
         }
+        // Finalizar
+        $resposta.setTexto("finalizado");
 end
