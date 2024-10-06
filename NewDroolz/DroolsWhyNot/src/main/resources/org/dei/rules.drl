@@ -1,0 +1,87 @@
+package org.dei;
+
+import org.dei.facts.Resposta;
+import org.dei.facts.model.Carro;
+import org.dei.facts.model.Marca;
+import org.dei.facts.model.ModeloCarro;
+import org.dei.facts.model.Motor;
+import org.dei.facts.model.Componente;
+import java.util.List;
+
+global java.util.List carros;  // List of Carro objects
+global java.util.List<String> triggeredRules;
+global org.slf4j.Logger LOG;
+
+// Rule 01: Ask for the car brand
+rule "R01: Pergunta Marca do Carro"
+    when
+        $resposta : Resposta(texto == null)
+    then
+        LOG.info("Qual é a marca do carro? (Ex: Opel, Peugeot)");
+        $resposta.setTexto("marca");
+        triggeredRules.add(drools.getRule().getName());
+end
+
+// Rule 02: Display available models for the selected brand
+rule "R02: Verifica Marca Selecionada"
+    when
+        $resposta : Resposta(texto == "marca", valor != null)
+        $marca : String() from $resposta.getValor() // Marca provided by user
+        $carro : Carro( marca.nome == $marca ) from carros
+    then
+        LOG.info("Modelos disponíveis para a marca " + $marca + ":");
+        for (ModeloCarro modelo : $carro.getMarca().getModelos()) {
+            LOG.info("- " + modelo.getNome());
+        }
+        $resposta.setTexto("modelo");
+        triggeredRules.add(drools.getRule().getName());
+end
+
+// Rule 03: Ask for the car model
+rule "R03: Pergunta Modelo do Carro"
+    when
+        $resposta : Resposta(texto == "modelo")
+    then
+        LOG.info("Qual é o modelo do carro?");
+        $resposta.setTexto("motor");
+        triggeredRules.add(drools.getRule().getName());
+end
+
+// Rule 04: Display available motors for the selected model
+rule "R04: Verifica Modelo Selecionado"
+    when
+        $resposta : Resposta(texto == "motor", valor != null)
+        $modelo : String() from $resposta.getValor() // Modelo provided by user
+        $carro : Carro( modelo.nome == $modelo ) from carros
+    then
+        LOG.info("Motores disponíveis para o modelo " + $modelo + ":");
+        for (Motor motor : $carro.getModelo().getMotores()) {
+            LOG.info("- " + motor.getNome());
+        }
+        $resposta.setTexto("componente");
+        triggeredRules.add(drools.getRule().getName());
+end
+
+// Rule 05: Display components for the selected motor
+rule "R05: Verifica Motor Selecionado"
+    when
+        $resposta : Resposta(texto == "componente", valor != null)
+        $motor : String() from $resposta.getValor() // Motor provided by user
+        $carro : Carro( motor.nome == $motor ) from carros
+    then
+        LOG.info("Componentes do motor " + $motor + ":");
+        for (Componente componente : $carro.getComponentes()) {
+            LOG.info(componente.getNome() + " - Valor Mínimo: " + componente.getValorMinimo() + ", Valor Máximo: " + componente.getValorMaximo());
+        }
+        $resposta.setTexto("finalizado");
+        triggeredRules.add(drools.getRule().getName());
+end
+
+// Rule 06: Finalize the car diagnosis
+rule "R06: Finaliza Diagnóstico"
+    when
+        $resposta : Resposta(texto == "finalizado")
+    then
+        LOG.info("Diagnóstico do carro finalizado com sucesso.");
+        triggeredRules.add(drools.getRule().getName());
+end
