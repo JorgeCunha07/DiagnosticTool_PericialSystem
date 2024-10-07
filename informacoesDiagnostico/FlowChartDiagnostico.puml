@@ -1,69 +1,83 @@
 @startuml
-title Workflow de Diagnóstico Mecânico Completo - Todos os Componentes
+title Workflow de Diagnóstico Mecânico Completo - Diagnósticos Expandidos
 
 start
 
 :O carro apresenta algum problema?;
 if (Sim) then (Sim)
-  :O carro não liga?;
-  if (Sim) then (Sim)
-    :Verificar a bateria;
+  :O carro liga a chave?;
+  if () then (Não)
+    :Verificar a bateria e cabos de bateria;
     if (Bateria fraca ou sem carga?) then (Sim)
       :Diagnóstico: Bateria com defeito ou sem carga;
       :Solução: Substituir ou recarregar a bateria;
       stop
     else (Não)
-      :Verificar motor de arranque;
+      :Verificar o motor de arranque e pedal de embraiagem acionado;
       if (Motor de arranque com defeito?) then (Sim)
         :Diagnóstico: Falha no motor de arranque;
         :Solução: Substituir motor de arranque;
         stop
       else (Não)
-        :Verificar sistema de ignição;
-        if (Ignição  a falhar?) then (Sim)
+        :Verificar o sistema de ignição;
+        if (Ignição a falhar?) then (Sim)
           :Diagnóstico: Sistema de ignição com defeito;
-          :Solução: Verificar chave de ignição, fusíveis e conectores;
+          :Solução: Verificar chave de ignição, fusíveis, conectores e verificação de alimentação de combustivel (pressão de combustivel);
           stop
         else (Não)
-          :Verificar sistema de segurança;
+          :Verificar o sistema de segurança (Imobilizador);
           if (Imobilizador ou alarme a bloquear?) then (Sim)
-            :Diagnóstico: Sistema de segurança ativado;
-            :Solução: Desativar sistema de segurança;
+            :Diagnóstico: Sistema de segurança activado;
+            :Solução: Desactivar sistema de segurança;
             stop
           else (Não)
-            :Diagnóstico: Verificação adicional necessária;
-            :Solução: Consultar especialista;
-            stop
+            :Verificar cabo condutor de energia elétrica e fichas de ligação;
+            if (fios danificados?) then (Sim)
+              :Diagnóstico: fios com corte ou curto-circuito;
+              :Solução: Reparar ou substituir cabo condutor de energia elétrica;
+              stop
+            else (Não)
+              :Diagnóstico: Verificação adicional necessária;
+              :Solução: Seguir protocolo de reparação da marca, consultar especialista;
+              stop
+            endif
           endif
         endif
       endif
     endif
-  else (Não)
+  else (Sim)
     :O carro liga mas vai abaixo?;
     if (Sim) then (Sim)
-      :Verificar superaquecimento do motor;
+      :Verificar sobreaquecimento do motor;
       if (Motor a sobreaquecer?) then (Sim)
         :Verificar sistema de arrefecimento;
         if (Radiador ou ventoinha com defeito?) then (Sim)
           :Diagnóstico: Problema no radiador ou ventoinha;
-          :Solução: Substituir ou reparar radiador/ventoinha;
+          :Solução: Substituir radiador/ventoinha;
           stop
         else (Não)
           :Verificar fugas no sistema de arrefecimento;
-          if (Fuga detectado?) then (Sim)
+          if (Fuga detectada?) then (Sim)
             :Diagnóstico: Fugas no sistema de arrefecimento;
-            :Solução: Reparar Fuga e completar fluido;
+            :Solução: Reparar fuga e completar fluido;
             stop
           else (Não)
-            :Verificar termostato;
-            if (Termostato defeituoso?) then (Sim)
-              :Diagnóstico: Termostato com defeito;
-              :Solução: Substituir termostato;
+            :Verificar termóstato;
+            if (Termóstato defeituoso?) then (Sim)
+              :Diagnóstico: Termóstato com defeito;
+              :Solução: Substituir termóstato;
               stop
             else (Não)
-              :Diagnóstico: Verificação adicional necessária;
-              :Solução: Consultar especialista;
-              stop
+              :Verificar bomba de água;
+              if (Bomba de água com defeito?) then (Sim)
+                :Diagnóstico: Falha na bomba de água;
+                :Solução: Substituir bomba de água;
+                stop
+              else (Não)
+                :Diagnóstico: Verificação adicional necessária;
+                :Solução: Efetuar teste de CO no circuito de refrigeração( Se resultado positivo substituir junta de cabeça de motor);
+                stop
+              endif
             endif
           endif
         endif
@@ -74,68 +88,93 @@ if (Sim) then (Sim)
           :Solução: Reabastecer ou substituir a bomba de combustível;
           stop
         else (Não)
-          :Verificar sistema de injeção de combustível;
-          if (Injeção de combustível com defeito?) then (Sim)
-            :Diagnóstico: Injeção de combustível com defeito;
-            :Solução: Limpar ou substituir injetores;
+          :Verificar filtro de combustível;
+          if (Filtro de combustível entupido?) then (Sim)
+            :Diagnóstico: Filtro de combustível entupido;
+            :Solução: Substituir filtro de combustível;
             stop
           else (Não)
-            :Verificar sistema de ignição;
-            if (Velas de ignição defeituosas?) then (Sim)
-              :Diagnóstico: Falha nas velas de ignição;
-              :Solução: Substituir velas de ignição;
+            :Verificar sistema de injeção de combustível;
+            if (Injeção de combustível com defeito?) then (Sim)
+              :Diagnóstico: Injeção de combustível com defeito;
+              :Solução: Limpar ou substituir injetores;
               stop
             else (Não)
-              :Diagnóstico: Problema indeterminado;
-              :Solução: Consultar especialista;
-              stop
+              :Verificar sistema de ignição;
+              if (Velas de ignição defeituosas?) then (Sim)
+                :Diagnóstico: Falha nas velas de ignição;
+                :Solução: Substituir velas de ignição;
+                stop
+              else (Não)
+                :Verificar sensores do motor (MAP, MAF, Sensor de rotação de cambota, Sensores de Vara de Cames, etc.);
+                if (Sensores defeituosos?) then (Sim)
+                  :Diagnóstico: Sensor do motor com falha;
+                  :Solução: Verificar e substituir sensores;
+                  stop
+                else (Não)
+                  :Diagnóstico: Problema indeterminado;
+                  :Solução: Seguir protocolo de OBD2 calculador de motor;
+                  stop
+                endif
+              endif
             endif
           endif
         endif
       endif
-    else (Não)
+    else (Não (Carro liga e nao vai abaixo))
       :O carro faz barulho anormal?;
       if (Sim) then (Sim)
         :Verificar motor;
         if (Barulho no motor?) then (Sim)
-          :Verificar correia ou corrente dentada;
+          :Verificar correias ou corrente dentada;
           if (Correia dentada gasta?) then (Sim)
-            :Diagnóstico: Correia dentada gasta;
-            :Solução: Substituir correia dentada;
+            :Diagnóstico: Correia dentada gasta e rolamentos;
+            :Solução: Substituir kit de distribuição;
             stop
           else (Não)
             :Verificar lubrificação do motor;
-            if (Nível de óleo baixo?) then (Sim)
-              :Diagnóstico: Lubrificação insuficiente;
+            :Verificar nível de óleo;
+            if (Nível de óleo < Mínimo) then (Sim)
+              :Diagnóstico: Nível de óleo insuficiente;
               :Solução: Completar nível de óleo;
               stop
-            else (Não)
-              :Verificar pistões ou válvulas;
-              if (Pistões ou válvulas gastas?) then (Sim)
-                :Diagnóstico: Pistões ou válvulas com defeito;
-                :Solução: Substituir pistões ou válvulas;
+            else if (Nível de óleo > Máximo) then (Sim)
+              :Diagnóstico: Excesso de óleo;
+              :Solução: Retirar excesso de óleo;
+              stop
+            else (Normal)
+              :Verificar velas de aquecimento (em motores a diesel);
+              if (Velas de aquecimento com defeito?) then (Sim)
+                :Diagnóstico: Falha nas velas de aquecimento;
+                :Solução: Substituir velas de aquecimento;
                 stop
               else (Não)
-                :Diagnóstico: Verificação adicional necessária;
-                :Solução: Consultar especialista;
-                stop
+                :Verificar sistema de escape;
+                if (Problema no sistema de escape?) then (Sim)
+                  :Diagnóstico: Vazamento ou bloqueio no sistema de escape;
+                  :Solução: Reparar ou substituir sistema de escape;
+                  stop
+                else (Não)
+                  :Diagnóstico: Verificação adicional necessária;
+                  :Solução: Consultar especialista;
+                  stop
+                endif
               endif
             endif
           endif
         else (Não)
-          :Verificar suspensão e rodas;
-          if (Barulho na suspensão ou rodas?) then (Sim)
-            :Verificar rolamentos de roda;
-            if (Rolamento gastos?) then (Sim)
-              :Diagnóstico: Rolamento gastos;
-              :Solução: Substituir rolamentos;
-              stop
-            else (Não)
-              :Verificar amortecedores e molas;
-              if (Amortecedores ou molas gastas?) then (Sim)
-                :Diagnóstico: Amortecedores gastas;
-                :Solução: Substituir amortecedores;
+            :Verificar suspensão e rodas;
+            if (Barulho na suspensão ou rodas?) then (Sim)
+              :Verificar rolamentos de roda (Acrescentar verificação de pneus, jantes e calços de travão);
+              if (Problema com pneus, jantes ou calços de travão?) then (Sim)
+                :Diagnóstico: Problema nos pneus, jantes ou calços de travão;
+                :Solução: Reparar ou substituir pneus, jantes ou calços de travão conforme necessário;
                 stop
+              else (Não)
+                if (Amortecedores gastos ou bases de amortecedores?) then (Sim)
+                :Diagnóstico: Amortecedores gastos ou bases de amortecedores gastos;
+                :Solução: Substituir kit de amortecedores;
+                  stop
               else (Não)
                 :Diagnóstico: Problema não identificado;
                 :Solução: Consultar especialista;
@@ -148,70 +187,86 @@ if (Sim) then (Sim)
           endif
         endif
       else (Não)
-        :O carro apresenta dificuldade ao a travar?;
+        :O carro apresenta dificuldade ao travar?;
         if (Sim) then (Sim)
-          :Verificar sistema de travao;
-          if (Pastilhas de travao gastas?) then (Sim)
-            :Diagnóstico: Pastilhas de travao gastas;
-            :Solução: Substituir pastilhas de travao;
+          :Verificar sistema de travões;
+          if (Pastilhas de travão gastas?) then (Sim)
+            :Diagnóstico: Pastilhas de travão gastas;
+            :Solução: Substituir pastilhas de travão;
             stop
           else (Não)
-            :Verificar discos de travao;
-            if (Discos gastos?) then (Sim)
-              :Diagnóstico: Discos de travao gastas;
-              :Solução: Substituir discos de travao;
+            :Verificar discos de travão;
+            if (Discos de travão gastos?) then (Sim)
+              :Diagnóstico: Discos de travão gastos;
+              :Solução: Substituir discos de travão;
               stop
             else (Não)
-              :Verificar fluido de travao;
-              if (Nível de fluido baixo ou Fuga?) then (Sim)
-                :Diagnóstico: Nível de fluido baixo ou Fuga;
-                :Solução: Completar fluido e reparar Fuga;
+              :Verificar fluido de travão;
+              if (Nível de fluido < Mínimo) then (Sim)
+                :Diagnóstico: Nível de fluido insuficiente;
+                :Solução: Completar fluido de travão e corrigir possiveis fugas;
                 stop
-              else (Não)
-                :Diagnóstico: Verificação adicional necessária;
-                :Solução: Consultar especialista;
+              else if (Nível de fluido > Máximo) then (Sim)
+                :Diagnóstico: Excesso de fluido de travão;
+                :Solução: Ajustar nível de fluido de travão;
                 stop
+              else (Normal)
+                :Verificar servofreio;
+                if (Problema no servofreio?) then (Sim)
+                  :Diagnóstico: Servofreio defeituoso;
+                  :Solução: Reparar ou substituir servofreio;
+                  stop
+                else (Não)
+                  :Verificar sistema ABS;
+                  if (ABS com falha?) then (Sim)
+                    :Diagnóstico: Sistema ABS com defeito;
+                    :Solução: Verificar e reparar sistema ABS com consulta de especialista;
+                    stop
+                  else (Não)
+                    :Diagnóstico: Problema indeterminado;
+                    :Solução: Consultar especialista;
+                    stop
+                  endif
+                endif
               endif
             endif
           endif
         else (Não)
-          :Problemas na transmissão?;
-          if (Sim) then (Sim)
-            :Verificar embreagem;
-            if (Embreagem gasta?) then (Sim)
-              :Diagnóstico: Embreagem gasta;
-              :Solução: Substituir embreagem;
+          :Problemas na caixa de velocidades?;
+          if () then (Sim)
+            :Verificar nível de fluido de caixa de velocidades;
+            if (Nível de fluido < Mínimo) then (Sim)
+              :Diagnóstico: Nível de fluido de transmissão baixo;
+              :Solução: Completar fluido de transmissão e verificar possiveis fugas;
               stop
-            else (Não)
-              :Verificar fluido de transmissão;
-              if (Nível de fluido baixo?) then (Sim)
-                :Diagnóstico: Nível de fluido de transmissão baixo;
-                :Solução: Completar fluido de transmissão;
-                stop
-              else (Não)
-                :Verificar sincronizadores e câmbio;
-                if (Sincronizadores ou câmbio defeituosos?) then (Sim)
-                  :Diagnóstico: Sincronizadores ou câmbio com defeito;
-                  :Solução: Substituir ou reparar câmbio;
+            else if (Nível de fluido > Máximo) then (Sim)
+              :Diagnóstico: Excesso de fluido de transmissão;
+              :Solução: Ajustar fluido de transmissão;
+              stop
+            else (Normal)
+            :Verificar embraiagem;
+                if (Embraiagem gasta ou a patinar?) then (Sim)
+                  :Diagnóstico: Embraiagem com desgaste excessivo ou volante bimassa defeituoso ;
+                  :Solução: Substituir kit de embraiagem;
                   stop
                 else (Não)
-                  :Diagnóstico: Problema não identificado;
+                  :Diagnóstico: Verificação adicional necessária;
                   :Solução: Consultar especialista;
                   stop
                 endif
               endif
-            endif
-          else (Não)
-            :Diagnóstico: Nenhum problema identificado;
+            else(Não)
+             :Diagnóstico: Nenhum problema identificado;
             stop
           endif
         endif
       endif
     endif
   endif
-else (Não)
-  :Nenhum problema identificado;
-  stop
+  else (Não)
+    :Diagnóstico: Sem problemas identificados;
+    stop
 endif
+
 
 @enduml

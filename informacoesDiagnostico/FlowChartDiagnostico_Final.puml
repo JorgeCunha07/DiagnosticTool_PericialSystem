@@ -5,15 +5,15 @@ start
 
 :O carro apresenta algum problema?;
 if (Sim) then (Sim)
-  :O carro  liga?;
+  :O carro liga a chave?;
   if () then (Não)
-    :Verificar a bateria;
+    :Verificar a bateria e cabos de bateria;
     if (Bateria fraca ou sem carga?) then (Sim)
       :Diagnóstico: Bateria com defeito ou sem carga;
       :Solução: Substituir ou recarregar a bateria;
       stop
     else (Não)
-      :Verificar o motor de arranque;
+      :Verificar o motor de arranque e pedal de embraiagem acionado;
       if (Motor de arranque com defeito?) then (Sim)
         :Diagnóstico: Falha no motor de arranque;
         :Solução: Substituir motor de arranque;
@@ -22,24 +22,49 @@ if (Sim) then (Sim)
         :Verificar o sistema de ignição;
         if (Ignição a falhar?) then (Sim)
           :Diagnóstico: Sistema de ignição com defeito;
-          :Solução: Verificar chave de ignição, fusíveis e conectores;
+          :Solução: Verificar chave de ignição, fusíveis, conectores e verificação de alimentação de combustível (pressão de combustível);
           stop
         else (Não)
-          :Verificar o sistema de segurança;
+          :Verificar o sistema de segurança (Imobilizador);
           if (Imobilizador ou alarme a bloquear?) then (Sim)
             :Diagnóstico: Sistema de segurança activado;
             :Solução: Desactivar sistema de segurança;
             stop
           else (Não)
-            :Verificar cabo condutor de energia elétrica e fios;
-            if (fios danificada?) then (Sim)
-              :Diagnóstico: fios com falha ou curto-circuito;
+            :Verificar cabo condutor de energia elétrica e fichas de ligação;
+            if (fios danificados?) then (Sim)
+              :Diagnóstico: fios com corte ou curto-circuito;
               :Solução: Reparar ou substituir cabo condutor de energia elétrica;
               stop
             else (Não)
-              :Diagnóstico: Verificação adicional necessária;
-              :Solução: Consultar especialista;
-              stop
+              :Verificar bomba de água, alternador, compressor de AC e tensores da correia;
+              if (Algum defeito identificado?) then (Sim)
+                if (Bomba de água com defeito?) then (Sim)
+                  :Diagnóstico: Falha na bomba de água;
+                  :Solução: Substituir bomba de água;
+                  stop
+                else if (Alternador com defeito?) then (Sim)
+                  :Diagnóstico: Alternador com defeito;
+                  :Solução: Substituir alternador;
+                  stop
+                else if (Compressor de AC com defeito?) then (Sim)
+                  :Diagnóstico: Compressor de AC com defeito;
+                  :Solução: Substituir compressor de ar condicionado;
+                  stop
+                else if (Tensores com defeito?) then (Sim)
+                  :Diagnóstico: Falha nos tensores da correia;
+                  :Solução: Substituir tensores da correia;
+                  stop
+                else (Não)
+                  :Diagnóstico: Verificação adicional necessária;
+                  :Solução: Consultar especialista;
+                  stop
+                endif
+              else (Não)
+                :Diagnóstico: Verificação adicional necessária;
+                :Solução: Seguir protocolo de reparação da marca, consultar especialista;
+                stop
+              endif
             endif
           endif
         endif
@@ -53,7 +78,7 @@ if (Sim) then (Sim)
         :Verificar sistema de arrefecimento;
         if (Radiador ou ventoinha com defeito?) then (Sim)
           :Diagnóstico: Problema no radiador ou ventoinha;
-          :Solução: Substituir ou reparar radiador/ventoinha;
+          :Solução: Substituir radiador/ventoinha;
           stop
         else (Não)
           :Verificar fugas no sistema de arrefecimento;
@@ -126,39 +151,53 @@ if (Sim) then (Sim)
       if (Sim) then (Sim)
         :Verificar motor;
         if (Barulho no motor?) then (Sim)
-          :Verificar correia ou corrente dentada;
+          :Verificar correias ou corrente dentada;
           if (Correia dentada gasta?) then (Sim)
-            :Diagnóstico: Correia dentada gasta;
-            :Solução: Substituir correia dentada;
+            :Diagnóstico: Correia dentada gasta e rolamentos;
+            :Solução: Substituir kit de distribuição;
             stop
           else (Não)
-            :Verificar lubrificação do motor;
-            :Verificar nível de óleo;
-            if (Nível de óleo < Mínimo) then (Sim)
-              :Diagnóstico: Nível de óleo insuficiente;
-              :Solução: Completar nível de óleo;
-              stop
-            else if (Nível de óleo > Máximo) then (Sim)
-              :Diagnóstico: Excesso de óleo;
-              :Solução: Drenar excesso de óleo;
-              stop
-            else (Normal)
-              :Verificar velas de aquecimento (em motores a diesel);
-              if (Velas de aquecimento com defeito?) then (Sim)
-                :Diagnóstico: Falha nas velas de aquecimento;
-                :Solução: Substituir velas de aquecimento;
+            :Verificar componentes;
+
+              if (Bomba de água com defeito?) then (Sim)
+                :Diagnóstico: Falha na bomba de água;
+                :Solução: Substituir kit de bomba de água;
+                stop
+              else if (Alternador com defeito?) then (Sim)
+                :Diagnóstico: Alternador com defeito;
+                :Solução: Substituir alternador;
+                stop
+              else if (Compressor de AC com defeito?) then (Sim)
+                :Diagnóstico: Compressor de AC com defeito;
+                :Solução: Substituir compressor de ar condicionado;
+                stop
+              else if (Tensores com defeito?) then (Sim)
+                :Diagnóstico: Falha nos tensores da correia;
+                :Solução: Substituir tensores da correia;
                 stop
               else (Não)
-                :Verificar sistema de escape;
-                if (Problema no sistema de escape?) then (Sim)
-                  :Diagnóstico: Vazamento ou bloqueio no sistema de escape;
-                  :Solução: Reparar ou substituir sistema de escape;
+                :Verificar lubrificação do motor;
+                :Verificar nível de óleo;
+                if (Nível de óleo < Mínimo) then (Sim)
+                  :Diagnóstico: Nível de óleo insuficiente;
+                  :Solução: Completar nível de óleo;
                   stop
-                else (Não)
-                  :Diagnóstico: Verificação adicional necessária;
-                  :Solução: Consultar especialista;
+                else if (Nível de óleo > Máximo) then (Sim)
+                  :Diagnóstico: Excesso de óleo;
+                  :Solução: Retirar excesso de óleo;
                   stop
-                endif
+                else (Normal)
+                  :Verificar sistema de escape;
+                  if (Problema no sistema de escape?) then (Sim)
+                    :Diagnóstico: Vazamento ou bloqueio no sistema de escape;
+                    :Solução: Reparar ou substituir sistema de escape;
+                    stop
+                  else (Não)
+                    :Diagnóstico: Verificação adicional necessária;
+                    :Solução: Consultar especialista;
+                    stop
+                  endif
+
               endif
             endif
           endif
@@ -166,15 +205,14 @@ if (Sim) then (Sim)
           :Verificar suspensão e rodas;
           if (Barulho na suspensão ou rodas?) then (Sim)
             :Verificar rolamentos de roda;
-            if (Rolamentos gastos?) then (Sim)
-              :Diagnóstico: Rolamentos gastos;
-              :Solução: Substituir rolamentos;
+            if (Problema com pneus, jantes ou calços de travão?) then (Sim)
+              :Diagnóstico: Problema nos pneus, jantes ou calços de travão;
+              :Solução: Reparar ou substituir pneus, jantes ou calços de travão conforme necessário;
               stop
             else (Não)
-              :Verificar amortecedores e molas;
-              if (Amortecedores ou molas gastos?) then (Sim)
-                :Diagnóstico: Amortecedores gastos;
-                :Solução: Substituir amortecedores;
+              if (Amortecedores gastos ou bases de amortecedores?) then (Sim)
+                :Diagnóstico: Amortecedores gastos ou bases de amortecedores gastos;
+                :Solução: Substituir kit de amortecedores;
                 stop
               else (Não)
                 :Diagnóstico: Problema não identificado;
@@ -205,7 +243,7 @@ if (Sim) then (Sim)
               :Verificar fluido de travão;
               if (Nível de fluido < Mínimo) then (Sim)
                 :Diagnóstico: Nível de fluido insuficiente;
-                :Solução: Completar fluido de travão;
+                :Solução: Completar fluido de travão e corrigir possíveis fugas;
                 stop
               else if (Nível de fluido > Máximo) then (Sim)
                 :Diagnóstico: Excesso de fluido de travão;
@@ -221,7 +259,7 @@ if (Sim) then (Sim)
                   :Verificar sistema ABS;
                   if (ABS com falha?) then (Sim)
                     :Diagnóstico: Sistema ABS com defeito;
-                    :Solução: Verificar e reparar sistema ABS;
+                    :Solução: Verificar e reparar sistema ABS com consulta de especialista;
                     stop
                   else (Não)
                     :Diagnóstico: Problema indeterminado;
@@ -233,22 +271,22 @@ if (Sim) then (Sim)
             endif
           endif
         else (Não)
-          :Problemas na transmissão?;
-          if (Sim) then (Sim)
-            :Verificar nível de fluido de transmissão;
+          :Problemas na caixa de velocidades?;
+          if () then (Sim)
+            :Verificar nível de fluido de caixa de velocidades;
             if (Nível de fluido < Mínimo) then (Sim)
               :Diagnóstico: Nível de fluido de transmissão baixo;
-              :Solução: Completar fluido de transmissão;
+              :Solução: Completar fluido de transmissão e verificar possíveis fugas;
               stop
             else if (Nível de fluido > Máximo) then (Sim)
               :Diagnóstico: Excesso de fluido de transmissão;
               :Solução: Ajustar fluido de transmissão;
               stop
             else (Normal)
-              :Verificar câmbio e sincronizadores;
-              if (Sincronizadores defeituosos?) then (Sim)
-                :Diagnóstico: Sincronizadores com defeito;
-                :Solução: Reparar ou substituir sincronizadores;
+              :Verificar embraiagem;
+              if (Embraiagem gasta ou a patinar?) then (Sim)
+                :Diagnóstico: Embraiagem com desgaste excessivo ou volante bimassa defeituoso;
+                :Solução: Substituir kit de embraiagem;
                 stop
               else (Não)
                 :Verificar embraiagem;
@@ -272,7 +310,7 @@ if (Sim) then (Sim)
     endif
   endif
 else (Não)
-  :Nenhum problema identificado;
+  :Diagnóstico: Sem problemas identificados;
   stop
 endif
 
