@@ -37,8 +37,7 @@ regra 4
 	se [liga(Veiculo,nao)]
 	entao [cria_facto(proximo_teste(Veiculo, carga_bateria))].
 
-facto(1, tem_problemas(meu_veiculo, problemas)).
-%facto(3, problemas(meu_veiculo, nao)).
+facto(1, proximo_teste(meu_veiculo, problemas)).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
