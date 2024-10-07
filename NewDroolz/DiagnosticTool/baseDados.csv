@@ -1,134 +1,134 @@
-Marca,Modelo,Motor,Componente,Mínimo,Máximo
-Opel,Astra J,1.4 Turbo,Bateria (Ah),60,70
-Opel,Astra J,1.4 Turbo,Líquido de Arrefecimento (litros),5.5,7
-Opel,Astra J,1.4 Turbo,Óleo do Motor (litros),4,4.5
-Opel,Astra J,1.4 Turbo,Fluido de Travão (litros),0.5,1
-Opel,Astra J,1.4 Turbo,Fluido de Transmissão (litros),1.8,2.5
-Opel,Astra J,1.4 Turbo,Motor de Arranque (kW),1.2,1.2
-Opel,Astra J,1.6 CDTi,Bateria (Ah),65,75
-Opel,Astra J,1.6 CDTi,Líquido de Arrefecimento (litros),6,8
-Opel,Astra J,1.6 CDTi,Óleo do Motor (litros),4.5,5
-Opel,Astra J,1.6 CDTi,Fluido de Travão (litros),0.6,1
-Opel,Astra J,1.6 CDTi,Fluido de Transmissão (litros),2,2.5
-Opel,Astra J,1.6 CDTi,Motor de Arranque (kW),1.4,1.4
-Opel,Astra J,2.0 CDTi,Bateria (Ah),70,80
-Opel,Astra J,2.0 CDTi,Líquido de Arrefecimento (litros),6.5,9
-Opel,Astra J,2.0 CDTi,Óleo do Motor (litros),5,5.5
-Opel,Astra J,2.0 CDTi,Fluido de Travão (litros),0.7,1
-Opel,Astra J,2.0 CDTi,Fluido de Transmissão (litros),2,2.5
-Opel,Astra J,2.0 CDTi,Motor de Arranque (kW),1.6,1.6
-Opel,Corsa E,1.2 Ecotec,Bateria (Ah),50,60
-Opel,Corsa E,1.2 Ecotec,Líquido de Arrefecimento (litros),5.5,7
-Opel,Corsa E,1.2 Ecotec,Óleo do Motor (litros),3.5,4
-Opel,Corsa E,1.2 Ecotec,Fluido de Travão (litros),0.5,0.8
-Opel,Corsa E,1.2 Ecotec,Fluido de Transmissão (litros),1.6,2.3
-Opel,Corsa E,1.2 Ecotec,Motor de Arranque (kW),1.1,1.1
-Opel,Corsa E,1.4 Ecotec,Bateria (Ah),55,65
-Opel,Corsa E,1.4 Ecotec,Líquido de Arrefecimento (litros),6,8
-Opel,Corsa E,1.4 Ecotec,Óleo do Motor (litros),4,4.5
-Opel,Corsa E,1.4 Ecotec,Fluido de Travão (litros),0.5,0.9
-Opel,Corsa E,1.4 Ecotec,Fluido de Transmissão (litros),1.8,2.4
-Opel,Corsa E,1.4 Ecotec,Motor de Arranque (kW),1.3,1.3
-Opel,Insignia B,1.5 Turbo,Bateria (Ah),70,80
-Opel,Insignia B,1.5 Turbo,Líquido de Arrefecimento (litros),7,9
-Opel,Insignia B,1.5 Turbo,Óleo do Motor (litros),4.5,5
-Opel,Insignia B,1.5 Turbo,Fluido de Travão (litros),0.7,1
-Opel,Insignia B,1.5 Turbo,Fluido de Transmissão (litros),2,2.5
-Opel,Insignia B,1.5 Turbo,Motor de Arranque (kW),1.5,1.5
-Opel,Insignia B,2.0 CDTi,Bateria (Ah),75,85
-Opel,Insignia B,2.0 CDTi,Líquido de Arrefecimento (litros),7.5,9.5
-Opel,Insignia B,2.0 CDTi,Óleo do Motor (litros),5,5.5
-Opel,Insignia B,2.0 CDTi,Fluido de Travão (litros),0.8,1
-Opel,Insignia B,2.0 CDTi,Fluido de Transmissão (litros),2.2,2.8
-Opel,Insignia B,2.0 CDTi,Motor de Arranque (kW),1.7,1.7
-Peugeot,208 II,1.2 PureTech,Bateria (Ah),50,60
-Peugeot,208 II,1.2 PureTech,Líquido de Arrefecimento (litros),6.5,8
-Peugeot,208 II,1.2 PureTech,Óleo do Motor (litros),3.5,4
-Peugeot,208 II,1.2 PureTech,Fluido de Travão (litros),0.5,0.8
-Peugeot,208 II,1.2 PureTech,Fluido de Transmissão (litros),1.6,2.2
-Peugeot,208 II,1.2 PureTech,Motor de Arranque (kW),1.2,1.2
-Peugeot,208 II,1.5 BlueHDi,Bateria (Ah),55,65
-Peugeot,208 II,1.5 BlueHDi,Líquido de Arrefecimento (litros),6.5,8.5
-Peugeot,208 II,1.5 BlueHDi,Óleo do Motor (litros),4,4.5
-Peugeot,208 II,1.5 BlueHDi,Fluido de Travão (litros),0.6,0.9
-Peugeot,208 II,1.5 BlueHDi,Fluido de Transmissão (litros),1.8,2.4
-Peugeot,208 II,1.5 BlueHDi,Motor de Arranque (kW),1.4,1.4
-Peugeot,308 II,1.2 PureTech,Bateria (Ah),60,70
-Peugeot,308 II,1.2 PureTech,Líquido de Arrefecimento (litros),6,8
-Peugeot,308 II,1.2 PureTech,Óleo do Motor (litros),4,4.5
-Peugeot,308 II,1.2 PureTech,Fluido de Travão (litros),0.6,0.9
-Peugeot,308 II,1.2 PureTech,Fluido de Transmissão (litros),1.8,2.3
-Peugeot,308 II,1.2 PureTech,Motor de Arranque (kW),1.3,1.3
-Peugeot,308 II,1.6 BlueHDi,Bateria (Ah),65,75
-Peugeot,308 II,1.6 BlueHDi,Líquido de Arrefecimento (litros),6.5,8.5
-Peugeot,308 II,1.6 BlueHDi,Óleo do Motor (litros),4.5,5
-Peugeot,308 II,1.6 BlueHDi,Fluido de Travão (litros),0.7,1
-Peugeot,308 II,1.6 BlueHDi,Fluido de Transmissão (litros),2,2.5
-Peugeot,308 II,1.6 BlueHDi,Motor de Arranque (kW),1.5,1.5
-Peugeot,3008 II,1.6 PureTech,Bateria (Ah),70,80
-Peugeot,3008 II,1.6 PureTech,Líquido de Arrefecimento (litros),7,9
-Peugeot,3008 II,1.6 PureTech,Óleo do Motor (litros),4.5,5
-Peugeot,3008 II,1.6 PureTech,Fluido de Travão (litros),0.7,1
-Peugeot,3008 II,1.6 PureTech,Fluido de Transmissão (litros),2,2.5
-Peugeot,3008 II,1.6 PureTech,Motor de Arranque (kW),1.6,1.6
-Peugeot,3008 II,2.0 BlueHDi,Bateria (Ah),75,85
-Peugeot,3008 II,2.0 BlueHDi,Líquido de Arrefecimento (litros),7.5,9.5
-Peugeot,3008 II,2.0 BlueHDi,Óleo do Motor (litros),5,5.5
-Peugeot,3008 II,2.0 BlueHDi,Fluido de Travão (litros),0.8,1
-Peugeot,3008 II,2.0 BlueHDi,Fluido de Transmissão (litros),2.2,2.8
-Peugeot,3008 II,2.0 BlueHDi,Motor de Arranque (kW),1.7,1.7
-Peugeot,508 II,1.6 PureTech,Bateria (Ah),70,80
-Peugeot,508 II,1.6 PureTech,Líquido de Arrefecimento (litros),7,9
-Peugeot,508 II,1.6 PureTech,Óleo do Motor (litros),4.5,5
-Peugeot,508 II,1.6 PureTech,Fluido de Travão (litros),0.7,1
-Peugeot,508 II,1.6 PureTech,Fluido de Transmissão (litros),2,2.5
-Peugeot,508 II,1.6 PureTech,Motor de Arranque (kW),1.6,1.6
-Peugeot,508 II,1.5 BlueHDi,Bateria (Ah),75,85
-Peugeot,508 II,1.5 BlueHDi,Líquido de Arrefecimento (litros),7.5,9.5
-Peugeot,508 II,1.5 BlueHDi,Óleo do Motor (litros),5,5.5
-Peugeot,508 II,1.5 BlueHDi,Fluido de Travão (litros),0.8,1
-Peugeot,508 II,1.5 BlueHDi,Fluido de Transmissão (litros),2.2,2.8
-Peugeot,508 II,1.5 BlueHDi,Motor de Arranque (kW),1.7,1.7
-Opel,Crossland X,1.2 Turbo,Bateria (Ah),60,70
-Opel,Crossland X,1.2 Turbo,Líquido de Arrefecimento (litros),6,8
-Opel,Crossland X,1.2 Turbo,Óleo do Motor (litros),3.5,4
-Opel,Crossland X,1.2 Turbo,Fluido de Travão (litros),0.6,0.9
-Opel,Crossland X,1.2 Turbo,Fluido de Transmissão (litros),1.8,2.5
-Opel,Crossland X,1.2 Turbo,Motor de Arranque (kW),1.3,1.3
-Opel,Crossland X,1.5 Diesel,Bateria (Ah),65,75
-Opel,Crossland X,1.5 Diesel,Líquido de Arrefecimento (litros),6.5,8.5
-Opel,Crossland X,1.5 Diesel,Óleo do Motor (litros),4,4.5
-Opel,Crossland X,1.5 Diesel,Fluido de Travão (litros),0.6,1
-Opel,Crossland X,1.5 Diesel,Fluido de Transmissão (litros),2,2.5
-Opel,Crossland X,1.5 Diesel,Motor de Arranque (kW),1.4,1.4
-Opel,Grandland X,1.2 Turbo,Bateria (Ah),70,80
-Opel,Grandland X,1.2 Turbo,Líquido de Arrefecimento (litros),6,8
-Opel,Grandland X,1.2 Turbo,Óleo do Motor (litros),3.5,4
-Opel,Grandland X,1.2 Turbo,Fluido de Travão (litros),0.6,0.9
-Opel,Grandland X,1.2 Turbo,Fluido de Transmissão (litros),1.8,2.5
-Opel,Grandland X,1.2 Turbo,Motor de Arranque (kW),1.3,1.3
-Opel,Grandland X,1.6 Hybrid,Bateria (Ah),70,80
-Opel,Grandland X,1.6 Hybrid,Líquido de Arrefecimento (litros),6.5,8.5
-Opel,Grandland X,1.6 Hybrid,Óleo do Motor (litros),4,4.5
-Opel,Grandland X,1.6 Hybrid,Fluido de Travão (litros),0.7,1
-Opel,Grandland X,1.6 Hybrid,Fluido de Transmissão (litros),2,2.5
-Opel,Grandland X,1.6 Hybrid,Motor de Arranque (kW),1.6,1.6
-Opel,Astra J,1.4 Turbo,Bloco de Motor,85,105
-Opel,Astra J,1.6 CDTi,Bloco de Motor,85,110
-Opel,Astra J,2.0 CDTi,Bloco de Motor,85,110
-Opel,Corsa E,1.2 Ecotec,Bloco de Motor,85,105
-Opel,Corsa E,1.4 Ecotec,Bloco de Motor,85,110
-Opel,Insignia B,1.5 Turbo,Bloco de Motor,85,105
-Opel,Insignia B,2.0 CDTi,Bloco de Motor,85,110
-Opel,Crossland X,1.2 Turbo,Bloco de Motor,85,105
-Opel,Crossland X,1.5 Diesel,Bloco de Motor,85,110
-Opel,Grandland X,1.2 Turbo,Bloco de Motor,85,105
-Opel,Grandland X,1.6 Hybrid,Bloco de Motor,85,110
-Peugeot,208 II,1.2 PureTech,Bloco de Motor,85,105
-Peugeot,208 II,1.5 BlueHDi,Bloco de Motor,85,110
-Peugeot,308 II,1.2 PureTech,Bloco de Motor,85,105
-Peugeot,308 II,1.6 BlueHDi,Bloco de Motor,85,110
-Peugeot,3008 II,1.6 PureTech,Bloco de Motor,85,105
-Peugeot,3008 II,2.0 BlueHDi,Bloco de Motor,85,110
-Peugeot,508 II,1.6 PureTech,Bloco de Motor,85,105
-Peugeot,508 II,1.5 BlueHDi,Bloco de Motor,85,110
+Marca,Modelo,Motor,Componente,Mínimo,Máximo,Max_capacidade,Unidade
+Opel,Astra J,1.4 Turbo,Bateria ,60,70,70,Ah
+Opel,Astra J,1.4 Turbo,Líquido de Arrefecimento ,5.5,7,10,Litros
+Opel,Astra J,1.4 Turbo,Óleo do Motor ,4,4.5,8,Litros
+Opel,Astra J,1.4 Turbo,Fluido de Travão ,0.5,1,1.2,Litros
+Opel,Astra J,1.4 Turbo,Fluido de Transmissão ,1.8,2.5,3,Litros
+Opel,Astra J,1.4 Turbo,Motor de Arranque ,1.2,1.2,3,kW
+Opel,Astra J,1.6 CDTi,Bateria ,65,75,75,Ah
+Opel,Astra J,1.6 CDTi,Líquido de Arrefecimento ,6,8,10,Litros
+Opel,Astra J,1.6 CDTi,Óleo do Motor ,4.5,5,8,Litros
+Opel,Astra J,1.6 CDTi,Fluido de Travão ,0.6,1,1.2,Litros
+Opel,Astra J,1.6 CDTi,Fluido de Transmissão ,2,2.5,3,Litros
+Opel,Astra J,1.6 CDTi,Motor de Arranque ,1.4,1.4,3,kW
+Opel,Astra J,2.0 CDTi,Bateria ,70,80,80,Ah
+Opel,Astra J,2.0 CDTi,Líquido de Arrefecimento ,6.5,9,10,Litros
+Opel,Astra J,2.0 CDTi,Óleo do Motor ,5,5.5,8,Litros
+Opel,Astra J,2.0 CDTi,Fluido de Travão ,0.7,1,1.2,Litros
+Opel,Astra J,2.0 CDTi,Fluido de Transmissão ,2,2.5,3,Litros
+Opel,Astra J,2.0 CDTi,Motor de Arranque ,1.6,1.6,3,kW
+Opel,Corsa E,1.2 Ecotec,Bateria ,50,60,60,Ah
+Opel,Corsa E,1.2 Ecotec,Líquido de Arrefecimento ,5.5,7,10,Litros
+Opel,Corsa E,1.2 Ecotec,Óleo do Motor ,3.5,4,8,Litros
+Opel,Corsa E,1.2 Ecotec,Fluido de Travão ,0.5,0.8,1.2,Litros
+Opel,Corsa E,1.2 Ecotec,Fluido de Transmissão ,1.6,2.3,3,Litros
+Opel,Corsa E,1.2 Ecotec,Motor de Arranque ,1.1,1.1,3,kW
+Opel,Corsa E,1.4 Ecotec,Bateria ,55,65,65,Ah
+Opel,Corsa E,1.4 Ecotec,Líquido de Arrefecimento ,6,8,10,Litros
+Opel,Corsa E,1.4 Ecotec,Óleo do Motor ,4,4.5,8,Litros
+Opel,Corsa E,1.4 Ecotec,Fluido de Travão ,0.5,0.9,1.2,Litros
+Opel,Corsa E,1.4 Ecotec,Fluido de Transmissão ,1.8,2.4,3,Litros
+Opel,Corsa E,1.4 Ecotec,Motor de Arranque ,1.3,1.3,3,kW
+Opel,Insignia B,1.5 Turbo,Bateria ,70,80,80,Ah
+Opel,Insignia B,1.5 Turbo,Líquido de Arrefecimento ,7,9,10,Litros
+Opel,Insignia B,1.5 Turbo,Óleo do Motor ,4.5,5,8,Litros
+Opel,Insignia B,1.5 Turbo,Fluido de Travão ,0.7,1,1.2,Litros
+Opel,Insignia B,1.5 Turbo,Fluido de Transmissão ,2,2.5,3,Litros
+Opel,Insignia B,1.5 Turbo,Motor de Arranque ,1.5,1.5,3,kW
+Opel,Insignia B,2.0 CDTi,Bateria ,75,85,85,Ah
+Opel,Insignia B,2.0 CDTi,Líquido de Arrefecimento ,7.5,9.5,10,Litros
+Opel,Insignia B,2.0 CDTi,Óleo do Motor ,5,5.5,8,Litros
+Opel,Insignia B,2.0 CDTi,Fluido de Travão ,0.8,1,1.2,Litros
+Opel,Insignia B,2.0 CDTi,Fluido de Transmissão ,2.2,2.8,3,Litros
+Opel,Insignia B,2.0 CDTi,Motor de Arranque ,1.7,1.7,3,kW
+Peugeot,208 II,1.2 PureTech,Bateria ,50,60,60,Ah
+Peugeot,208 II,1.2 PureTech,Líquido de Arrefecimento ,6.5,8,10,Litros
+Peugeot,208 II,1.2 PureTech,Óleo do Motor ,3.5,4,8,Litros
+Peugeot,208 II,1.2 PureTech,Fluido de Travão ,0.5,0.8,1.2,Litros
+Peugeot,208 II,1.2 PureTech,Fluido de Transmissão ,1.6,2.2,3,Litros
+Peugeot,208 II,1.2 PureTech,Motor de Arranque ,1.2,1.2,3,kW
+Peugeot,208 II,1.5 BlueHDi,Bateria ,55,65,65,Ah
+Peugeot,208 II,1.5 BlueHDi,Líquido de Arrefecimento ,6.5,8.5,10,Litros
+Peugeot,208 II,1.5 BlueHDi,Óleo do Motor ,4,4.5,8,Litros
+Peugeot,208 II,1.5 BlueHDi,Fluido de Travão ,0.6,0.9,1.2,Litros
+Peugeot,208 II,1.5 BlueHDi,Fluido de Transmissão ,1.8,2.4,3,Litros
+Peugeot,208 II,1.5 BlueHDi,Motor de Arranque ,1.4,1.4,3,kW
+Peugeot,308 II,1.2 PureTech,Bateria ,60,70,70,Ah
+Peugeot,308 II,1.2 PureTech,Líquido de Arrefecimento ,6,8,10,Litros
+Peugeot,308 II,1.2 PureTech,Óleo do Motor ,4,4.5,8,Litros
+Peugeot,308 II,1.2 PureTech,Fluido de Travão ,0.6,0.9,1.2,Litros
+Peugeot,308 II,1.2 PureTech,Fluido de Transmissão ,1.8,2.3,3,Litros
+Peugeot,308 II,1.2 PureTech,Motor de Arranque ,1.3,1.3,3,kW
+Peugeot,308 II,1.6 BlueHDi,Bateria ,65,75,75,Ah
+Peugeot,308 II,1.6 BlueHDi,Líquido de Arrefecimento ,6.5,8.5,10,Litros
+Peugeot,308 II,1.6 BlueHDi,Óleo do Motor ,4.5,5,8,Litros
+Peugeot,308 II,1.6 BlueHDi,Fluido de Travão ,0.7,1,1.2,Litros
+Peugeot,308 II,1.6 BlueHDi,Fluido de Transmissão ,2,2.5,3,Litros
+Peugeot,308 II,1.6 BlueHDi,Motor de Arranque ,1.5,1.5,3,kW
+Peugeot,3008 II,1.6 PureTech,Bateria ,70,80,80,Ah
+Peugeot,3008 II,1.6 PureTech,Líquido de Arrefecimento ,7,9,10,Litros
+Peugeot,3008 II,1.6 PureTech,Óleo do Motor ,4.5,5,8,Litros
+Peugeot,3008 II,1.6 PureTech,Fluido de Travão ,0.7,1,1.2,Litros
+Peugeot,3008 II,1.6 PureTech,Fluido de Transmissão ,2,2.5,3,Litros
+Peugeot,3008 II,1.6 PureTech,Motor de Arranque ,1.6,1.6,3,kW
+Peugeot,3008 II,2.0 BlueHDi,Bateria ,75,85,85,Ah
+Peugeot,3008 II,2.0 BlueHDi,Líquido de Arrefecimento ,7.5,9.5,10,Litros
+Peugeot,3008 II,2.0 BlueHDi,Óleo do Motor ,5,5.5,8,Litros
+Peugeot,3008 II,2.0 BlueHDi,Fluido de Travão ,0.8,1,1.2,Litros
+Peugeot,3008 II,2.0 BlueHDi,Fluido de Transmissão ,2.2,2.8,3,Litros
+Peugeot,3008 II,2.0 BlueHDi,Motor de Arranque ,1.7,1.7,3,kW
+Peugeot,508 II,1.6 PureTech,Bateria ,70,80,80,Ah
+Peugeot,508 II,1.6 PureTech,Líquido de Arrefecimento ,7,9,10,Litros
+Peugeot,508 II,1.6 PureTech,Óleo do Motor ,4.5,5,8,Litros
+Peugeot,508 II,1.6 PureTech,Fluido de Travão ,0.7,1,1.2,Litros
+Peugeot,508 II,1.6 PureTech,Fluido de Transmissão ,2,2.5,3,Litros
+Peugeot,508 II,1.6 PureTech,Motor de Arranque ,1.6,1.6,3,kW
+Peugeot,508 II,1.5 BlueHDi,Bateria ,75,85,85,Ah
+Peugeot,508 II,1.5 BlueHDi,Líquido de Arrefecimento ,7.5,9.5,10,Litros
+Peugeot,508 II,1.5 BlueHDi,Óleo do Motor ,5,5.5,8,Litros
+Peugeot,508 II,1.5 BlueHDi,Fluido de Travão ,0.8,1,1.2,Litros
+Peugeot,508 II,1.5 BlueHDi,Fluido de Transmissão ,2.2,2.8,3,Litros
+Peugeot,508 II,1.5 BlueHDi,Motor de Arranque ,1.7,1.7,3,kW
+Opel,Crossland X,1.2 Turbo,Bateria ,60,70,70,Ah
+Opel,Crossland X,1.2 Turbo,Líquido de Arrefecimento ,6,8,10,Litros
+Opel,Crossland X,1.2 Turbo,Óleo do Motor ,3.5,4,8,Litros
+Opel,Crossland X,1.2 Turbo,Fluido de Travão ,0.6,0.9,1.2,Litros
+Opel,Crossland X,1.2 Turbo,Fluido de Transmissão ,1.8,2.5,3,Litros
+Opel,Crossland X,1.2 Turbo,Motor de Arranque ,1.3,1.3,3,kW
+Opel,Crossland X,1.5 Diesel,Bateria ,65,75,75,Ah
+Opel,Crossland X,1.5 Diesel,Líquido de Arrefecimento ,6.5,8.5,10,Litros
+Opel,Crossland X,1.5 Diesel,Óleo do Motor ,4,4.5,8,Litros
+Opel,Crossland X,1.5 Diesel,Fluido de Travão ,0.6,1,1.2,Litros
+Opel,Crossland X,1.5 Diesel,Fluido de Transmissão ,2,2.5,3,Litros
+Opel,Crossland X,1.5 Diesel,Motor de Arranque ,1.4,1.4,3,kW
+Opel,Grandland X,1.2 Turbo,Bateria ,70,80,80,Ah
+Opel,Grandland X,1.2 Turbo,Líquido de Arrefecimento ,6,8,10,Litros
+Opel,Grandland X,1.2 Turbo,Óleo do Motor ,3.5,4,8,Litros
+Opel,Grandland X,1.2 Turbo,Fluido de Travão ,0.6,0.9,1.2,Litros
+Opel,Grandland X,1.2 Turbo,Fluido de Transmissão ,1.8,2.5,3,Litros
+Opel,Grandland X,1.2 Turbo,Motor de Arranque ,1.3,1.3,3,kW
+Opel,Grandland X,1.6 Hybrid,Bateria ,70,80,80,Ah
+Opel,Grandland X,1.6 Hybrid,Líquido de Arrefecimento ,6.5,8.5,10,Litros
+Opel,Grandland X,1.6 Hybrid,Óleo do Motor ,4,4.5,8,Litros
+Opel,Grandland X,1.6 Hybrid,Fluido de Travão ,0.7,1,1.2,Litros
+Opel,Grandland X,1.6 Hybrid,Fluido de Transmissão ,2,2.5,3,Litros
+Opel,Grandland X,1.6 Hybrid,Motor de Arranque ,1.6,1.6,3,kW
+Opel,Astra J,1.4 Turbo,Bloco de Motor,85,105,120,C
+Opel,Astra J,1.6 CDTi,Bloco de Motor,85,110,120,C
+Opel,Astra J,2.0 CDTi,Bloco de Motor,85,110,120,C
+Opel,Corsa E,1.2 Ecotec,Bloco de Motor,85,105,120,C
+Opel,Corsa E,1.4 Ecotec,Bloco de Motor,85,110,120,C
+Opel,Insignia B,1.5 Turbo,Bloco de Motor,85,105,120,C
+Opel,Insignia B,2.0 CDTi,Bloco de Motor,85,110,120,C
+Opel,Crossland X,1.2 Turbo,Bloco de Motor,85,105,120,C
+Opel,Crossland X,1.5 Diesel,Bloco de Motor,85,110,120,C
+Opel,Grandland X,1.2 Turbo,Bloco de Motor,85,105,120,C
+Opel,Grandland X,1.6 Hybrid,Bloco de Motor,85,110,120,C
+Peugeot,208 II,1.2 PureTech,Bloco de Motor,85,105,120,C
+Peugeot,208 II,1.5 BlueHDi,Bloco de Motor,85,110,120,C
+Peugeot,308 II,1.2 PureTech,Bloco de Motor,85,105,120,C
+Peugeot,308 II,1.6 BlueHDi,Bloco de Motor,85,110,120,C
+Peugeot,3008 II,1.6 PureTech,Bloco de Motor,85,105,120,C
+Peugeot,3008 II,2.0 BlueHDi,Bloco de Motor,85,110,120,C
+Peugeot,508 II,1.6 PureTech,Bloco de Motor,85,105,120,C
+Peugeot,508 II,1.5 BlueHDi,Bloco de Motor,85,110,120,C

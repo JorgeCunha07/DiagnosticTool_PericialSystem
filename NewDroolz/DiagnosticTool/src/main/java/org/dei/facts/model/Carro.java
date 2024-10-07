@@ -1,7 +1,15 @@
 package org.dei.facts.model;
+
+import lombok.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
 public class Carro {
     private Marca marca;
     private ModeloCarro modelo;
@@ -15,53 +23,8 @@ public class Carro {
         this.componentes = new ArrayList<>();
     }
 
-    public Carro() {
-    }
-
     public void adicionarComponente(Componente componente) {
         this.componentes.add(componente);
     }
 
-
-    public Marca getMarca() {
-        return marca;
-    }
-
-    public void setMarca(Marca marca) {
-        this.marca = marca;
-    }
-
-    public ModeloCarro getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(ModeloCarro modelo) {
-        this.modelo = modelo;
-    }
-
-    public Motor getMotor() {
-        return motor;
-    }
-
-    public void setMotor(Motor motor) {
-        this.motor = motor;
-    }
-
-    public List<Componente> getComponentes() {
-        return componentes;
-    }
-
-    public void setComponentes(List<Componente> componentes) {
-        this.componentes = componentes;
-    }
-
-    @Override
-    public String toString() {
-        return "Carro{" +
-                "marca=" + marca +
-                ", modelo=" + modelo +
-                ", motor=" + motor +
-                ", componentes=" + componentes +
-                '}';
-    }
 }

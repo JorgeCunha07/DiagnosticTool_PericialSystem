@@ -37,34 +37,9 @@ if (Sim) then (Sim)
               :Solução: Reparar ou substituir cabo condutor de energia elétrica;
               stop
             else (Não)
-              :Verificar bomba de água, alternador, compressor de AC e tensores da correia;
-              if (Algum defeito identificado?) then (Sim)
-                if (Bomba de água com defeito?) then (Sim)
-                  :Diagnóstico: Falha na bomba de água;
-                  :Solução: Substituir bomba de água;
-                  stop
-                else if (Alternador com defeito?) then (Sim)
-                  :Diagnóstico: Alternador com defeito;
-                  :Solução: Substituir alternador;
-                  stop
-                else if (Compressor de AC com defeito?) then (Sim)
-                  :Diagnóstico: Compressor de AC com defeito;
-                  :Solução: Substituir compressor de ar condicionado;
-                  stop
-                else if (Tensores com defeito?) then (Sim)
-                  :Diagnóstico: Falha nos tensores da correia;
-                  :Solução: Substituir tensores da correia;
-                  stop
-                else (Não)
-                  :Diagnóstico: Verificação adicional necessária;
-                  :Solução: Consultar especialista;
-                  stop
-                endif
-              else (Não)
-                :Diagnóstico: Verificação adicional necessária;
-                :Solução: Seguir protocolo de reparação da marca, consultar especialista;
-                stop
-              endif
+              :Diagnóstico: Verificação adicional necessária;
+              :Solução: Seguir protocolo de reparação da marca, consultar especialista;
+              stop
             endif
           endif
         endif

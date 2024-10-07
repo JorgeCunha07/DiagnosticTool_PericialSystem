@@ -121,7 +121,7 @@ rule "R06: Verifica Motor Selecionado"
 
         System.out.println("Componentes disponíveis: ");
         for (Componente componente : $carroSelecionado.getComponentes()) {
-            System.out.println(componente.getNome() + " (Min: " + componente.getValorMinimo() + ", Max: " + componente.getValorMaximo() + ")");
+            System.out.println(componente.getNome() + " (Min Ideal: " + componente.getValorMinimoIdeal() + ", Max Ideal: " + componente.getValorMaximoIdeal() +  ", Unidade: " + componente.getUnidade() + ")");
         }
 
         $resposta.setEstado("finalizado");

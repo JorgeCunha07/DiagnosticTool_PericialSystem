@@ -31,15 +31,18 @@ public class ImportFile {
         String nomeModelo = valores[1].trim();
         String nomeMotor = valores[2].trim();
         String nomeComponente = valores[3].trim();
-        double valorMinimo = Double.parseDouble(valores[4].trim());
-        double valorMaximo = Double.parseDouble(valores[5].trim());
+        double valorMinimoIdeal = Double.parseDouble(valores[4].trim());
+        double valorMaximoIdeal = Double.parseDouble(valores[5].trim());
+        double valorMinimo = 0;
+        double valorMaximo = Double.parseDouble(valores[6].trim());
+        String unidade = valores[7].trim();
 
         Marca marca = obterOuCriarMarca(nomeMarca, carros);
         ModeloCarro modeloCarro = obterOuCriarModelo(marca, nomeModelo);
         Motor motor = obterOuCriarMotor(modeloCarro, nomeMotor);
         Carro carro = obterOuCriarCarro(marca, modeloCarro, motor, carros);
 
-        Componente componente = new Componente(nomeComponente, valorMinimo, valorMaximo);
+        Componente componente = new Componente(nomeComponente, valorMinimo, valorMaximo, valorMinimoIdeal, valorMaximoIdeal, unidade);
         carro.adicionarComponente(componente);
     }
 
