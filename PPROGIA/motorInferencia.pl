@@ -1,7 +1,7 @@
 % Versão preparada para lidar com regras que contenham negação (nao)
 % Metaconhecimento
 % Usar base de conhecimento veIculos2.txt
-% Explicações como?(how?) e porque não?(whynot?)
+% Explicacoes como?(how?) e porque não?(whynot?)
 
 :- op(220, xfx, entao).
 :- op(35, xfy, se).
@@ -52,14 +52,15 @@ facto_dispara_regras1(_, []).
 dispara_regras(N, Facto, [ID | LRegras]) :-
     regra ID se LHS entao RHS,
     facto_esta_numa_condicao(Facto, LHS),
+	% Instancia Facto em LHS
     verifica_condicoes(LHS, LFactos),
     member(N, LFactos),
     sort(LFactos, SortedLFactos),
     (   regra_disparadas(ID, SortedLFactos) ->
-        % Regra já foi disparada com estas condições; ignora
+        % Regra já foi disparada com estas condicoes; ignora
         true
     ;   
-        % Dispara a regra e registra que foi disparada com estas condições
+        % Dispara a regra e registra que foi disparada com estas condicoes
         concluir(RHS, ID, LFactos),
         asserta(regra_disparadas(ID, SortedLFactos))
     ),
@@ -69,14 +70,15 @@ dispara_regras(N, Facto, [ID | LRegras]) :-
 dispara_regras(N, Facto, [ID | LRegras]) :-
     regra ID se LHS entao RHS e RHS2,
     facto_esta_numa_condicao(Facto, LHS),
+	% Instancia Facto em LHS
     verifica_condicoes(LHS, LFactos),
     member(N, LFactos),
     sort(LFactos, SortedLFactos),
     (   regra_disparadas(ID, SortedLFactos) ->
-        % Regra já foi disparada com estas condições; ignora
+        % Regra já foi disparada com estas condicoes; ignora
         true
     ;   
-        % Dispara a regra e registra que foi disparada com estas condições
+        % Dispara a regra e registra que foi disparada com estas condicoes
         concluir(RHS, ID, LFactos),
         concluir(RHS2, ID, LFactos),
         asserta(regra_disparadas(ID, SortedLFactos))
@@ -91,7 +93,7 @@ dispara_regras(_, _, []).
 
 % Verificar se o facto está numa condição
 facto_esta_numa_condicao(F, [F e _]).
-facto_esta_numa_condicao(F, [avalia(F1) e _]) :-
+facto_esta_numa_condicao(F, [avalia(F1) e _]) :- 
     F =.. [H, H1 | _],
     F1 =.. [H, H1 | _].
 facto_esta_numa_condicao(F, [_ e Fs]) :-
@@ -101,7 +103,7 @@ facto_esta_numa_condicao(F, [avalia(F1)]) :-
     F =.. [H, H1 | _],
     F1 =.. [H, H1 | _].
 
-% Verificar condições das regras
+% Verificar condicoes das regras
 verifica_condicoes([nao avalia(X) e Y], [nao X | LF]) :-
     !,
     \+ avalia(_, X),
@@ -130,7 +132,7 @@ verifica_condicoes([nao X], [nao X]) :-
 verifica_condicoes([X], [N]) :-
     facto(N, X).
 
-% Concluir ações das regras
+% Concluir acoes das regras
 concluir([cria_facto(F) | Y], ID, LFactos) :-
     !,
     cria_facto(F, ID, LFactos),
@@ -154,7 +156,7 @@ cria_facto(F, ID, LFactos) :-
     assertz(facto(N, F)),
     write('Foi concluído o facto nº '), write(N), write(' -> '), write(F), nl, !.
 
-% Avaliar condições
+% Avaliar condicoes
 avalia(N, P) :-
     P =.. [Functor, Entidade, Operando, Valor],
     P1 =.. [Functor, Entidade, Valor1],
@@ -169,12 +171,15 @@ compara(V1, <, V) :- V1 < V.
 compara(V1, >=, V) :- V1 >= V.
 compara(V1, =<, V) :- V1 =< V.
 
-% Mostrar factos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Visualização da base de factos
 mostra_factos :-
     findall(N, facto(N, _), LFactos),
     escreve_factos(LFactos).
 
-% Gerar explicações do tipo "Como"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Geração de explicações do tipo "Como"
+
 como(N) :-
     ultimo_facto(Last),
     Last < N,
@@ -218,7 +223,10 @@ explica([I | R]) :-
 explica([]) :-
     write('********************************************************'), nl.
 
-% Gerar explicações do tipo "Porque não" (whynot)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Geração de explicações do tipo "Porque nao"
+% Exemplo: ?- whynot(classe(meu_veículo,ligeiro)).
+
 whynot(Facto) :-
     whynot(Facto, 1).
 
@@ -238,7 +246,8 @@ whynot(Facto, Nivel) :-
     write('Porque:'), write(' O facto '), write(Facto),
     write(' não está definido na base de conhecimento'), nl.
 
-% Encontrar regras para "whynot"
+%  As explicações do whynot(Facto) devem considerar todas as regras que poderiam dar origem a conclusão relativa ao facto Facto
+
 encontra_regras_whynot(Facto, LLPF) :-
     findall(
         (ID, LPF),
@@ -322,7 +331,7 @@ retirar_lista_factos([K1 | LK1]) :-
     retirar_facto(K1),
     retirar_lista_factos(LK1).
 
-% Predicado 'diagnostico' inicia o processo de diagnóstico
+% Predicado que inicia o processo de diagnóstico
 diagnostico :-
     retractall(factos_processados(_)),
     diagnostico_loop.
