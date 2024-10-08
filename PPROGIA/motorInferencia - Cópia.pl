@@ -9,33 +9,31 @@
 :-op(500,fy,nao).
 :-op(600,xfy,e).
 
-:-dynamic facto/2, justifica/3, regra_fired/2, processed_fact/1.
+:-dynamic facto/2, justifica/3, regra_fired/2, factos_processados/1.
 
+carrega_bc:- 
+	write('NOME DA BASE DE CONHECIMENTO (terminar com .)-> '),
+	read(NBC),
+	consult(NBC).
 
-
-carrega_bc:-
-		write('NOME DA BASE DE CONHECIMENTO (terminar com .)-> '),
-		read(NBC),
-		consult(NBC).
-
-% Modified arranca_motor to process only new facts
+% Modificacao do predicado arranca_motor para processar apenas factos novos
 arranca_motor :-
-    retractall(processed_fact(_)),
-    process_new_facts.
+    retractall(factos_processados(_)),
+    processa_novo_factos.
 
-process_new_facts :-
-    findall((N, Facto), (facto(N, Facto), \+ processed_fact(N)), NewFacts),
-    ( NewFacts \= [] ->
-        process_facts(NewFacts),
-        process_new_facts
+processa_novo_factos :-
+    findall((N, Facto), (facto(N, Facto), \+ factos_processados(N)), NovoFactos),
+    ( NovoFactos \= [] ->
+        processa_factos(NovoFactos),
+        processa_novo_factos
     ;   true).
 
-process_facts([]).
-process_facts([(N, Facto)|Rest]) :-
-    asserta(processed_fact(N)),
+processa_factos([]).
+processa_factos([(N, Facto)|Resto]) :-
+    asserta(factos_processados(N)),
     facto_dispara_regras1(Facto, LRegras),
     dispara_regras(N, Facto, LRegras),
-    process_facts(Rest).
+    processa_factos(Resto).
 
 
 
@@ -71,9 +69,9 @@ diag_problemas :-
 
 % Processes each test
 process_tests([]).
-process_tests([(Id, Veiculo, Teste) | Rest]) :-
+process_tests([(Id, Veiculo, Teste) | Resto]) :-
     tratar_problema(Id, Veiculo, Teste),
-    process_tests(Rest).
+    process_tests(Resto).
 
 % Handles individual problem
 tratar_problema(Id, Veiculo, Teste) :-
@@ -92,9 +90,9 @@ mostrar_diagnostico :-
     mostrar_diagnosticos(Diagnosticos).
 
 mostrar_diagnosticos([]).
-mostrar_diagnosticos([(Veiculo, Diagnostico)|Rest]) :-
+mostrar_diagnosticos([(Veiculo, Diagnostico)|Resto]) :-
     format('Diagnóstico para ~w: ~w~n', [Veiculo, Diagnostico]),
-    mostrar_diagnosticos(Rest).
+    mostrar_diagnosticos(Resto).
 
 
 %%%%%%%%%%%
