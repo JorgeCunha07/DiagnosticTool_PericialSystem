@@ -8,11 +8,28 @@ facto_dispara_regras(problemas(_, sim), [2]).
 facto_dispara_regras(liga(_, sim), [3]).
 facto_dispara_regras(liga(_, nao), [4]).
 %vai abaixo
-%carga_bateria
+%carga bateria
+
+% Factos perguntaveis
+perguntavel(problemas(Veiculo, Resposta)).
+perguntavel(liga(Veiculo, Resposta)).
+perguntavel(carga_bateria(Veiculo, Resposta)).
+perguntavel(vai_abaixo(Veiculo, Resposta)).
+
+% Mapeamento de perguntas
+texto_pergunta(problemas(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O veiculo ~w tem algum problema?', [Veiculo]).
+texto_pergunta(liga(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O veiculo ~w liga?', [Veiculo]).
+texto_pergunta(carga_bateria(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'A bateria do veiculo ~w está carregada?', [Veiculo]).
+texto_pergunta(vai_abaixo(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O veículo ~w vai abaixo depois de ligar?', [Veiculo]).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ultimo_facto(3).
+ultimo_facto(1).
 % por fazer
 % ultima_regra(8).
 
@@ -38,7 +55,6 @@ regra 4
 	entao [cria_facto(proximo_teste(Veiculo, carga_bateria))].
 
 facto(1, proximo_teste(meu_veiculo, problemas)).
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Factos para carros
