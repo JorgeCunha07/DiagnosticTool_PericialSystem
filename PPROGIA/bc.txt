@@ -11,10 +11,10 @@ facto_dispara_regras(liga(_, nao), [4]).
 %carga bateria
 
 % Factos perguntaveis
-perguntavel(problemas(Veiculo, Resposta)).
-perguntavel(liga(Veiculo, Resposta)).
-perguntavel(carga_bateria(Veiculo, Resposta)).
-perguntavel(vai_abaixo(Veiculo, Resposta)).
+perguntavel(problemas(_, _)).
+perguntavel(liga(_, _)).
+perguntavel(carga_bateria(_, _)).
+perguntavel(vai_abaixo(_, _)).
 
 % Mapeamento de perguntas
 texto_pergunta(problemas(Veiculo, _), Pergunta) :-
