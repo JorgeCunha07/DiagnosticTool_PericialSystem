@@ -7,6 +7,8 @@ facto_dispara_regras(problemas(_, nao), [1]).
 facto_dispara_regras(problemas(_, sim), [2]).
 facto_dispara_regras(liga(_, sim), [3]).
 facto_dispara_regras(liga(_, nao), [4]).
+%facto_dispara_regras(vai_abaixo(_, sim), [5]).
+%facto_dispara_regras(vai_abaixo(_, nao), [6]).
 %vai abaixo
 %carga bateria
 
@@ -26,6 +28,11 @@ texto_pergunta(carga_bateria(Veiculo, _), Pergunta) :-
 texto_pergunta(vai_abaixo(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O veículo ~w vai abaixo depois de ligar?', [Veiculo]).
 
+% Define as opções válidas para as respostas
+optioes_validas(problemas(_, _), [sim, nao, nao_sei]).
+optioes_validas(liga(_, _), [sim, nao, nao_sei]).
+optioes_validas(carga_bateria(_, _), [sim, nao, nao_sei]).
+optioes_validas(vai_abaixo(_, _), [sim, nao, nao_sei]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
