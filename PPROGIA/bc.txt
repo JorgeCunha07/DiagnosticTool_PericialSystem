@@ -5,8 +5,11 @@
 
 facto_dispara_regras(problemas(_, nao), [1]).
 facto_dispara_regras(problemas(_, sim), [2]).
-facto_dispara_regras(liga(_, sim), [3]).
-facto_dispara_regras(liga(_, nao), [4]).
+facto_dispara_regras(liga(_, sim), [12]).
+facto_dispara_regras(liga(_, nao), [11]).
+%facto_dispara_regras(carga_bateria(_, _). [21, 22]).
+%facto_dispara_regras(motor_arranque_defeito(_, sim), [31]).
+%facto_dispara_regras(motor_arranque_defeito(_, nao), [32]).
 %vai abaixo
 %carga bateria
 
@@ -15,6 +18,7 @@ perguntavel(problemas(_, _)).
 perguntavel(liga(_, _)).
 perguntavel(carga_bateria(_, _)).
 perguntavel(vai_abaixo(_, _)).
+perguntavel(motor_arranque_defeito(_, _)).
 
 % Mapeamento de perguntas
 texto_pergunta(problemas(Veiculo, _), Pergunta) :-
@@ -25,6 +29,8 @@ texto_pergunta(carga_bateria(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'A bateria do veiculo ~w está carregada?', [Veiculo]).
 texto_pergunta(vai_abaixo(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O veículo ~w vai abaixo depois de ligar?', [Veiculo]).
+texto_pergunta(motor_arranque_defeito(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'Motor de arranque do veículo ~w está com defeito?', [Veiculo]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -34,25 +40,46 @@ ultimo_facto(1).
 % ultima_regra(8).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Se o carro NAO apresenta algum problema então não tem problemas
+% As regras estão relacionadas com o diagrama 'FlowChartDiagnostico_final_regras.puml' 
+% adjacente à solução proposta.
+% As regras estão organizadas por nível de profundidade da árvore, para ajudar 
+% a uma melhor identificação das mesmas no fluxograma.
+% Ex. O nível de profundidade 5 contém as regras 51, 52, ..., 510, etc.
+
+% Se o carro NAO apresenta algum problema então não tem problemas
 regra 1
 	se [problemas(Veiculo,nao)]
 	entao [cria_facto(diagnostico(Veiculo,'Nenhum problema identificado'))].
 
-%  Se o carro NAO apresenta algum problema então temos de verificar Se o carro liga
+% Se o carro apresenta algum problema então temos de verificar Se o carro liga
 regra 2
 	se [problemas(Veiculo,sim)]
 	entao [cria_facto(proximo_teste(Veiculo, liga))].
 
+% Se o carro NAO liga vamos verificar a bateria
+regra 11
+	se [liga(Veiculo,nao)]
+	entao [cria_facto(proximo_teste(Veiculo, carga_bateria))].
+
 % Se o carro liga vamos verificar se o carro vai abaixo
-regra 3
+regra 12
 	se [liga(Veiculo,sim)]
 	entao [cria_facto(proximo_teste(Veiculo, vai_abaixo))].
 
-% Se o carro NAO liga vamos verificar a bateria
-regra 4
-	se [liga(Veiculo,nao)]
-	entao [cria_facto(proximo_teste(Veiculo, carga_bateria))].
+% Se o carro está com bateria fraca ou sem carga
+%regra 21
+%	se [avalia(carga_bateria(Veiculo,<,bateria(Veiculo, Min, _)))]
+%	entao [cria_facto(diagnostico(Veiculo, "Bateria com defeito ou sem carga."))]
+
+% Se o carro NAO está com bateria fraca ou sem carga
+%regra 22
+%	se [avalia(carga_bateria(Veiculo,>,bateria(Veiculo, Min, _)))] e [avalia(carga_bateria(Veiculo,<,bateria(Veiculo, _, Max)))]
+%	entao [cria_facto(proximo_teste(Veiculo, motor_arranque_defeito))]
+
+% Se o carro está com defeito no motor de arranque
+%regra 31
+%	se [motor_arranque_defeito(Veiculo,sim)]
+%	entao [cria_facto(diagnostico(Veiculo, "Falha no motor de aranque"))]
 
 facto(1, proximo_teste(meu_veiculo, problemas)).
 

@@ -1,0 +1,285 @@
+@startuml
+title Workflow de Diagnóstico Mecânico Completo - Diagnósticos Expandidos
+
+start
+
+:O carro apresenta algum problema?;
+if () then (Sim (regra 01))
+  :O carro liga a chave?;
+  if () then (Não (regra 11))
+    :Verificar a bateria e cabos de bateria;
+    if (Bateria fraca ou sem carga?) then (Sim (regra 21))
+      :Diagnóstico: Bateria com defeito ou sem carga;
+      :Solução: Substituir ou recarregar a bateria;
+      stop
+    else (Não (regra 22))
+      :Verificar o motor de arranque e pedal de embraiagem acionado;
+      if (Motor de arranque com defeito?) then (Sim (regra 31))
+        :Diagnóstico: Falha no motor de arranque;
+        :Solução: Substituir motor de arranque;
+        stop
+      else (Não (regra 32))
+        :Verificar o sistema de ignição;
+        if (Ignição a falhar?) then (Sim (regra 41))
+          :Diagnóstico: Sistema de ignição com defeito;
+          :Solução: Verificar chave de ignição, fusíveis, conectores e verificação de alimentação de combustível (pressão de combustível);
+          stop
+        else (Não (regra 42))
+          :Verificar o sistema de segurança (Imobilizador);
+          if (Imobilizador ou alarme a bloquear?) then (Sim (regra 51))
+            :Diagnóstico: Sistema de segurança activado;
+            :Solução: Desactivar sistema de segurança;
+            stop
+          else (Não (regra 52))
+            :Verificar cabo condutor de energia elétrica e fichas de ligação;
+            if (fios danificados?) then (Sim (regra 61))
+              :Diagnóstico: fios com corte ou curto-circuito;
+              :Solução: Reparar ou substituir cabo condutor de energia elétrica;
+              stop
+            else (Não (regra 62))
+              :Diagnóstico: Verificação adicional necessária;
+              :Solução: Seguir protocolo de reparação da marca, consultar especialista;
+              stop
+            endif
+          endif
+        endif
+      endif
+    endif
+  else (Sim (regra 12))
+    :O carro liga mas vai abaixo?;
+    if () then (Sim (regra 23))
+      :Verificar sobreaquecimento do motor;
+      if (Motor a sobreaquecer?) then (Sim (regra 33))
+        :Verificar sistema de arrefecimento;
+        if (Radiador ou ventoinha com defeito?) then (Sim (regra 43))
+          :Diagnóstico: Problema no radiador ou ventoinha;
+          :Solução: Substituir radiador/ventoinha;
+          stop
+        else (Não (regra 44))
+          :Verificar fugas no sistema de arrefecimento;
+          if (Fuga detectada?) then (Sim (regra 53))
+            :Diagnóstico: Fugas no sistema de arrefecimento;
+            :Solução: Reparar fuga e completar fluido;
+            stop
+          else (Não (regra 54))
+            :Verificar termóstato;
+            if (Termóstato defeituoso?) then (Sim (regra 63))
+              :Diagnóstico: Termóstato com defeito;
+              :Solução: Substituir termóstato;
+              stop
+            else (Não (regra 64))
+              :Verificar bomba de água;
+              if (Bomba de água com defeito?) then (Sim (regra 81))
+                :Diagnóstico: Falha na bomba de água;
+                :Solução: Substituir bomba de água;
+                stop
+              else (Não (regra 82))
+                :Diagnóstico: Verificação adicional necessária;
+                :Solução: Consultar especialista;
+                stop
+              endif
+            endif
+          endif
+        endif
+      else (Não (regra 34))
+        :Verificar sistema de combustível;
+        if (Falta de combustível ou falha na bomba?) then (Sim (regra 45))
+          :Diagnóstico: Falta de combustível ou bomba de combustível com defeito;
+          :Solução: Reabastecer ou substituir a bomba de combustível;
+          stop
+        else (Não (regra 46))
+          :Verificar filtro de combustível;
+          if (Filtro de combustível entupido?) then (Sim (regra 55))
+            :Diagnóstico: Filtro de combustível entupido;
+            :Solução: Substituir filtro de combustível;
+            stop
+          else (Não (regra 56))
+            :Verificar sistema de injeção de combustível;
+            if (Injeção de combustível com defeito?) then (Sim (regra 65))
+              :Diagnóstico: Injeção de combustível com defeito;
+              :Solução: Limpar ou substituir injetores;
+              stop
+            else (Não (regra 66))
+              :Verificar sistema de ignição;
+              if (Velas de ignição defeituosas?) then (Sim (regra 83))
+                :Diagnóstico: Falha nas velas de ignição;
+                :Solução: Substituir velas de ignição;
+                stop
+              else (Não (regra 84))
+                :Verificar sensores do motor (MAP, MAF, etc.);
+                if (Sensores defeituosos?) then (Sim (regra 91))
+                  :Diagnóstico: Sensor do motor com falha;
+                  :Solução: Verificar e substituir sensores;
+                  stop
+                else (Não (regra 92))
+                  :Diagnóstico: Problema indeterminado;
+                  :Solução: Consultar especialista;
+                  stop
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    else (Não  (regra 24))
+      :O carro faz barulho anormal?;
+      if () then (Sim (regra 35))
+        :Verificar motor;
+        if (Barulho no motor?) then (Sim (regra 47))
+          :Verificar correias ou corrente dentada;
+          if (Correia dentada gasta?) then (Sim (regra 57))
+            :Diagnóstico: Correia dentada gasta e rolamentos;
+            :Solução: Substituir kit de distribuição;
+            stop
+          else (Não (regra 58))
+            :Verificar componentes;
+
+              if (Bomba de água com defeito?) then (Sim (regra 71))
+                :Diagnóstico: Falha na bomba de água;
+                :Solução: Substituir kit de bomba de água;
+                stop
+              else if (Alternador com defeito?) then (Sim (regra 72))
+                :Diagnóstico: Alternador com defeito;
+                :Solução: Substituir alternador;
+                stop
+              else if (Compressor de AC com defeito?) then (Sim (regra 73))
+                :Diagnóstico: Compressor de AC com defeito;
+                :Solução: Substituir compressor de ar condicionado;
+                stop
+              else if (Tensores com defeito?) then (Sim (regra 74))
+                :Diagnóstico: Falha nos tensores da correia;
+                :Solução: Substituir tensores da correia;
+                stop
+              else (Não (regra 75))
+                :Verificar lubrificação do motor;
+                :Verificar nível de óleo;
+                if (Nível de óleo < Mínimo) then (Sim (regra 93))
+                  :Diagnóstico: Nível de óleo insuficiente;
+                  :Solução: Completar nível de óleo;
+                  stop
+                else if (Nível de óleo > Máximo) then (Sim (regra 94))
+                  :Diagnóstico: Excesso de óleo;
+                  :Solução: Retirar excesso de óleo;
+                  stop
+                else (Normal (regra 95))
+                  :Verificar sistema de escape;
+                  if (Problema no sistema de escape?) then (Sim (regra 101))
+                    :Diagnóstico: Vazamento ou bloqueio no sistema de escape;
+                    :Solução: Reparar ou substituir sistema de escape;
+                    stop
+                  else (Não (regra 102))
+                    :Diagnóstico: Verificação adicional necessária;
+                    :Solução: Consultar especialista;
+                    stop
+                  endif
+
+              endif
+            endif
+          endif
+        else (Não (regra 48))
+          :Verificar suspensão e rodas;
+          if (Barulho na suspensão ou rodas?) then (Sim (regra 59))
+            :Verificar rolamentos de roda;
+            if (Problema com pneus, jantes ou calços de travão?) then (Sim (regra 67))
+              :Diagnóstico: Problema nos pneus, jantes ou calços de travão;
+              :Solução: Reparar ou substituir pneus, jantes ou calços de travão conforme necessário;
+              stop
+            else (Não (regra 68))
+              if (Amortecedores gastos ou bases de amortecedores?) then (Sim (regra 76))
+                :Diagnóstico: Amortecedores gastos ou bases de amortecedores gastos;
+                :Solução: Substituir kit de amortecedores;
+                stop
+              else (Não (regra 77))
+                :Diagnóstico: Problema não identificado;
+                :Solução: Consultar especialista;
+                stop
+              endif
+            endif
+          else (Não (regra 510))
+            :Diagnóstico: Sem barulhos anormais;
+            stop
+          endif
+        endif
+      else (Não (regra 36))
+        :O carro apresenta dificuldade ao travar?;
+        if () then (Sim (regra 49))
+          :Verificar sistema de travões;
+          if (Pastilhas de travão gastas?) then (Sim (regra 511))
+            :Diagnóstico: Pastilhas de travão gastas;
+            :Solução: Substituir pastilhas de travão;
+            stop
+          else (Não (regra 512))
+            :Verificar discos de travão;
+            if (Discos de travão gastos?) then (Sim (regra 69))
+              :Diagnóstico: Discos de travão gastos;
+              :Solução: Substituir discos de travão;
+              stop
+            else (Não (regra 610))
+              :Verificar fluido de travão;
+              if (Nível de fluido < Mínimo) then (Sim (regra 85))
+                :Diagnóstico: Nível de fluido insuficiente;
+                :Solução: Completar fluido de travão e corrigir possíveis fugas;
+                stop
+              else if (Nível de fluido > Máximo) then (Sim (regra 86))
+                :Diagnóstico: Excesso de fluido de travão;
+                :Solução: Ajustar nível de fluido de travão;
+                stop
+              else (Normal (regra 87))
+                :Verificar servofreio;
+                if (Problema no servofreio?) then (Sim (regra 96))
+                  :Diagnóstico: Servofreio defeituoso;
+                  :Solução: Reparar ou substituir servofreio;
+                  stop
+                else (Não (regra 97))
+                  :Verificar sistema ABS;
+                  if (ABS com falha?) then (Sim (regra 103))
+                    :Diagnóstico: Sistema ABS com defeito;
+                    :Solução: Verificar e reparar sistema ABS com consulta de especialista;
+                    stop
+                  else (Não (regra 104))
+                    :Diagnóstico: Problema indeterminado;
+                    :Solução: Consultar especialista;
+                    stop
+                  endif
+                endif
+              endif
+            endif
+          endif
+        else (Não (regra 410))
+          :Problemas na caixa de velocidades?;
+          if () then (Sim (regra 513))
+            :Verificar nível de fluido de caixa de velocidades;
+            if (Nível de fluido < Mínimo) then (Sim (regra 78))
+              :Diagnóstico: Nível de fluido de transmissão baixo;
+              :Solução: Completar fluido de transmissão e verificar possíveis fugas;
+              stop
+            else if (Nível de fluido > Máximo) then (Sim (regra 79))
+              :Diagnóstico: Excesso de fluido de transmissão;
+              :Solução: Ajustar fluido de transmissão;
+              stop
+            else (Normal (regra 710))
+              :Verificar embraiagem;
+              if (Embraiagem gasta ou a patinar?) then (Sim (regra 88))
+                :Diagnóstico: Embraiagem com desgaste excessivo ou volante bimassa defeituoso;
+                :Solução: Substituir kit de embraiagem;
+                stop
+              else (Não (regra 89))
+                :Diagnóstico: Verificação adicional necessária;
+                :Solução: Consultar especialista;
+                stop
+              endif
+            endif
+          else (Não (regra 514))
+            :Diagnóstico: Nenhum problema identificado;
+            stop
+          endif
+        endif
+      endif
+    endif
+  endif
+else (Não (regra 02))
+  :Diagnóstico: Sem problemas identificados;
+  stop
+endif
+
+@enduml
