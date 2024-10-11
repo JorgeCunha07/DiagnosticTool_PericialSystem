@@ -1,7 +1,7 @@
 % Versão preparada para lidar com regras que contenham negação (nao)
 % Metaconhecimento
 % Usar base de conhecimento veIculos2.txt
-% Explicacoes como?(how?) e porque não?(whynot?)
+% Explicações como?(how?) e porque não?(whynot?)
 
 :- op(220, xfx, entao).
 :- op(35, xfy, se).
@@ -23,9 +23,9 @@ carrega_bc :-
 
 % Iniciar o motor de inferência
 % arranca_motor:- facto(N,Facto),
-%		facto_dispara_regras1(Facto, LRegras),
-%		dispara_regras(N, Facto, LRegras),
-%		ultimo_facto(N).
+%                facto_dispara_regras1(Facto, LRegras),
+%                dispara_regras(N, Facto, LRegras),
+%                ultimo_facto(N).
 
 arranca_motor :-
     retractall(regra_disparadas(_, _)),
@@ -57,10 +57,10 @@ dispara_regras(N, Facto, [ID | LRegras]) :-
     member(N, LFactos),
     sort(LFactos, SortedLFactos),
     (   regra_disparadas(ID, SortedLFactos) ->
-        % Regra já foi disparada com estas condicoes; ignora
+		% Regra já foi disparada com estas condicoes; ignor
         true
     ;   
-        % Dispara a regra e registra que foi disparada com estas condicoes
+		% Dispara a regra e registra que foi disparada com estas condicoes
         concluir(RHS, ID, LFactos),
         asserta(regra_disparadas(ID, SortedLFactos))
     ),
@@ -70,15 +70,12 @@ dispara_regras(N, Facto, [ID | LRegras]) :-
 dispara_regras(N, Facto, [ID | LRegras]) :-
     regra ID se LHS entao RHS e RHS2,
     facto_esta_numa_condicao(Facto, LHS),
-	% Instancia Facto em LHS
     verifica_condicoes(LHS, LFactos),
     member(N, LFactos),
     sort(LFactos, SortedLFactos),
     (   regra_disparadas(ID, SortedLFactos) ->
-        % Regra já foi disparada com estas condicoes; ignora
         true
     ;   
-        % Dispara a regra e registra que foi disparada com estas condicoes
         concluir(RHS, ID, LFactos),
         concluir(RHS2, ID, LFactos),
         asserta(regra_disparadas(ID, SortedLFactos))
@@ -176,10 +173,9 @@ compara(V1, =<, V) :- V1 =< V.
 mostra_factos :-
     findall(N, facto(N, _), LFactos),
     escreve_factos(LFactos).
-
+	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Geração de explicações do tipo "Como"
-
 como(N) :-
     ultimo_facto(Last),
     Last < N,
@@ -226,7 +222,6 @@ explica([]) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Geração de explicações do tipo "Porque nao"
 % Exemplo: ?- whynot(classe(meu_veículo,ligeiro)).
-
 whynot(Facto) :-
     whynot(Facto, 1).
 
@@ -245,9 +240,8 @@ whynot(Facto, Nivel) :-
     formata(Nivel),
     write('Porque:'), write(' O facto '), write(Facto),
     write(' não está definido na base de conhecimento'), nl.
-
+	
 %  As explicações do whynot(Facto) devem considerar todas as regras que poderiam dar origem a conclusão relativa ao facto Facto
-
 encontra_regras_whynot(Facto, LLPF) :-
     findall(
         (ID, LPF),
@@ -259,6 +253,7 @@ encontra_regras_whynot(Facto, LLPF) :-
         ),
         LLPF
     ).
+
 
 % Explicar "whynot"
 whynot1([], _).
@@ -361,30 +356,37 @@ problemas_pendentes :-
 % Processar todos os factos 'proximo_teste' pendentes
 diag_problemas :-
     findall((Id, Veiculo, Teste), facto(Id, proximo_teste(Veiculo, Teste)), Tests),
-    process_tests(Tests).
+    processar_testes(Tests).
 
 % Processar cada teste
-process_tests([]).
-process_tests([(Id, Veiculo, Teste) | Rest]) :-
+processar_testes([]).
+processar_testes([(Id, Veiculo, Teste) | Rest]) :-
     tratar_problema(Id, Veiculo, Teste),
-    process_tests(Rest).
+    processar_testes(Rest).
 
 % Tratar cada problema individualmente
 tratar_problema(Id, Veiculo, Teste) :-
-    repeat,
-    format('O ~w está com o problema: ~w? (sim/nao) ', [Veiculo, Teste]),
-    read(Resposta),
-    ( (Resposta == sim ; Resposta == nao) ->
-        NovoFacto =.. [Teste, Veiculo, Resposta],
-        retract(ultimo_facto(N1)),
-        N is N1 + 1,
-        asserta(ultimo_facto(N)),
-        assertz(facto(N, NovoFacto)),
-        retract(facto(Id, proximo_teste(Veiculo, Teste))),
-        !
-    ;   
-        write('Resposta inválida. Por favor, responda com sim ou nao.'), nl,
-        fail
+    TesteTermo =.. [Teste, Veiculo, _],
+    (perguntavel(TesteTermo) ->
+        texto_pergunta(TesteTermo, Pergunta),
+        optioes_validas(TesteTermo, OpcoesValidas),
+        format('~w ~w ', [Pergunta, OpcoesValidas]),
+        repeat,
+        read(Resposta),
+        ( member(Resposta, OpcoesValidas) ->
+            NovoFacto =.. [Teste, Veiculo, Resposta],
+            retract(ultimo_facto(N1)),
+            N is N1 + 1,
+            asserta(ultimo_facto(N)),
+            assertz(facto(N, NovoFacto)),
+            retract(facto(Id, proximo_teste(Veiculo, Teste))),
+            !
+        ;   
+            write('Resposta inválida. Por favor, responda com uma das opções: '), write(OpcoesValidas), nl,
+            fail
+        )
+    ;
+        write('Teste não é perguntável: '), write(Teste), nl
     ).
 
 % Exibir o diagnóstico final
@@ -396,3 +398,5 @@ mostrar_diagnosticos([]).
 mostrar_diagnosticos([(Veiculo, Diagnostico) | Rest]) :-
     format('Diagnóstico para ~w: ~w~n', [Veiculo, Diagnostico]),
     mostrar_diagnosticos(Rest).
+
+

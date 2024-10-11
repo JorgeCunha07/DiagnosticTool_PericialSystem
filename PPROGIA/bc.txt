@@ -32,6 +32,11 @@ texto_pergunta(vai_abaixo(Veiculo, _), Pergunta) :-
 texto_pergunta(motor_arranque_defeito(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'Motor de arranque do veículo ~w está com defeito?', [Veiculo]).
 
+% Define as opções válidas para as respostas
+optioes_validas(problemas(_, _), [sim, nao, nao_sei]).
+optioes_validas(liga(_, _), [sim, nao, nao_sei]).
+optioes_validas(carga_bateria(_, _), [sim, nao, nao_sei]).
+optioes_validas(vai_abaixo(_, _), [sim, nao, nao_sei]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
