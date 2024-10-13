@@ -25,7 +25,7 @@ rule "R01: Pergunta Marca do Carro"
         update($resposta);
 end
 
-// Rule 02: Verifica Marca Selecionada
+// Rule 02: Verifica Marca Selecionada (válida)
 rule "R02: Verifica Marca Selecionada"
     when
         $resposta : Resposta(estado == "aguardandoMarca", $texto : texto != null && texto != "")
@@ -54,6 +54,17 @@ rule "R02: Verifica Marca Selecionada"
         update($resposta);
 end
 
+// Rule 02b: Marca inválida
+rule "R02b: Marca Inválida"
+    when
+        $resposta : Resposta(estado == "aguardandoMarca", $texto : texto != null && texto != "")
+        not (Carro( marca.getNome() == $texto ) from carros)
+    then
+        System.out.println("Marca não encontrada. Por favor, tente novamente.");
+        $resposta.setTexto(""); // Limpa o texto para repetir a pergunta
+        update($resposta);
+end
+
 // Rule 03: Pergunta Modelo do Carro
 rule "R03: Pergunta Modelo do Carro"
     when
@@ -63,7 +74,7 @@ rule "R03: Pergunta Modelo do Carro"
         // Aguarda a entrada do usuário
 end
 
-// Rule 04: Verifica Modelo Selecionado
+// Rule 04: Verifica Modelo Selecionado (válido)
 rule "R04: Verifica Modelo Selecionado"
     when
         $resposta : Resposta(estado == "aguardandoModelo", $texto : texto != null && texto != "")
@@ -94,6 +105,18 @@ rule "R04: Verifica Modelo Selecionado"
         update($resposta);
 end
 
+// Rule 04b: Modelo inválido
+rule "R04b: Modelo Inválido"
+    when
+        $resposta : Resposta(estado == "aguardandoModelo", $texto : texto != null && texto != "")
+        $marcaSelecionada : String() from $resposta.getMarcaSelecionada()
+        not (Carro( marca.getNome() == $marcaSelecionada, modelo.getNome() == $texto ) from carros)
+    then
+        System.out.println("Modelo não encontrado para a marca selecionada. Por favor, tente novamente.");
+        $resposta.setTexto(""); // Limpa o texto para repetir a pergunta
+        update($resposta);
+end
+
 // Rule 05: Pergunta Motor do Carro
 rule "R05: Pergunta Motor do Carro"
     when
@@ -103,7 +126,7 @@ rule "R05: Pergunta Motor do Carro"
         // Aguarda a entrada do usuário
 end
 
-// Rule 06: Verifica Motor Selecionado e Armazena Carro Selecionado
+// Rule 06: Verifica Motor Selecionado e Armazena Carro Selecionado (válido)
 rule "R06: Verifica Motor Selecionado"
     when
         $resposta : Resposta(estado == "aguardandoMotor", $texto : texto != null && texto != "")
@@ -121,10 +144,27 @@ rule "R06: Verifica Motor Selecionado"
 
         System.out.println("Componentes disponíveis: ");
         for (Componente componente : $carroSelecionado.getComponentes()) {
-            System.out.println(componente.getNome() + " (Min Ideal: " + componente.getValorMinimoIdeal() + ", Max Ideal: " + componente.getValorMaximoIdeal() +  ", Unidade: " + componente.getUnidade() + ")");
+            System.out.println(componente.getNome() + " (Min Ideal: " + componente.getValorMinimoIdeal() + ", Max Ideal: " + componente.getValorMaximoIdeal() + ", Unidade: " + componente.getUnidade() + ")");
         }
 
         $resposta.setEstado("finalizado");
         $resposta.setTexto(""); // Limpa o texto
+        update($resposta);
+end
+
+// Rule 06b: Motor inválido
+rule "R06b: Motor Inválido"
+    when
+        $resposta : Resposta(estado == "aguardandoMotor", $texto : texto != null && texto != "")
+        $marcaSelecionada : String() from $resposta.getMarcaSelecionada()
+        $modeloSelecionado : String() from $resposta.getModeloSelecionado()
+        not (Carro(
+            marca.getNome() == $marcaSelecionada,
+            modelo.getNome() == $modeloSelecionado,
+            motor.getNome() == $texto
+        ) from carros)
+    then
+        System.out.println("Motor não encontrado para o modelo e marca selecionados. Por favor, tente novamente.");
+        $resposta.setTexto(""); // Limpa o texto para repetir a pergunta
         update($resposta);
 end
