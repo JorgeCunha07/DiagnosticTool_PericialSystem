@@ -9,11 +9,10 @@ import java.util.List;
 
 public class ImportFile {
 
-    // Load data from CSV
     static List<Carro> carregarBaseDados(String caminhoArquivo) {
         List<Carro> carros = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-            br.readLine(); // Ignore header
+            br.readLine();
             String linha;
             while ((linha = br.readLine()) != null) {
                 processarLinha(linha, carros);
