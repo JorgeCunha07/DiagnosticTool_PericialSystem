@@ -67,26 +67,26 @@ dispara_regras(N, Facto, [ID | LRegras]) :-
     !,
     dispara_regras(N, Facto, LRegras).
 
-dispara_regras(N, Facto, [ID | LRegras]) :-
-    regra ID se LHS entao RHS e RHS2,
-    facto_esta_numa_condicao(Facto, LHS),
-    verifica_condicoes(LHS, LFactos),
-    member(N, LFactos),
-    sort(LFactos, SortedLFactos),
-    (   regra_disparadas(ID, SortedLFactos) ->
-        true
-    ;   
-        concluir(RHS, ID, LFactos),
-        concluir(RHS2, ID, LFactos),
-        asserta(regra_disparadas(ID, SortedLFactos))
-    ),
-    !,
-    dispara_regras(N, Facto, LRegras).
-
 dispara_regras(N, Facto, [_ | LRegras]) :-
     dispara_regras(N, Facto, LRegras).
 
 dispara_regras(_, _, []).
+
+resolve(avalia(P), N) :-
+    avalia(N, P),
+    !.
+
+resolve(nao avalia(P), 'nao') :-
+    \+ avalia(_, P),
+    !.
+
+resolve(X, N) :-
+    facto(N, X),
+    !.
+
+resolve(X, 'kb') :-
+    call(X).
+
 
 % Verificar se o facto está numa condição
 facto_esta_numa_condicao(F, [F e _]).
@@ -101,34 +101,16 @@ facto_esta_numa_condicao(F, [avalia(F1)]) :-
     F1 =.. [H, H1 | _].
 
 % Verificar condicoes das regras
-verifica_condicoes([nao avalia(X) e Y], [nao X | LF]) :-
-    !,
-    \+ avalia(_, X),
-    verifica_condicoes([Y], LF).
-verifica_condicoes([avalia(X) e Y], [N | LF]) :-
-    !,
-    avalia(N, X),
-    verifica_condicoes([Y], LF).
-verifica_condicoes([nao avalia(X)], [nao X]) :-
-    !,
-    \+ avalia(_, X).
-verifica_condicoes([avalia(X)], [N]) :-
-    !,
-    avalia(N, X).
-verifica_condicoes([nao X e Y], [nao X | LF]) :-
-    !,
-    \+ facto(_, X),
-    verifica_condicoes([Y], LF).
 verifica_condicoes([X e Y], [N | LF]) :-
     !,
-    facto(N, X),
+    resolve(X, N),
     verifica_condicoes([Y], LF).
-verifica_condicoes([nao X], [nao X]) :-
-    !,
-    \+ facto(_, X).
-verifica_condicoes([X], [N]) :-
-    facto(N, X).
 
+verifica_condicoes([X], [N]) :-
+    resolve(X, N).
+
+
+ 
 % Concluir acoes das regras
 concluir([cria_facto(F) | Y], ID, LFactos) :-
     !,
@@ -157,8 +139,9 @@ cria_facto(F, ID, LFactos) :-
 avalia(N, P) :-
     P =.. [Functor, Entidade, Operando, Valor],
     P1 =.. [Functor, Entidade, Valor1],
-    facto(N, P1),
+    resolve(P1, N),
     compara(Valor1, Operando, Valor).
+
 
 % Comparar valores
 compara(V1, ==, V) :- V1 == V.
