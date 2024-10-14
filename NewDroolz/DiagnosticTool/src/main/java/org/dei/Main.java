@@ -2,6 +2,8 @@ package org.dei;
 
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
+import org.dei.whynot.DroolsWithWhyNot;
+import org.dei.whynot.WhyNot;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -85,21 +87,24 @@ public class Main {
         }
     }
 
-    // New method to handle diagnostic
     public static void iniciarDiagnostico(Carro selectedCar) {
         try {
-            // Create a new KieSession for diagnostic rules
-            KieServices ks = KieServices.Factory.get();
-            KieContainer kc = ks.getKieClasspathContainer();
-            KieSession diagSession = kc.newKieSession("ksession-diagnostic");
+            // Inicializa a sessão Drools com WhyNot
+            DroolsWithWhyNot drools = DroolsWithWhyNot.init("org.dei.facts");
+            KieSession diagSession = drools.getKieSession();
 
-            // Set the selected car as a global variable
+            // Define o carro selecionado como variável global
             diagSession.setGlobal("selectedCar", selectedCar);
 
-            // Create a new Resposta object for the diagnostic session
+            // Define a instância do WhyNot como variável global
+            WhyNot whyNot = WhyNot.getInstance();
+            diagSession.setGlobal("whyNot", whyNot);
+
+            // Cria um novo objeto Resposta para a sessão de diagnóstico
             Resposta diagResposta = new Resposta();
             diagResposta.setEstado("iniciarDiagnostico");
             diagResposta.setTexto("");
+            diagResposta.setCarroSelecionado(selectedCar);
 
             FactHandle respostaHandle = diagSession.insert(diagResposta);
 
@@ -108,21 +113,19 @@ public class Main {
             while (!"finalizado".equals(diagResposta.getEstado())) {
                 diagSession.fireAllRules();
 
-                String estado = diagResposta.getEstado();
-                String texto = diagResposta.getTexto();
-
-                if (estado != null && estado.equals("perguntarSintoma") && (texto == null || texto.isEmpty())) {
-                    System.out.print("Digite sua resposta: ");
-                    String input = scanner.nextLine();
-                    diagResposta.setTexto(input);
-
-                    if (respostaHandle != null) {
+                // Verifica o estado e processa a resposta do utilizador
+                if (diagResposta.getEstado().startsWith("perguntar") || diagResposta.getEstado().startsWith("processar")) {
+                    if (diagResposta.getTexto() == null || diagResposta.getTexto().isEmpty() ) {
+                        System.out.print("Digite sua resposta: ");
+                        String input = scanner.nextLine();
+                        diagResposta.setTexto(input);
                         diagSession.update(respostaHandle, diagResposta);
-                    } else {
-                        respostaHandle = diagSession.insert(diagResposta);
+
                     }
                 }
             }
+
+
 
             diagSession.dispose();
 
@@ -130,4 +133,5 @@ public class Main {
             e.printStackTrace();
         }
     }
+
 }

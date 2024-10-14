@@ -19,9 +19,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -121,33 +123,38 @@ class KnowledgeBase {
      * @return KieBase object
      */
     private KieBase createKieBase() {
-        KieServices ks = KieServices.Factory.get();
-        KieRepository kr = ks.getRepository();
-        KieFileSystem kfs = ks.newKieFileSystem();
-        KieBase kieBase;
-        KieContainer kContainer;
+        try {
+            KieServices ks = KieServices.Factory.get();
+            KieRepository kr = ks.getRepository();
+            KieFileSystem kfs = ks.newKieFileSystem();
 
-        String queriesDrl = generateQueries();
+            String queriesDrl = generateQueries();
 
-        for (String path: this.drlPaths) {
-            File drlFile = new File(path);
-            Resource resource = ks.getResources().newFileSystemResource(drlFile);
-            kfs.write(resource); // rules
+            // Load DRL files from classpath
+            for (String drlPath : drlPaths) {
+                Resource resource = ks.getResources().newClassPathResource(drlPath);
+                kfs.write(resource);
+            }
+
+            // Write dynamic queries to KieFileSystem
+            kfs.write("org/dei/queries.drl", queriesDrl);
+
+            KieBuilder kb = ks.newKieBuilder(kfs);
+            kb.buildAll();
+
+            if (kb.getResults().hasMessages(Message.Level.ERROR)) {
+                throw new RuntimeException("Build Errors:\n" + kb.getResults().toString());
+            }
+
+            KieContainer kContainer = ks.newKieContainer(kr.getDefaultReleaseId());
+
+            LOG.info("Creating kieBase");
+            kieBase = kContainer.getKieBase();
+
+            return kieBase;
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating KieBase: " + e.getMessage(), e);
         }
-        kfs.write("src/main/resources/org/dei/queries.drl", queriesDrl); // dynamic generated queries
-
-        KieBuilder kb = ks.newKieBuilder(kfs);
-        kb.buildAll();
-        if (kb.getResults().hasMessages(Message.Level.ERROR)) {
-            throw new RuntimeException("Build Errors:\n" + kb.getResults().toString());
-        }
-        kContainer = ks.newKieContainer(kr.getDefaultReleaseId());
-
-        LOG.info("Creating kieBase");
-        kieBase = kContainer.getKieBase();
-
-        return kieBase;
-
     }
 
     /**
@@ -155,10 +162,12 @@ class KnowledgeBase {
      * @return List of paths
      */
     private List<String> findDrlFiles() {
-        String baseDir = System.getProperty("user.dir");
-        File fileDir = new File(baseDir + "/src");
-        ArrayList<String> lst = new ArrayList<String>();
-        findFile(fileDir, lst);
+        List<String> lst = new ArrayList<>();
+
+        // List of DRL files in your resources (adjust the paths accordingly)
+        lst.add("org/dei/diagnostic.drl");
+        // Add other DRL files as needed
+
         return lst;
     }
 
@@ -186,41 +195,38 @@ class KnowledgeBase {
      * @return list containing rules description
      */
     private List<RuleDescr> getRulesDescriptionFromDRL() {
-        String drl;
-        StringBuffer drlBuffer = new StringBuffer();
-
         try {
-            for (String path: this.drlPaths) {
-                drlBuffer.append(new String(Files.readAllBytes(Paths.get(path)), Charset.defaultCharset()));
+            StringBuilder drlContent = new StringBuilder();
+            for (String drlPath : drlPaths) {
+                InputStream is = getClass().getClassLoader().getResourceAsStream(drlPath);
+                if (is == null) {
+                    throw new RuntimeException("DRL file not found: " + drlPath);
+                }
+                Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name()).useDelimiter("\\A");
+                String content = scanner.hasNext() ? scanner.next() : "";
+                drlContent.append(content).append("\n");
             }
-            drl = drlBuffer.toString();
-        } catch (IOException e) {
-            throw new RuntimeException("File not found", e);
-        }
 
-        DrlParser parser = new DrlParser(LanguageLevelOption.DRL6);
-        PackageDescr pkgDescr;
-        try {
-            pkgDescr = parser.parse(null, drl);
+            DrlParser parser = new DrlParser(LanguageLevelOption.DRL6);
+            PackageDescr pkgDescr = parser.parse(false, drlContent.toString());
+
+            if (pkgDescr == null) {
+                throw new RuntimeException("Failed to parse DRL files. Check for syntax errors.");
+            }
+
+            return pkgDescr.getRules();
         } catch (DroolsParserException e) {
-            throw new RuntimeException("DRL parse error", e);
-        } catch (NullPointerException e) {
-            throw new RuntimeException("Path incorrectly defined: ", e);
+            throw new RuntimeException("DRL parse error: " + e.getMessage(), e);
         }
-
-        if (pkgDescr == null) {
-            throw new RuntimeException("Path incorrectly defined");
-        }
-        return pkgDescr.getRules();
     }
 
     /**
      * Creates HashMap with RuleWM objects containing description of rules from parsed DRL files
      * @return HashMap with rules' description
      */
-    private Map<String,RuleWM> getRulesWM() {
+    private Map<String, RuleWM> getRulesWM() {
         this.rules = new HashMap<>();
-        for (RuleDescr rule: rulesDescr) {
+        for (RuleDescr rule : rulesDescr) {
             String ruleName = rule.getName();
             this.rules.put(ruleName, new RuleWM(ruleName, rule));
         }
@@ -247,13 +253,13 @@ class KnowledgeBase {
 
         condSet.addAll(consSet);
 
-        StringBuffer drl = new StringBuffer(getImportsString() + "\n" );
+        StringBuilder drl = new StringBuilder(getImportsString() + "\n");
         int n = 0;
-        for (String c: condSet) {
+        for (String c : condSet) {
             String queryName = "confirmCondition" + ++n;
-            drl.append("query ").append(queryName).append("\n").append("\t").append(c).append("\n").
-                    append("end").append("\n");
-            dynamicQueries.put(c,queryName);
+            drl.append("query ").append(queryName).append("\n").append("\t").append(c).append("\n")
+                    .append("end").append("\n");
+            dynamicQueries.put(c, queryName);
         }
 
         return drl.toString();
@@ -264,14 +270,20 @@ class KnowledgeBase {
      * @return Set with rules' conditions
      */
     private Set<String> getAllRuleConditionsList() {
-        Set<String> set = rulesDescr.stream().
-                map(RuleDescr::getLhs).
-                map(AndDescr::getAllPatternDescr).
-                flatMap(List::stream).
-                map(p -> p.getObjectType() + "(" + p.getDescrs().stream().
-                        map(BaseDescr::getText).
-                        reduce((s1,s2) -> s1 + " , " + s2).get() + ")").
-                collect(Collectors.toSet());
+        Set<String> set = rulesDescr.stream()
+                .map(RuleDescr::getLhs)
+                .map(AndDescr::getDescrs)
+                .flatMap(Collection::stream)
+                .filter(descr -> descr instanceof PatternDescr)
+                .map(descr -> (PatternDescr) descr)
+                .map(p -> {
+                    String constraints = p.getConstraint().getDescrs().stream()
+                            .map(BaseDescr::getText)
+                            .reduce((s1, s2) -> s1 + " , " + s2)
+                            .orElse("");
+                    return p.getObjectType() + "(" + constraints + ")";
+                })
+                .collect(Collectors.toSet());
         return set;
     }
 
@@ -294,12 +306,13 @@ class KnowledgeBase {
      * @return Set of constructor calls
      */
     private Set<String> getConstructorCalls(String consequent) {
-        Set<String> set = new HashSet();
-        Pattern pattern = Pattern.compile("(?<=new\\s).*?(?=;)");
+        Set<String> set = new HashSet<>();
+        Pattern pattern = Pattern.compile("new\\s+([\\w\\.<>]+)\\s*\\(([^;]*)\\)");
         Matcher matcher = pattern.matcher(consequent);
         while (matcher.find()) {
-            String str = matcher.group().replaceAll(" ", "");
-            set.add(str);
+            String className = matcher.group(1).replaceAll("<.*>", ""); // Remove generic types
+            String args = matcher.group(2).replaceAll("\\s+", "");
+            set.add(className + "(" + args + ")");
         }
         return set;
     }
@@ -331,21 +344,22 @@ class KnowledgeBase {
      * @throws Exception in case of unknown class constructor or undefined class
      */
     protected String convertConstructorToDRL(String constructor) throws Exception {
-        String objectType = constructor.substring(0, constructor.indexOf('(')).
-                replaceAll("\\s+","");
-        StringBuffer DRL = new StringBuffer(objectType);
-        String[] constructorArgs = constructor.substring(constructor.indexOf('(')+1, constructor.indexOf(')')).
-                replaceAll("\\s+","").split(",");
-        String[] parameters = null;
-        Class type = null;
+        String objectType = constructor.substring(0, constructor.indexOf('('))
+                .replaceAll("\\s+", "");
+        objectType = objectType.replaceAll("<.*>", ""); // Remove generic type parameters
+        StringBuilder DRL = new StringBuilder(objectType);
+        String[] constructorArgs = constructor.substring(constructor.indexOf('(') + 1, constructor.lastIndexOf(')'))
+                .replaceAll("\\s+", "").split(",");
+        String[] parameters;
+        Class<?> type;
         try {
             type = Class.forName(this.factsPackage + "." + objectType);
         } catch (ClassNotFoundException e) {
             throw new Exception("Unknown class: " + this.factsPackage + "." + objectType +
-                    "\nCheck FACTS_PACKAGE constant: " + this.factsPackage +
-                    "\nCheck conclusion functor: " + objectType, e);
+                    "\nEnsure that the class exists and that the factsPackage is set correctly.", e);
+
         }
-        parameters = getConstructorParameters(type); // fact classes must be all in the same package
+        parameters = getConstructorParameters(type);
 
         if (parameters != null) {
             if (parameters.length != constructorArgs.length) {

@@ -98,11 +98,15 @@ public class DroolsWithWhyNot {
      * @return Reference to the Drools KieSession
      */
     private KieSession createKieSession() {
+        try {
+            KieBase kieBase = kb.getKieBase();
 
-        KieBase kieBase = kb.getKieBase();
-
-        LOG.info("Creating kieSession");
-        session = kieBase.newKieSession();
-        return session;
+            LOG.info("Creating kieSession");
+            session = kieBase.newKieSession();
+            return session;
+        } catch (Exception e) {
+            LOG.error("Failed to create KieSession: {}", e.getMessage(), e);
+            throw new RuntimeException("Error creating KieSession", e);
+        }
     }
 }

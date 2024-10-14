@@ -5,5 +5,7 @@
   </kbase>
   <kbase name="diagnostic" packages="org.dei.diagnostic">
     <ksession name="ksession-diagnostic"/>
+
   </kbase>
+
 </kmodule>

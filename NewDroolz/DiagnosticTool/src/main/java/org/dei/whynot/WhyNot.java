@@ -92,7 +92,7 @@ public class WhyNot {
         }
 
         try {
-            generateExplanation(expectedConclusion, DRLconclusion, explanation,0);
+            generateExplanation(expectedConclusion, DRLconclusion, explanation, 0);
         } catch (Exception e) {
             System.out.println(e.toString());
             System.exit(0);
@@ -101,23 +101,13 @@ public class WhyNot {
         return explanation.toString();
     }
 
-    /**
-     * Auxiliary recursive method to generate whynot explanations
-     * @param expectedConclusion The expected conclusion according the constructor format
-     * @param DRLConclusion The expected conclusion in DRL format
-     * @param explanation Text explanation being formed incrementally across multiple recursive method calls
-     * @param level Text explanation indentation level
-     * @throws Exception
-     */
     private void generateExplanation(String expectedConclusion, String DRLConclusion, StringBuffer explanation, int level) throws Exception {
         String tabs = StringUtils.repeat("\t", level * 2);
 
-        // expectedConclusion is a basic fact
         if (kb.isBasicFact(expectedConclusion)) {
             explanation.append(tabs);
             explanation.append(DRLConclusion);
             explanation.append(" is a basic fact not defined\n");
-
             return;
         }
 
@@ -137,13 +127,14 @@ public class WhyNot {
                 int condNoLocal = 1;
                 List<PatternDescr> conditions = rule.getRuleConditions();
                 for (PatternDescr patt : conditions) {
-                    String drlCondition = patt.getObjectType() + "(" + patt.getDescrs().stream().
-                            map(BaseDescr::getText).reduce((s1, s2) -> s1 + " , " + s2).get() + ")";
+                    String drlCondition = patt.getObjectType() + "(" + patt.getDescrs().stream()
+                            .map(BaseDescr::getText)
+                            .reduce((s1, s2) -> s1 + " , " + s2)
+                            .orElse("") + ")";
 
                     if (chkWM.conditionIsFalse(drlCondition)) {
-                        explanation.append(tabs).append("\t").append("Rule condition ").append(condNoLocal).append(": ").
-                                append(drlCondition).append(" is false\n");
-                        // convert patt to conclusion (constructor format): conc
+                        explanation.append(tabs).append("\t").append("Rule condition ").append(condNoLocal).append(": ")
+                                .append(drlCondition).append(" is false\n");
                         String conc = kb.convertDRLPatternToConstructor(patt);
                         generateExplanation(conc, drlCondition, explanation, level + 1);
                     }
