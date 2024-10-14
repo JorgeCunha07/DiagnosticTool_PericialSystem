@@ -7,7 +7,7 @@ facto_dispara_regras(problemas(_, nao), [1]).
 facto_dispara_regras(problemas(_, sim), [2]).
 facto_dispara_regras(liga(_, sim), [12]).
 facto_dispara_regras(liga(_, nao), [11]).
-%facto_dispara_regras(carga_bateria(_, _). [21, 22]).
+facto_dispara_regras(carga_bateria(_, _), [21, 22]).
 %facto_dispara_regras(motor_arranque_defeito(_, sim), [31]).
 %facto_dispara_regras(motor_arranque_defeito(_, nao), [32]).
 %vai abaixo
@@ -26,7 +26,7 @@ texto_pergunta(problemas(Veiculo, _), Pergunta) :-
 texto_pergunta(liga(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O veiculo ~w liga?', [Veiculo]).
 texto_pergunta(carga_bateria(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'A bateria do veiculo ~w está carregada?', [Veiculo]).
+    format(atom(Pergunta), 'Qual a bateria do veiculo ~w?', [Veiculo]).
 texto_pergunta(vai_abaixo(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O veículo ~w vai abaixo depois de ligar?', [Veiculo]).
 texto_pergunta(motor_arranque_defeito(Veiculo, _), Pergunta) :-
@@ -35,7 +35,7 @@ texto_pergunta(motor_arranque_defeito(Veiculo, _), Pergunta) :-
 % Define as opções válidas para as respostas
 optioes_validas(problemas(_, _), [sim, nao, nao_sei]).
 optioes_validas(liga(_, _), [sim, nao, nao_sei]).
-optioes_validas(carga_bateria(_, _), [sim, nao, nao_sei]).
+optioes_validas(carga_bateria(_, _), Valor).
 optioes_validas(vai_abaixo(_, _), [sim, nao, nao_sei]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,21 +72,21 @@ regra 12
 	entao [cria_facto(proximo_teste(Veiculo, vai_abaixo))].
 
 % Se o carro está com bateria fraca ou sem carga
-%regra 21
-%	se [avalia(carga_bateria(Veiculo,<,bateria(Veiculo, Min, _)))]
-%	entao [cria_facto(diagnostico(Veiculo, "Bateria com defeito ou sem carga."))]
+regra 21
+    se [bateria(Veiculo, Min, _) e avalia(bateria(Veiculo, <, Min))]
+	entao [cria_facto(diagnostico(Veiculo, "Bateria com defeito ou sem carga."))].
 
 % Se o carro NAO está com bateria fraca ou sem carga
-%regra 22
-%	se [avalia(carga_bateria(Veiculo,>,bateria(Veiculo, Min, _)))] e [avalia(carga_bateria(Veiculo,<,bateria(Veiculo, _, Max)))]
-%	entao [cria_facto(proximo_teste(Veiculo, motor_arranque_defeito))]
+regra 22
+    se [bateria(Veiculo, Min, Max) e avalia(bateria(Veiculo, >, Min)), avalia(bateria(Veiculo, <, Max))]
+	entao [cria_facto(proximo_teste(Veiculo, motor_arranque_defeito))].
 
 % Se o carro está com defeito no motor de arranque
 %regra 31
 %	se [motor_arranque_defeito(Veiculo,sim)]
 %	entao [cria_facto(diagnostico(Veiculo, "Falha no motor de aranque"))]
 
-facto(1, proximo_teste(meu_veiculo, problemas)).
+facto(1, proximo_teste(1, problemas)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Factos para carros
