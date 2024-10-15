@@ -32,7 +32,7 @@ listar_motores(Marca, Modelo) :-
 obter_opcao_por_indice(Lista, Indice, Opcao) :-
     nth1(Indice, Lista, Opcao).
 
-% Predicado para perguntar ao utilizador e obter o número do carro
+% Predicado para perguntar ao utilizador e criar o primeiro teste
 obter_numero_carro :-
     listar_marcas,
     write('Escolha o número da marca: '), nl,
@@ -56,4 +56,5 @@ obter_numero_carro :-
     obter_opcao_por_indice(MotoresUnicos, IndiceMotor, Motor),
     
     carro(Numero, Marca, Modelo, Motor),
-    write('O número do carro é: '), write(Numero), nl.
+    write('O número do carro é: '), write(Numero), nl,
+    assertz(facto(Numero, proximo_teste(1, problemas))).
