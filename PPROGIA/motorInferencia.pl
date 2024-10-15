@@ -375,7 +375,7 @@ tratar_problema(Id, Veiculo, Teste) :-
     TesteTermo =.. [Teste, Veiculo, _],
     (perguntavel(TesteTermo) ->
         texto_pergunta(TesteTermo, Pergunta),
-        optioes_validas(TesteTermo, OpcoesValidas),
+        opcoes_validas(TesteTermo, OpcoesValidas),
         format('~w ~w ', [Pergunta, OpcoesValidas]),
         repeat,
         read(Resposta),
