@@ -29,6 +29,25 @@ function String getUnidadeComponente(Carro carro, String nomeComponente) {
     return "";
 }
 
+// Função auxiliar para substituir vírgula por ponto
+function String substituirVirgulaPorPonto(String texto) {
+    if (texto != null) {
+        return texto.replace(",", ".");
+    }
+    return texto;
+}
+
+// Função auxiliar para verificar se a string é numérica
+function boolean isNumeric(String str) {
+    try {
+        Double.parseDouble(str);
+        return true;
+    } catch (NumberFormatException e) {
+        return false;
+    }
+}
+
+
 // Rule D01: Start Diagnostic
 rule "D01: Start Diagnostic"
     when
@@ -86,7 +105,6 @@ rule "D05: Process 'O carro liga a chave?'"
         Evidence<String, String> ev = new Evidence<>("processarCarroLigaChave", $resposta.getTexto());
         insert(ev);
         if ($resposta.getTexto().equalsIgnoreCase("Sim")) {
-            System.out.println("O carro liga a chave. O carro liga mas vai abaixo? (Sim/Não)");
             $resposta.setEstado("perguntarCarroLigaMasVaiAbaixo");
             $resposta.setTexto(""); 
             
@@ -930,7 +948,7 @@ end
 rule "D70: Processar 'Componente defeituoso? Inválido'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso",
-                             texto != "0" && texto != "1" && texto != "2" && texto != "3" && texto != "4")
+                             texto != "0" && texto != "1" && texto != "2" && texto != "3" && texto != "4" && texto != "")
     then
         System.out.println("Opção inválida. Por favor, digite um número de 0 a 4.");
         $resposta.setEstado("perguntarComponenteDefeituoso");
@@ -958,25 +976,53 @@ rule "D72: Verificar nível de óleo"
         $carro : Carro() from selectedCar
     then
         Componente oleoMotor = getComponenteByName($carro, "Óleo do Motor");
-        if (oleoMotor != null) {
-            System.out.println("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
-            $resposta.setEstado("perguntarNivelOleoAtual");
-
-        } else {
-            System.out.println("Componente 'Óleo do Motor' não encontrado.");
-            $resposta.setEstado("diagnosticoConcluido");
-        }
+        System.out.println("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
+        $resposta.setEstado("perguntarNivelOleoAtual");
         $resposta.setTexto("");
         update($resposta);
 end
 
-// Rule D73: Nível de óleo baixo
-rule "D73: Nível de óleo baixo"
+// Regra D73: Avaliar Nível de Óleo
+rule "D73: Avaliar Nível de Óleo"
     when
         $resposta : Resposta(estado == "perguntarNivelOleoAtual", texto != "")
         $carro : Carro() from selectedCar
-        $oleoMotor : Componente(nome == "Óleo do Motor")
-        eval(Double.parseDouble($resposta.getTexto()) < $oleoMotor.getValorMinimoIdeal())
+    then
+        Componente oleoMotor = getComponenteByName($carro, "Óleo do Motor");
+
+        // Substituir vírgula por ponto e validar
+        String valorOleo = substituirVirgulaPorPonto($resposta.getTexto());
+        System.out.println("Valor de óleo recebido: " + valorOleo);
+        Evidence<String, String> ev = new Evidence<>("perguntarNivelOleoAtual", $resposta.getTexto());
+        insert(ev);
+
+        if (isNumeric(valorOleo)) {
+            double nivelOleo = Double.parseDouble(valorOleo);
+            // Verifica nível de óleo e direciona para as regras apropriadas
+            if (nivelOleo < oleoMotor.getValorMinimoIdeal()) {
+                $resposta.setEstado("nivelOleoBaixo");
+                $resposta.setTexto("");
+            } else if (nivelOleo > oleoMotor.getValorMaximoIdeal()) {
+                $resposta.setEstado("nivelOleoAlto");
+                $resposta.setTexto("");
+            } else {
+                $resposta.setEstado("nivelOleoNormal");
+                $resposta.setTexto("");
+            }
+        } else {
+            System.out.println("Valor inválido. Por favor, insira um valor numérico.");
+            $resposta.setEstado("perguntarNivelOleoAtual");
+            $resposta.setTexto("");
+        }
+        update($resposta);
+end
+
+
+
+// Regra para Nível de Óleo Baixo
+rule "D74: Nível de óleo baixo"
+    when
+        $resposta : Resposta(estado == "nivelOleoBaixo")
     then
         Evidence<String, String> ev = new Evidence<>("perguntarNivelOleoAtual", $resposta.getTexto());
         insert(ev);
@@ -988,15 +1034,13 @@ rule "D73: Nível de óleo baixo"
         update($resposta);
 end
 
-// Rule D74: Nível de óleo alto
-rule "D74: Nível de óleo alto"
+
+// Regra para Nível de Óleo Alto
+rule "D75: Nível de óleo alto"
     when
-        $resposta : Resposta(estado == "perguntarNivelOleoAtual", texto != "")
-        $carro : Carro() from selectedCar
-        $oleoMotor : Componente(nome == "Óleo do Motor")
-        eval(Double.parseDouble($resposta.getTexto()) > $oleoMotor.getValorMaximoIdeal())
+        $resposta : Resposta(estado == "nivelOleoAlto")
     then
-        Evidence<String, String> ev = new Evidence<>("perguntarNivelOleoAtual", $resposta.getTexto());
+        Evidence<String, String> ev = new Evidence<>("nivelOleoAlto", $resposta.getTexto());
         insert(ev);
         $resposta.setDiagnostico("Excesso de óleo");
         $resposta.setSolucao("Retirar excesso de óleo");
@@ -1006,23 +1050,21 @@ rule "D74: Nível de óleo alto"
         update($resposta);
 end
 
-// Rule D75: Nível de óleo normal
-rule "D75: Nível de óleo normal"
+// Regra para Nível de Óleo Normal
+rule "D76: Nível de óleo normal"
     when
-        $resposta : Resposta(estado == "perguntarNivelOleoAtual", texto != "")
-        $carro : Carro() from selectedCar
-        $oleoMotor : Componente(nome == "Óleo do Motor")
-        eval(Double.parseDouble($resposta.getTexto()) >= $oleoMotor.getValorMinimoIdeal() && Double.parseDouble($resposta.getTexto()) <= $oleoMotor.getValorMaximoIdeal())
+        $resposta : Resposta(estado == "nivelOleoNormal")
     then
-        Evidence<String, String> ev = new Evidence<>("perguntarNivelOleoAtual", $resposta.getTexto());
+        Evidence<String, String> ev = new Evidence<>("nivelOleoNormal", $resposta.getTexto());
         insert(ev);
         $resposta.setEstado("verificarSistemaEscape");
         $resposta.setTexto("");
         update($resposta);
 end
 
+
 // Rule D76: Verificar sistema de escape
-rule "D76: Verificar sistema de escape"
+rule "D77: Verificar sistema de escape"
     when
         $resposta : Resposta(estado == "verificarSistemaEscape", texto == "")
     then
@@ -1033,7 +1075,7 @@ rule "D76: Verificar sistema de escape"
 end
 
 // Rule D77: Problema no sistema de escape - Sim
-rule "D77: Problema no sistema de escape - Sim"
+rule "D78: Problema no sistema de escape - Sim"
     when
         $resposta : Resposta(estado == "perguntarProblemaEscape", texto == "Sim")
     then
@@ -1048,7 +1090,7 @@ rule "D77: Problema no sistema de escape - Sim"
 end
 
 // Rule D78: Problema no sistema de escape - Não
-rule "D78: Problema no sistema de escape - Não"
+rule "D79: Problema no sistema de escape - Não"
     when
         $resposta : Resposta(estado == "perguntarProblemaEscape", texto == "Não")
     then
