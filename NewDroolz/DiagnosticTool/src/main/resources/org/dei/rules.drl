@@ -18,22 +18,7 @@ rule "R00: Lista Marcas Disponíveis"
     when
         $resposta : Resposta(estado == null || estado == "")
     then
-        // Cast carros to List<Carro>
-        List<Carro> carrosList = (List<Carro>) carros;
-
-        // Usar um Set para evitar duplicação
-        Set<String> marcasDisponiveis = new HashSet<>();
-        for (Carro carro : carrosList) {
-            marcasDisponiveis.add(carro.getMarca().getNome());
-        }
-
-        // Armazena as marcas disponíveis na resposta
-        StringBuilder marcasMsg = new StringBuilder("Marcas disponíveis: ");
-        for (String marca : marcasDisponiveis) {
-            marcasMsg.append(marca).append("\n");
-        }
-
-        $resposta.setPergunta(marcasMsg.toString());
+        $resposta.setPergunta("Marcas disponíveis: ");
         $resposta.setEstado("aguardandoMarca");
         update($resposta);
 end
