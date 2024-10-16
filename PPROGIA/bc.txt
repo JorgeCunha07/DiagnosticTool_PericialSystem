@@ -7,97 +7,102 @@
 facto_dispara_regras(problemas(_, sim), [1]).
 facto_dispara_regras(problemas(_, nao), [2]).
 
+facto_dispara_regras(liga(_, sim), [12]).
 facto_dispara_regras(liga(_, nao), [11]).
+
 facto_dispara_regras(bateria(_, _), [21, 22]).
+
+facto_dispara_regras(vai_abaixo(_, sim), [23]).
+facto_dispara_regras(vai_abaixo(_, nao), [24]).
 
 facto_dispara_regras(motor_arranque_defeito(_, sim), [31]).
 facto_dispara_regras(motor_arranque_defeito(_, nao), [32]).
 
-facto_dispara_regras(ignicao_falhando(_, sim), [41]).
-facto_dispara_regras(ignicao_falhando(_, nao), [42]).
-
-facto_dispara_regras(sistema_seguranca_ativado(_, sim), [51]).
-facto_dispara_regras(sistema_seguranca_ativado(_, nao), [52]).
-
-facto_dispara_regras(fios_danificados(_, sim), [61]).
-facto_dispara_regras(fios_danificados(_, nao), [62]).
-
-facto_dispara_regras(liga(_, sim), [12]).
-facto_dispara_regras(vai_abaixo(_, sim), [23]).
-facto_dispara_regras(vai_abaixo(_, nao), [24]).
-
 facto_dispara_regras(motor_sobreaquece(_, sim), [33]).
 facto_dispara_regras(motor_sobreaquece(_, nao), [34]).
-
-facto_dispara_regras(radiador_ventoinha_defeito(_, sim), [43]).
-facto_dispara_regras(radiador_ventoinha_defeito(_, nao), [44]).
-
-facto_dispara_regras(fuga_arrefecimento(_, sim), [53]).
-facto_dispara_regras(fuga_arrefecimento(_, nao), [54]).
-
-facto_dispara_regras(termostato_defeituoso(_, sim), [63]).
-facto_dispara_regras(termostato_defeituoso(_, nao), [64]).
-
-facto_dispara_regras(bomba_agua_defeituosa(_, sim), [81]).
-facto_dispara_regras(bomba_agua_defeituosa(_, nao), [82]).
-
-facto_dispara_regras(falta_combustivel_ou_bomba_defeito(_, sim), [45]).
-facto_dispara_regras(falta_combustivel_ou_bomba_defeito(_, nao), [46]).
-
-facto_dispara_regras(filtro_combustivel_entupido(_, sim), [55]).
-facto_dispara_regras(filtro_combustivel_entupido(_, nao), [56]).
-
-facto_dispara_regras(injecao_combustivel_defeito(_, sim), [65]).
-facto_dispara_regras(injecao_combustivel_defeito(_, nao), [66]).
-
-facto_dispara_regras(velas_ignicao_defeito(_, sim), [83]).
-facto_dispara_regras(velas_ignicao_defeito(_, nao), [84]).
-
-facto_dispara_regras(sensores_defeituosos(_, sim), [91]).
-facto_dispara_regras(sensores_defeituosos(_, nao), [92]).
 
 facto_dispara_regras(barulho_anormal(_, sim), [35]).
 facto_dispara_regras(barulho_anormal(_, nao), [36]).
 
+facto_dispara_regras(ignicao_falhando(_, sim), [41]).
+facto_dispara_regras(ignicao_falhando(_, nao), [42]).
+
+facto_dispara_regras(radiador_ventoinha_defeito(_, sim), [43]).
+facto_dispara_regras(radiador_ventoinha_defeito(_, nao), [44]).
+
+facto_dispara_regras(falta_combustivel_ou_bomba_defeito(_, sim), [45]).
+facto_dispara_regras(falta_combustivel_ou_bomba_defeito(_, nao), [46]).
+
 facto_dispara_regras(barulho_no_motor(_, sim), [47]).
 facto_dispara_regras(barulho_no_motor(_, nao), [48]).
-
-facto_dispara_regras(correia_dentada_gasta(_, sim), [57]).
-facto_dispara_regras(correia_dentada_gasta(_, nao), [58]).
-
-facto_dispara_regras(amortecedores_gastos(_, sim), [76]).
-facto_dispara_regras(amortecedores_gastos(_, nao), [77]).
 
 facto_dispara_regras(dificuldade_travar(_, sim), [49]).
 facto_dispara_regras(dificuldade_travar(_, nao), [410]).
 
+facto_dispara_regras(sistema_seguranca_ativado(_, sim), [51]).
+facto_dispara_regras(sistema_seguranca_ativado(_, nao), [52]).
+
+facto_dispara_regras(fuga_arrefecimento(_, sim), [53]).
+facto_dispara_regras(fuga_arrefecimento(_, nao), [54]).
+
+facto_dispara_regras(filtro_combustivel_entupido(_, sim), [55]).
+facto_dispara_regras(filtro_combustivel_entupido(_, nao), [56]).
+
+facto_dispara_regras(correia_dentada_gasta(_, sim), [57]).
+facto_dispara_regras(correia_dentada_gasta(_, nao), [58]).
+
+facto_dispara_regras(barulho_suspensao_rodas(_, sim), [59]).
+facto_dispara_regras(barulho_suspensao_rodas(_, nao), [510]).
+
 facto_dispara_regras(pastilhas_travao_gastas(_, sim), [511]).
 facto_dispara_regras(pastilhas_travao_gastas(_, nao), [512]).
+
+facto_dispara_regras(problemas_caixa_velocidades(_, sim), [513]).
+facto_dispara_regras(problemas_caixa_velocidades(_, nao), [514]).
+
+facto_dispara_regras(fios_danificados(_, sim), [61]).
+facto_dispara_regras(fios_danificados(_, nao), [62]).
+
+facto_dispara_regras(termostato_defeituoso(_, sim), [63]).
+facto_dispara_regras(termostato_defeituoso(_, nao), [64]).
+
+facto_dispara_regras(injecao_combustivel_defeito(_, sim), [65]).
+facto_dispara_regras(injecao_combustivel_defeito(_, nao), [66]).
+
+facto_dispara_regras(problema_pneus_jantes_calcos(_, sim), [67]).
+facto_dispara_regras(problema_pneus_jantes_calcos(_, nao), [68]).
 
 facto_dispara_regras(discos_travao_gastos(_, sim), [69]).
 facto_dispara_regras(discos_travao_gastos(_, nao), [610]).
 
-
-facto_dispara_regras(nivel_fluido_travao(_, baixo), [85]).
-facto_dispara_regras(nivel_fluido_travao(_, alto), [86]).
-facto_dispara_regras(nivel_fluido_travao(_, normal), [87]).
-
-facto_dispara_regras(problemas_caixa_velocidades(_, sim), [513]).
-facto_dispara_regras(problemas_caixa_velocidades(_, nao), [514]).
+facto_dispara_regras(amortecedores_gastos(_, sim), [76]).
+facto_dispara_regras(amortecedores_gastos(_, nao), [77]).
 
 facto_dispara_regras(nivel_fluido_transmissao(_, baixo), [78]).
 facto_dispara_regras(nivel_fluido_transmissao(_, alto), [79]).
 facto_dispara_regras(nivel_fluido_transmissao(_, normal), [710]).
 
+facto_dispara_regras(bomba_agua_defeituosa(_, sim), [81]).
+facto_dispara_regras(bomba_agua_defeituosa(_, nao), [82]).
+
+facto_dispara_regras(velas_ignicao_defeito(_, sim), [83]).
+facto_dispara_regras(velas_ignicao_defeito(_, nao), [84]).
+
+facto_dispara_regras(nivel_fluido_travao(_, baixo), [85]).
+facto_dispara_regras(nivel_fluido_travao(_, alto), [86]).
+facto_dispara_regras(nivel_fluido_travao(_, normal), [87]).
+
 facto_dispara_regras(embraiagem_gasta(_, sim), [88]).
 facto_dispara_regras(embraiagem_gasta(_, nao), [89]).
 
+facto_dispara_regras(sensores_defeituosos(_, sim), [91]).
+facto_dispara_regras(sensores_defeituosos(_, nao), [92]).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Factos perguntaveis
 perguntavel(problemas(_, _)).
 perguntavel(liga(_, _)).
 perguntavel(bateria(_, _)).
-
 perguntavel(motor_arranque_defeito(_, _)).
 perguntavel(vai_abaixo(_, _)).
 perguntavel(ignicao_falhando(_, _)).
@@ -124,7 +129,10 @@ perguntavel(nivel_fluido_travao(_, _)).
 perguntavel(problemas_caixa_velocidades(_, _)).
 perguntavel(nivel_fluido_transmissao(_, _)).
 perguntavel(embraiagem_gasta(_, _)).
+perguntavel(barulho_suspensao_rodas(_, _)).
+perguntavel(problema_pneus_jantes_calcos(_, _)).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mapeamento de perguntas
 texto_pergunta(problemas(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O veiculo ~w tem algum problema?', [Veiculo]).
@@ -168,7 +176,23 @@ texto_pergunta(barulho_no_motor(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O barulho do veículo ~w vem do motor?', [Veiculo]).
 texto_pergunta(correia_dentada_gasta(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'A correia dentada do Veiculo ~w esta gasta?', [Veiculo]).
+texto_pergunta(barulho_suspensao_rodas(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O barulho na suspensão ou rodas do Veiculo ~w faz barulho?', [Veiculo]).
+texto_pergunta(problema_pneus_jantes_calcos(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w tem problema com pneus, jantes ou calços de travão?', [Veiculo]).
+texto_pergunta(amortecedores_gastos(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w tem amortecedores gastos ou bases de amortecedores gastas?', [Veiculo]).
+texto_pergunta(dificuldade_travar(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w apresenta dificuldade em travar?', [Veiculo]).
+texto_pergunta(problemas_caixa_velocidades(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w apresenta problemas na caixa de velocidade?', [Veiculo]).
+texto_pergunta(pastilhas_travao_gastas(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w apresenta as pastilhas de travão gastas?', [Veiculo]).
+texto_pergunta(discos_travao_gastos(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w apresenta discos de travão gastos?', [Veiculo]).
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define as opções válidas para as respostas
 opcoes_validas(problemas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(liga(_, _), [sim, nao, nao_sei]).
@@ -199,7 +223,8 @@ opcoes_validas(nivel_fluido_travao(_, _), [baixo, normal, alto]).
 opcoes_validas(problemas_caixa_velocidades(_, _), [sim, nao, nao_sei]).
 opcoes_validas(nivel_fluido_transmissao(_, _), [baixo, normal, alto]).
 opcoes_validas(embraiagem_gasta(_, _), [sim, nao, nao_sei]).
-
+opcoes_validas(barulho_suspensao_rodas(_, _), [sim, nao, nao_sei]).
+opcoes_validas(problema_pneus_jantes_calcos(_, _), [sim, nao, nao_sei]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -274,7 +299,7 @@ regra 35
 	
 regra 36
     se [barulho_anormal(Veiculo, nao)]
-    entao [cria_facto(proximo_teste(Veiculo, barulho_no_motor))].
+    entao [cria_facto(proximo_teste(Veiculo, dificuldade_travar))].
 	
 % Se a ignicao esta falhando
 regra 41
@@ -308,11 +333,15 @@ regra 47
 
 regra 48
     se [barulho_no_motor(Veiculo, nao)]
-    entao [cria_facto(proximo_teste(Veiculo, verifica_suspensao_rodas))].
+    entao [cria_facto(proximo_teste(Veiculo, barulho_suspensao_rodas))].
 
 regra 49
     se [dificuldade_travar(Veiculo, sim)]
-    entao [cria_facto(proximo_teste(Veiculo, verifica_sistema_travoes))].
+    entao [cria_facto(proximo_teste(Veiculo, pastilhas_travao_gastas))].
+	
+regra 410
+    se [dificuldade_travar(Veiculo, nao)]
+    entao [cria_facto(proximo_teste(Veiculo, problemas_caixa_velocidades))].
 
 regra 51
     se [sistema_seguranca_ativado(Veiculo, sim)]
@@ -349,6 +378,26 @@ regra 57
 regra 58
     se [correia_dentada_gasta(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, verifica_componentes_motor))].
+	
+regra 59
+    se [barulho_suspensao_rodas(Veiculo, sim)]
+    entao [cria_facto(proximo_teste(Veiculo, problema_pneus_jantes_calcos))].
+	
+regra 510
+    se [barulho_suspensao_rodas(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Sem barulhos anormais'))].
+	
+regra 511
+    se [pastilhas_travao_gastas(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Pastilhas de travao gastas'))].
+
+regra 512
+    se [pastilhas_travao_gastas(Veiculo, nao)]
+    entao [cria_facto(proximo_teste(Veiculo, discos_travao_gastos))].
+	
+regra 514
+    se [problemas_caixa_velocidades(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Nenhum problema identificado'))].
 
 regra 61
     se [fios_danificados(Veiculo, sim)]
@@ -376,7 +425,7 @@ regra 67
 
 regra 68
     se [problema_pneus_jantes_calcos(Veiculo, nao)]
-    entao [cria_facto(proximo_teste(Veiculo, verifica_amortecedores))].
+    entao [cria_facto(proximo_teste(Veiculo, amortecedores_gastos))].
 
 regra 69
     se [discos_travao_gastos(Veiculo, sim)]
@@ -389,6 +438,10 @@ regra 610
 regra 76
     se [amortecedores_gastos(Veiculo, sim)]
     entao [cria_facto(diagnostico(Veiculo, 'Amortecedores gastos'))].
+
+regra 77
+    se [amortecedores_gastos(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Consulta especialista'))].
 	
 regra 83
     se [velas_ignicao_defeito(Veiculo, sim)]
