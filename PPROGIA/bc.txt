@@ -24,8 +24,8 @@ facto_dispara_regras(motor_sobreaquece(_, nao), [34]).
 facto_dispara_regras(barulho_anormal(_, sim), [35]).
 facto_dispara_regras(barulho_anormal(_, nao), [36]).
 
-facto_dispara_regras(ignicao_falhando(_, sim), [41]).
-facto_dispara_regras(ignicao_falhando(_, nao), [42]).
+facto_dispara_regras(ignicao_falha(_, sim), [41]).
+facto_dispara_regras(ignicao_falha(_, nao), [42]).
 
 facto_dispara_regras(radiador_ventoinha_defeito(_, sim), [43]).
 facto_dispara_regras(radiador_ventoinha_defeito(_, nao), [44]).
@@ -97,8 +97,8 @@ facto_dispara_regras(sensores_defeituosos(_, nao), [92]).
 facto_dispara_regras(servofreio(_, sim), [96]).
 facto_dispara_regras(servofreio(_, nao), [97]).
 
-facto_dispara_regras(sistemaABS(_, sim), [103]).
-facto_dispara_regras(sistemaABS(_, nao), [104]).
+facto_dispara_regras(sistema_ABS(_, sim), [103]).
+facto_dispara_regras(sistema_ABS(_, nao), [104]).
 
 facto_dispara_regras(alternador_defeito(_, sim), [72]).
 facto_dispara_regras(alternador_defeito(_, nao), [721]).
@@ -121,7 +121,7 @@ perguntavel(liga(_, _)).
 perguntavel(bateria(_, _)).
 perguntavel(motor_arranque_defeito(_, _)).
 perguntavel(vai_abaixo(_, _)).
-perguntavel(ignicao_falhando(_, _)).
+perguntavel(ignicao_falha(_, _)).
 perguntavel(sistema_seguranca_ativado(_, _)).
 perguntavel(fios_danificados(_, _)).
 perguntavel(motor_sobreaquece(_, _)).
@@ -148,7 +148,7 @@ perguntavel(embraiagem_gasta(_, _)).
 perguntavel(barulho_suspensao_rodas(_, _)).
 perguntavel(problema_pneus_jantes_calcos(_, _)).
 perguntavel(servofreio(_, _)).
-perguntavel(sistemaABS(_, _)).
+perguntavel(sistema_ABS(_, _)).
 perguntavel(alternador_defeito(_, _)).
 perguntavel(compressor_AC(_, _)).
 perguntavel(tensores(_, _)).
@@ -157,91 +157,95 @@ perguntavel(sistema_escape(_, _)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mapeamento de perguntas
-texto_pergunta(problemas(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O veiculo ~w tem algum problema?', [Veiculo]).
-texto_pergunta(liga(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O veiculo ~w liga?', [Veiculo]).
-texto_pergunta(bateria(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Qual a bateria do veiculo ~w?', [Veiculo]).
-texto_pergunta(motor_arranque_defeito(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Motor de arranque do veículo ~w está com defeito?', [Veiculo]).
-texto_pergunta(ignicao_falhando(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'A ignição do veículo ~w está falhando?', [Veiculo]).
-texto_pergunta(sistema_seguranca_ativado(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O sistema de segurança do veículo ~w está ativado?', [Veiculo]).
-texto_pergunta(fios_danificados(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Os fios ou cabos do veículo ~w estão danificados ou em curto-circuito?', [Veiculo]).
-texto_pergunta(motor_sobreaquece(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O motor do veículo ~w está sobreaquecendo?', [Veiculo]).
-texto_pergunta(radiador_ventoinha_defeito(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O radiador ou a ventoinha do veículo ~w está com defeito?', [Veiculo]).
-texto_pergunta(fuga_arrefecimento(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Há alguma fuga no sistema de arrefecimento do veículo ~w?', [Veiculo]).
-texto_pergunta(termostato_defeituoso(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O termostato do veículo ~w está com defeito?', [Veiculo]).
-texto_pergunta(bomba_agua_defeituosa(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'A bomba de água do veículo ~w está com defeito?', [Veiculo]).
-texto_pergunta(falta_combustivel_ou_bomba_defeito(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O veículo ~w está sem combustível ou a bomba de combustível está com defeito?', [Veiculo]).
-texto_pergunta(filtro_combustivel_entupido(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O filtro de combustível do veículo ~w está entupido?', [Veiculo]).
-texto_pergunta(injecao_combustivel_defeito(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O sistema de injeção de combustível do veículo ~w está com defeito?', [Veiculo]).
-texto_pergunta(velas_ignicao_defeito(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'As velas de ignição do veículo ~w estão com defeito?', [Veiculo]).
-texto_pergunta(sensores_defeituosos(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Algum sensor do motor do veículo ~w está com defeito?', [Veiculo]).	
-texto_pergunta(vai_abaixo(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O veículo ~w vai abaixo depois de ligar?', [Veiculo]).
-texto_pergunta(barulho_anormal(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O veículo ~w faz barulho anormal?', [Veiculo]).
-texto_pergunta(barulho_no_motor(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O barulho do veículo ~w vem do motor?', [Veiculo]).
-texto_pergunta(correia_dentada_gasta(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'A correia dentada do Veiculo ~w esta gasta?', [Veiculo]).
-texto_pergunta(barulho_suspensao_rodas(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O barulho na suspensão ou rodas do Veiculo ~w faz barulho?', [Veiculo]).
-texto_pergunta(problema_pneus_jantes_calcos(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w tem problema com pneus, jantes ou calços de travão?', [Veiculo]).
-texto_pergunta(amortecedores_gastos(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w tem amortecedores gastos ou bases de amortecedores gastas?', [Veiculo]).
-texto_pergunta(dificuldade_travar(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w apresenta dificuldade em travar?', [Veiculo]).
-texto_pergunta(problemas_caixa_velocidades(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w apresenta problemas na caixa de velocidade?', [Veiculo]).
-texto_pergunta(pastilhas_travao_gastas(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w apresenta as pastilhas de travão gastas?', [Veiculo]).
-texto_pergunta(discos_travao_gastos(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w apresenta discos de travão gastos?', [Veiculo]).
-texto_pergunta(fluido_transmissao(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Qual é o nivel do fluido da caixa de velocidade que o Veiculo ~w apresenta?', [Veiculo]).
-texto_pergunta(embraiagem_gasta(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'A embraiagem do Veiculo ~w apresenta sinais de desgaste ou de patinar?', [Veiculo]).
-texto_pergunta(fluido_travao(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Qual é o nivel do fluido dos travoes do Veiculo ~w?', [Veiculo]).
-texto_pergunta(servofreio(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w tem problema no servofreio?', [Veiculo]).
-texto_pergunta(sistemaABS(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O Veiculo ~w tem problema no sistema de ABS?', [Veiculo]).
-texto_pergunta(alternador_defeito(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O alternador do Veiculo ~w tem defeito?', [Veiculo]).
-texto_pergunta(compressor_AC(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'O compressor de AC do Veiculo ~w tem defeito?', [Veiculo]).
-texto_pergunta(tensores(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Os tensores do Veiculo ~w tem defeito?', [Veiculo]).
-texto_pergunta(oleo_motor(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), 'Qual e o nivel de oleo do motor do Veiculo ~w?', [Veiculo]).
-texto_pergunta(sistema_escape(Veiculo, _), Pergunta) :-
-    format(atom(Pergunta), '0 Veiculo ~w tem problema no sistema de escape?', [Veiculo]).
+pergunta(FactoPergunta,Pergunta):-
+    carro_selecionado(Carro),
+    texto_pergunta(FactoPergunta, Pergunta, Carro).
+
+texto_pergunta(problemas(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w tem algum problema?', [Carro]).
+texto_pergunta(liga(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w liga?', [Carro]).
+texto_pergunta(bateria(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Qual a bateria do veiculo ~w?', [Carro]).
+texto_pergunta(motor_arranque_defeito(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Motor de arranque do veículo ~w está com defeito?', [Carro]).
+texto_pergunta(ignicao_falha(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'A ignição do veículo ~w está falhando?', [Carro]).
+texto_pergunta(sistema_seguranca_ativado(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O sistema de segurança do veículo ~w está ativado?', [Carro]).
+texto_pergunta(fios_danificados(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Os fios ou cabos do veículo ~w estão danificados ou em curto-circuito?', [Carro]).
+texto_pergunta(motor_sobreaquece(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O motor do veículo ~w está sobreaquecendo?', [Carro]).
+texto_pergunta(radiador_ventoinha_defeito(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O radiador ou a ventoinha do veículo ~w está com defeito?', [Carro]).
+texto_pergunta(fuga_arrefecimento(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Há alguma fuga no sistema de arrefecimento do veículo ~w?', [Carro]).
+texto_pergunta(termostato_defeituoso(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O termostato do veículo ~w está com defeito?', [Carro]).
+texto_pergunta(bomba_agua_defeituosa(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'A bomba de água do veículo ~w está com defeito?', [Carro]).
+texto_pergunta(falta_combustivel_ou_bomba_defeito(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veículo ~w está sem combustível ou a bomba de combustível está com defeito?', [Carro]).
+texto_pergunta(filtro_combustivel_entupido(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O filtro de combustível do veículo ~w está entupido?', [Carro]).
+texto_pergunta(injecao_combustivel_defeito(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O sistema de injeção de combustível do veículo ~w está com defeito?', [Carro]).
+texto_pergunta(velas_ignicao_defeito(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'As velas de ignição do veículo ~w estão com defeito?', [Carro]).
+texto_pergunta(sensores_defeituosos(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Algum sensor do motor do veículo ~w está com defeito?', [Carro]).
+texto_pergunta(vai_abaixo(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veículo ~w vai abaixo depois de ligar?', [Carro]).
+texto_pergunta(barulho_anormal(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veículo ~w faz barulho anormal?', [Carro]).
+texto_pergunta(barulho_no_motor(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O barulho do veículo ~w vem do motor?', [Carro]).
+texto_pergunta(correia_dentada_gasta(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'A correia dentada do veiculo ~w esta gasta?', [Carro]).
+texto_pergunta(barulho_suspensao_rodas(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O barulho na suspensão ou rodas do veiculo ~w faz barulho?', [Carro]).
+texto_pergunta(problema_pneus_jantes_calcos(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w tem problema com pneus, jantes ou calços de travão?', [Carro]).
+texto_pergunta(amortecedores_gastos(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w tem amortecedores gastos ou bases de amortecedores gastas?', [Carro]).
+texto_pergunta(dificuldade_travar(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w apresenta dificuldade em travar?', [Carro]).
+texto_pergunta(problemas_caixa_velocidades(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w apresenta problemas na caixa de velocidade?', [Carro]).
+texto_pergunta(pastilhas_travao_gastas(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w apresenta as pastilhas de travão gastas?', [Carro]).
+texto_pergunta(discos_travao_gastos(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w apresenta discos de travão gastos?', [Carro]).
+texto_pergunta(fluido_transmissao(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Qual é o nivel do fluido da caixa de velocidade que o veiculo ~w apresenta?', [Carro]).
+texto_pergunta(embraiagem_gasta(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'A embraiagem do veiculo ~w apresenta sinais de desgaste ou de patinar?', [Carro]).
+texto_pergunta(fluido_travao(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Qual é o nivel do fluido dos travoes do veiculo ~w?', [Carro]).
+texto_pergunta(servofreio(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w tem problema no servofreio?', [Carro]).
+texto_pergunta(sistema_ABS(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O veiculo ~w tem problema no sistema de ABS?', [Carro]).
+texto_pergunta(alternador_defeito(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O alternador do veiculo ~w tem defeito?', [Carro]).
+texto_pergunta(compressor_AC(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'O compressor de AC do veiculo ~w tem defeito?', [Carro]).
+texto_pergunta(tensores(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Os tensores do veiculo ~w tem defeito?', [Carro]).
+texto_pergunta(oleo_motor(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), 'Qual e o nivel de oleo do motor do veiculo ~w?', [Carro]).
+texto_pergunta(sistema_escape(_, _), Pergunta, Carro) :-
+    format(atom(Pergunta), '0 veiculo ~w tem problema no sistema de escape?', [Carro]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define as opções válidas para as respostas
 opcoes_validas(problemas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(liga(_, _), [sim, nao, nao_sei]).
-opcoes_validas(bateria(_, _), Valor).
+opcoes_validas(bateria(_, _), _).
 opcoes_validas(motor_arranque_defeito(_, _), [sim, nao, nao_sei]).
-opcoes_validas(ignicao_falhando(_, _), [sim, nao, nao_sei]).
+opcoes_validas(ignicao_falha(_, _), [sim, nao, nao_sei]).
 opcoes_validas(sistema_seguranca_ativado(_, _), [sim, nao, nao_sei]).
 opcoes_validas(fios_danificados(_, _), [sim, nao, nao_sei]).
 opcoes_validas(vai_abaixo(_, _), [sim, nao, nao_sei]).
@@ -262,19 +266,19 @@ opcoes_validas(amortecedores_gastos(_, _), [sim, nao, nao_sei]).
 opcoes_validas(dificuldade_travar(_, _), [sim, nao, nao_sei]).
 opcoes_validas(pastilhas_travao_gastas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(discos_travao_gastos(_, _), [sim, nao, nao_sei]).
-opcoes_validas(fluido_travao(_, _), [Valor]).
+opcoes_validas(fluido_travao(_, _), _).
 opcoes_validas(problemas_caixa_velocidades(_, _), [sim, nao, nao_sei]).
-opcoes_validas(fluido_transmissao(_, _), Valor).
+opcoes_validas(fluido_transmissao(_, _), _).
 opcoes_validas(embraiagem_gasta(_, _), [sim, nao, nao_sei]).
 opcoes_validas(barulho_suspensao_rodas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(problema_pneus_jantes_calcos(_, _), [sim, nao, nao_sei]).
 opcoes_validas(servofreio(_, _), [sim, nao, nao_sei]).
-opcoes_validas(sistemaABS(_, _), [sim, nao, nao_sei]).
+opcoes_validas(sistema_ABS(_, _), [sim, nao, nao_sei]).
 opcoes_validas(alternador_defeito(_, _), [sim, nao, nao_sei]).
 opcoes_validas(compressor_AC(_, _), [sim, nao, nao_sei]).
 opcoes_validas(tensores(_, _), [sim, nao, nao_sei]).
-opcoes_validas(oleo_motor(_, _), [Valor]).
-opcoes_validas(sistema_escape(_, _), [Valor]).
+opcoes_validas(oleo_motor(_, _), _).
+opcoes_validas(sistema_escape(_, _), _).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -302,7 +306,7 @@ regra 11
 % Se o carro apresenta algum problema então temos de verificar Se o carro liga
 regra 2
 	se [problemas(Veiculo,nao)]
-	entao [cria_facto(diagnostico(Veiculo,'Nenhum problema identificado'))].
+	entao [cria_facto(diagnostico(Veiculo,'Nenhum problema identificado.')), cria_facto(solucao(Veiculo,'Nao ha necessidade de apresentar solucao.'))].
 
 % Se o carro liga vamos verificar se o carro vai abaixo
 regra 12
@@ -312,311 +316,382 @@ regra 12
 % Se o carro está com bateria fraca ou sem carga
 regra 21
     se [avalia(bateria(Veiculo,<,'Min'))]
-	entao [cria_facto(diagnostico(Veiculo,'Bateria com defeito ou sem carga.'))].
+	entao [cria_facto(diagnostico(Veiculo,'Bateria com defeito ou sem carga.')), cria_facto(solucao(Veiculo,'Substituir ou recarregar a bateria.'))].
 
 % Se o carro NAO esta com bateria fraca ou sem carga
 regra 22
     se [avalia(bateria(Veiculo,>=,'Min'))]
 	entao [cria_facto(proximo_teste(Veiculo, motor_arranque_defeito))].
 
+% Se o carro vai abaixo
 regra 23
     se [vai_abaixo(Veiculo, sim)]
     entao [cria_facto(proximo_teste(Veiculo, motor_sobreaquece))].
 
+% Se o carro NAO vai abaixo
 regra 24
     se [vai_abaixo(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, barulho_anormal))].
 
+% Se o motor de arranque esta com defeito
 regra 31
     se [motor_arranque_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Falha no motor de arranque'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Falha no motor de arranque.')), cria_facto(solucao(Veiculo,'Substituir motor de arranque.'))].
 
+% Se o motor de arranque NAO esta com defeito
 regra 32
     se [motor_arranque_defeito(Veiculo, nao)]
-    entao [cria_facto(proximo_teste(Veiculo, ignicao_falhando))].
+    entao [cria_facto(proximo_teste(Veiculo, ignicao_falha))].
 
+% Se o motor sobreaquece
 regra 33
     se [motor_sobreaquece(Veiculo, sim)]
     entao [cria_facto(proximo_teste(Veiculo, radiador_ventoinha_defeito))].
 
+% Se o motor NAO sobreaquece
 regra 34
     se [motor_sobreaquece(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, falta_combustivel_ou_bomba_defeito))].
-	
+
+% Se o carro faz barulho anormal
 regra 35
     se [barulho_anormal(Veiculo, sim)]
     entao [cria_facto(proximo_teste(Veiculo, barulho_no_motor))].
-	
+
+% Se o carro NAO faz barulho anormal
 regra 36
     se [barulho_anormal(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, dificuldade_travar))].
 	
-% Se a ignicao esta falhando
+% Se a ignicao esta a falhar
 regra 41
-    se [ignicao_falhando(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Sistema de ignição com defeito'))].
+    se [ignicao_falha(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Sistema de ignição com defeito.')), cria_facto(solucao(Veiculo,'Verificar chave de ignição, fusiveis, conectores e verificacao de alimentacao de combustivel (pressao de combustivel).'))].
 
-% Se a ignicao NAO esta falhando
+% Se a ignicao NAO esta a falhar
 regra 42
-    se [ignicao_falhando(Veiculo, nao)]
+    se [ignicao_falha(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, sistema_seguranca_ativado))].
 
+% Se o radiador ou ventoinha esta com defeito
 regra 43
     se [radiador_ventoinha_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Radiador ou ventoinha com defeito'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Problema no radiador ou ventoinha.')), cria_facto(solucao(Veiculo, 'Substituir radiador/ventoinha.'))].
 
+% Se o radiador ou ventoinha NAO esta com defeito
 regra 44
     se [radiador_ventoinha_defeito(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, fuga_arrefecimento))].
 
+% Se o carro esta sem combustivel ou a bomba de combustivel esta com defeito
 regra 45
     se [falta_combustivel_ou_bomba_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Falta de combustível ou bomba de combustível com defeito'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Falta de combustível ou bomba de combustível com defeito')), cria_facto(solucao(Veiculo, 'Reabastecer ou substituir a bomba de combustivel.'))].
 
+% Se o carro NAO esta sem combustivel ou a bomba de combustivel NAO esta com defeito
 regra 46
     se [falta_combustivel_ou_bomba_defeito(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, filtro_combustivel_entupido))].
 
+% Se o carro faz barulho no motor
 regra 47
     se [barulho_no_motor(Veiculo, sim)]
     entao [cria_facto(proximo_teste(Veiculo, correia_dentada_gasta))].
 
+% Se o carro NAO faz barulho no motor
 regra 48
     se [barulho_no_motor(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, barulho_suspensao_rodas))].
 
+% Se o carro apresenta dificuldade em travar
 regra 49
     se [dificuldade_travar(Veiculo, sim)]
     entao [cria_facto(proximo_teste(Veiculo, pastilhas_travao_gastas))].
-	
+
+% Se o carro NAO apresenta dificuldade em travar
 regra 410
     se [dificuldade_travar(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, problemas_caixa_velocidades))].
 
+% Se o sistema de seguranca esta ativado
 regra 51
     se [sistema_seguranca_ativado(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Sistema de segurança ativado'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Sistema de segurança ativado.')), cria_facto(solucao(Veiculo, 'Desactivar sistema de seguranca.'))].
 
+% Se o sistema de seguranca NAO esta ativado
 regra 52
     se [sistema_seguranca_ativado(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, fios_danificados))].
 
-regra 62
-    se [fios_danificados(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
-
+% Se o sistema de arrefecimento esta com fuga
 regra 53
     se [fuga_arrefecimento(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Fuga no sistema de arrefecimento'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Fuga no sistema de arrefecimento.')), cria_facto(solucao(Veiculo, 'Reparar fuga e completar fluido.'))].
 
+% Se o sistema de arrefecimento NAO esta com fuga
 regra 54
     se [fuga_arrefecimento(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, termostato_defeituoso))].
 
+% Se o filtro de combustivel esta entupido
 regra 55
     se [filtro_combustivel_entupido(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Filtro de combustível entupido'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Filtro de combustível entupido.')), cria_facto(solucao(Veiculo, 'Substituir filtro de combustivel.'))].
 
+% Se o filtro de combustivel NAO esta entupido
 regra 56
     se [filtro_combustivel_entupido(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, injecao_combustivel_defeito))].
 
+% Se a correia dentada esta gasta
 regra 57
     se [correia_dentada_gasta(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Correia dentada gasta'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Correia dentada gasta.')), cria_facto(solucao(Veiculo, 'Substituir kit de distribuicao.'))].
 
+% Se a correia dentada NAO esta gasta
 regra 58
     se [correia_dentada_gasta(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, bomba_agua_defeituosa))].
-	
+
+% Se o carro faz barulho na suspensao ou rodas
 regra 59
     se [barulho_suspensao_rodas(Veiculo, sim)]
     entao [cria_facto(proximo_teste(Veiculo, problema_pneus_jantes_calcos))].
-	
+
+% Se o carro NAO faz barulho na suspensao ou rodas
 regra 510
     se [barulho_suspensao_rodas(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Sem barulhos anormais'))].
-	
+    entao [cria_facto(diagnostico(Veiculo, 'Sem barulhos anormais.')), cria_facto(solucao(Veiculo, 'Nao ha necessidade de apresentar solucao'))].
+
+% Se as pastilhas de travao estão gastas
 regra 511
     se [pastilhas_travao_gastas(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Pastilhas de travao gastas'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Pastilhas de travao gastas.')), cria_facto(solucao(Veiculo, 'Substituir pastilhas de travao.'))].
 
+% Se as pastilhas de travao NAO estão gastas
 regra 512
     se [pastilhas_travao_gastas(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, discos_travao_gastos))].
-	
+
+% Se o carro apresenta problemas na caixa de velocidades
 regra 513	
     se [problemas_caixa_velocidades(Veiculo, sim)]
 	entao [cria_facto(proximo_teste(Veiculo, fluido_transmissao))].
-	
+
+% Se o carro NAO apresenta problemas na caixa de velocidades
 regra 514
     se [problemas_caixa_velocidades(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Nenhum problema identificado'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Nenhum problema identificado.')), cria_facto(solucao(Veiculo, 'Nao ha necessidade de apresentar solucao.'))].
 
+% Se os fios estao danificados
 regra 61
     se [fios_danificados(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Fios com corte ou curto-circuito'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Fios com corte ou curto-circuito.')), cria_facto(solucao(Veiculo, 'Reparar ou substituir cabo condutor de energia eletrica.'))].
 
+% Se os fios estao danificados
+regra 62
+    se [fios_danificados(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessaria.')), cria_facto(solucao(Veiculo, 'Seguir protocolo de reparacao da marca, consultar especialista.'))].
+
+% Se o termostato esta com defeito
 regra 63
     se [termostato_defeituoso(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Termostato com defeito'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Termostato com defeito.')), cria_facto(solucao(Veiculo, 'Substituir termostato.'))].
 
+% Se o termostato NAO esta com defeito
 regra 64
     se [termostato_defeituoso(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, bomba_agua_defeituosa))].
 
+% Se o sistema de injecao de combustivel esta com defeito
 regra 65
     se [injecao_combustivel_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Injeção de combustível com defeito'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Injeção de combustível com defeito.')), cria_facto(solucao(Veiculo, 'Limpar ou substituir injetores.'))].
 
+% Se o sistema de injecao de combustivel NAO esta com defeito
 regra 66
     se [injecao_combustivel_defeito(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, velas_ignicao_defeito))].
 
+% Se o carro apresenta problemas nos pneus, jantes ou calcos de travão
 regra 67
     se [problema_pneus_jantes_calcos(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Problema nos pneus, jantes ou calços de travão'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Problema nos pneus, jantes ou calços de travao.')), cria_facto(solucao(Veiculo, 'Reparar ou substituir pneus, jantes ou calços de travão conforme necessario.'))].
 
+% Se o carro NAO apresenta problemas nos pneus, jantes ou calcos de travão
 regra 68
     se [problema_pneus_jantes_calcos(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, amortecedores_gastos))].
 
+% Se os discos de travão estão gastos
 regra 69
     se [discos_travao_gastos(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Discos de travão gastos'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Discos de travão gastos.')), cria_facto(solucao(Veiculo, 'Substituir discos de travao.'))].
 
+% Se os discos de travão NAO estão gastos
 regra 610
     se [discos_travao_gastos(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, fluido_travao))].
 
+% Se o sistema de ABS esta com defeito
 regra 72
     se [alternador_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Alternador com defeito'))].
-	
+    entao [cria_facto(diagnostico(Veiculo, 'Alternador com defeito.')), cria_facto(solucao(Veiculo, 'Substituir alternador.'))].
+
+% Se o sistema de ABS NAO esta com defeito
 regra 721
     se [alternador_defeito(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, compressor_AC))].
-	
+
+% Se o compressor de AC esta com defeito
 regra 73
     se [compressor_AC(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Compressor de AC com defeito'))].
-	
+    entao [cria_facto(diagnostico(Veiculo, 'Compressor de AC com defeito.')), cria_facto(solucao(Veiculo, 'Substituir compressor de ar condicionado.'))].
+
+% Se o compressor de AC NAO esta com defeito
 regra 731
     se [compressor_AC(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, tensores))].
-	
+
+% Se os tensores estao com defeito
 regra 74
     se [tensores(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Falha nos tensores da correia'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Falha nos tensores da correia.')), cria_facto(solucao(Veiculo, 'Substituir tensores da correia.'))].
 
+% Se os tensores NAO estao com defeito
 regra 75
     se [tensores(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, oleo_motor))].
 
+% Se os amortecedores estao gastos
 regra 76
     se [amortecedores_gastos(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Amortecedores gastos'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Amortecedores gastos.')), cria_facto(solucao(Veiculo, 'Substituir kit de amortecedores.'))].
 
+% Se os amortecedores NAO estao gastos
 regra 77
     se [amortecedores_gastos(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Consulta especialista'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Problema nao identificado.')), cria_facto(solucao(Veiculo, 'Consultar especialista.'))].
 
+% Se o nivel do fluido da caixa de velocidade esta fora dos limites
 regra 78
     se [avalia(fluido_transmissao(Veiculo,<,'Min'))]
-	entao [cria_facto(diagnostico(Veiculo,'Nível de fluido de transmissão baixo'))].
+	entao [cria_facto(diagnostico(Veiculo,'Nível de fluido de transmissao baixo.')), cria_facto(solucao(Veiculo, 'Completar fluido de transmissao e verificar possiveis fugas.'))].
 
+% Se o nivel do fluido da caixa de velocidade esta fora dos limites
 regra 79
     se [avalia(fluido_transmissao(Veiculo,>,'Max'))]
-	entao [cria_facto(diagnostico(Veiculo,'Excesso de fluido de transmissão'))].
+	entao [cria_facto(diagnostico(Veiculo,'Excesso de fluido de transmissao.')), cria_facto(solucao(Veiculo, 'Ajustar fluido de transmissao.'))].
 
+% Se o nivel do fluido da caixa de velocidade esta dentro dos limites
 regra 710
     se [avalia(fluido_transmissao(Veiculo,>,'Min')) e avalia(fluido_transmissao(Veiculo,<,'Max'))]
 	entao [cria_facto(proximo_teste(Veiculo, embraiagem_gasta))].
-	
+
+% Se a bomba de agua esta com defeito
 regra 81
     se [bomba_agua_defeituosa(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Falha na bomba de agua'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Falha na bomba de agua.')), cria_facto(solucao(Veiculo, 'Substituir bomba de agua.'))].
 
+% Se a bomba de agua NAO esta com defeito e a correia dentada NAO esta gasta
 regra 821
     se [bomba_agua_defeituosa(Veiculo, nao) e correia_dentada_gasta(Veiculo,nao)]
     entao [cria_facto(proximo_teste(Veiculo, alternador_defeito))].
-	
+
+% Se a bomba de agua NAO esta com defeito e o termoestato NAO esta com defeito
 regra 822
     se [bomba_agua_defeituosa(Veiculo, nao) e termostato_defeituoso(_, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessaria.')), cria_facto(solucao(Veiculo, 'Consultar especialista.'))].
 
+% Se as velas de ignicao estao com defeito
 regra 83
     se [velas_ignicao_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Falha nas velas de ignição'))].
-	
+    entao [cria_facto(diagnostico(Veiculo, 'Falha nas velas de ignição')), cria_facto(solucao(Veiculo, 'Substituir velas de ignicao.'))].
+
+% Se as velas de ignicao NAO estao com defeito
 regra 84
     se [velas_ignicao_defeito(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, sensores_defeituosos))].
 
+% Se o nivel do fluido dos travoes esta fora dos limites
 regra 85
     se [avalia(fluido_travao(Veiculo,<,'Min'))]
-	entao [cria_facto(diagnostico(Veiculo,'Nível de fluido insuficiente'))].
+	entao [cria_facto(diagnostico(Veiculo,'Nivel de fluido insuficiente.')), cria_facto(solucao(Veiculo, 'Completar fluido de travão e corrigir possiveis fugas.'))].
 
+% Se o nivel do fluido dos travoes esta fora dos limites
 regra 86
     se [avalia(fluido_travao(Veiculo,>,'Max'))]
-	entao [cria_facto(diagnostico(Veiculo,'Excesso de fluido de travão'))].
+	entao [cria_facto(diagnostico(Veiculo,'Excesso de fluido de travao.')), cria_facto(solucao(Veiculo, 'Ajustar nivel de fluido de travao.'))].
 
+% Se o nivel do fluido dos travoes esta dentro dos limites
 regra 87
     se [avalia(fluido_travao(Veiculo,>,'Min')) e avalia(fluido_travao(Veiculo,<,'Max'))]
 	entao [cria_facto(proximo_teste(Veiculo, servofreio))].
 
+% Se a embraiagem esta gasta
 regra 88
     se [embraiagem_gasta(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Embraiagem com desgaste excessivo ou volante bimassa defeituoso'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Embraiagem com desgaste excessivo ou volante bimassa defeituoso.')), cria_facto(solucao(Veiculo, 'Substituir kit de embraiagem.'))].
 
+% Se a embraiagem NAO esta gasta
 regra 89
     se [embraiagem_gasta(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Verificacao adicional necessaria.')), cria_facto(solucao(Veiculo, 'Consultar especialista.'))].
 
+% Se os sensores do motor estao com defeito
 regra 91
 	se [sensores_defeituosos(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Sensor dor motor com falha'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Sensor dor motor com falha.')), cria_facto(solucao(Veiculo, 'Verificar e substituir sensores.'))].
 
+% Se os sensores do motor NAO estao com defeito
 regra 92
 	se [sensores_defeituosos(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Problema indeterminado'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Problema indeterminado.')), cria_facto(solucao(Veiculo, 'Consultar especialista.'))].
 
-
+% Se o nivel de oleo do motor esta fora dos limites
 regra 93
     se [avalia(oleo_motor(Veiculo,<,'Min'))]
-	entao [cria_facto(diagnostico(Veiculo,'Nível de óleo insuficiente'))].
+	entao [cria_facto(diagnostico(Veiculo,'Nivel de oleo insuficiente.')), cria_facto(solucao(Veiculo, 'Completar nivel de oleo.'))].
 
+% Se o nivel de oleo do motor esta fora dos limites
 regra 94
     se [avalia(oleo_motor(Veiculo,>,'Max'))]
-	entao [cria_facto(diagnostico(Veiculo,'Excesso de óleo'))].
+	entao [cria_facto(diagnostico(Veiculo,'Excesso de oleo.')), cria_facto(solucao(Veiculo, 'Retirar excesso de oleo.'))].
 
+% Se o nivel de oleo do motor esta dentro dos limites
 regra 95
     se [avalia(oleo_motor(Veiculo,>,'Min')) e avalia(oleo_motor(Veiculo,<,'Max'))]
 	entao [cria_facto(proximo_teste(Veiculo, sistema_escape))].
 
+% Se o servofreio esta com defeito
 regra 96
 	se [servofreio(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Servofreio defeituoso'))].
-	
+    entao [cria_facto(diagnostico(Veiculo, 'Servofreio defeituoso.')), cria_facto(solucao(Veiculo, 'Reparar ou substituir servofreio.'))].
+
+% Se o servofreio NAO esta com defeito
 regra 97
 	se [servofreio(Veiculo, nao)]
-    entao [cria_facto(proximo_teste(Veiculo, sistemaABS))].
+    entao [cria_facto(proximo_teste(Veiculo, sistema_ABS))].
 
+% Se o sistema de escape esta com defeito
 regra 101
 	se [sistema_escape(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Vazamento ou bloqueio no sistema de escape'))].
-	
+    entao [cria_facto(diagnostico(Veiculo, 'Vazamento ou bloqueio no sistema de escape.')), cria_facto(solucao(Veiculo, 'Reparar ou substituir sistema de escape.'))].
+
+% Se o sistema de escape NAO esta com defeito
 regra 102
 	se [sistema_escape(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Verificacao adicional necessaria.')), cria_facto(solucao(Veiculo, 'Consultar especialista.'))].
 
+% Se o sistema de ABS esta com defeito
 regra 103
-	se [sistemaABS(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Sistema ABS com defeito'))].
-	
+	se [sistema_ABS(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Sistema ABS com defeito.')), cria_facto(solucao(Veiculo, 'Verificar e reparar sistema ABS com consulta de especialista.'))].
+
+% Se o sistema de ABS NAO esta com defeito
 regra 104
-	se [sistemaABS(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Problema indeterminado'))].
+	se [sistema_ABS(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Problema indeterminado.')), cria_facto(solucao(Veiculo, 'Consultar especialista.'))].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Factos para carros

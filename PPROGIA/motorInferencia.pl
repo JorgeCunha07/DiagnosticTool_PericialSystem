@@ -1,7 +1,7 @@
-% Vers�o preparada para lidar com regras que contenham nega��o (nao)
+% Versao preparada para lidar com regras que contenham negacaoo (nao)
 % Metaconhecimento
 % Usar base de conhecimento veIculos2.txt
-% Explica��es como?(how?) e porque n�o?(whynot?)
+% Explicacoes como?(how?) e porque nao?(whynot?)
 
 :- op(220, xfx, entao).
 :- op(35, xfy, se).
@@ -14,6 +14,7 @@
 :- dynamic facto/2.
 :- dynamic ultimo_facto/1.
 :- dynamic factos_processados/1.
+:- dynamic carro_selecionado/1.
 
 :- consult('escolha_carro.pl').
 :- consult('bc.txt').
@@ -24,7 +25,7 @@ carrega_bc :-
     read(NBC),
     consult(NBC).
 
-% Iniciar o motor de infer�ncia
+% Iniciar o motor de inferencia
 % arranca_motor:- facto(N,Facto),
 %                facto_dispara_regras1(Facto, LRegras),
 %                dispara_regras(N, Facto, LRegras),
@@ -48,7 +49,7 @@ arranca_motor_loop.
 facto_dispara_regras1(Facto, LRegras) :-
     facto_dispara_regras(Facto, LRegras),
     !.
-% Caso em que o facto n�o origina o disparo de qualquer regra.
+% Caso em que o facto nao origina o disparo de qualquer regra.
 facto_dispara_regras1(_, []).
 
 % Disparar regras baseadas no facto
@@ -60,7 +61,7 @@ dispara_regras(N, Facto, [ID | LRegras]) :-
     member(N, LFactos),
     sort(LFactos, SortedLFactos),
     (   regra_disparadas(ID, SortedLFactos) ->
-		% Regra j� foi disparada com estas condicoes; ignor
+		% Regra ja foi disparada com estas condicoes; ignore
         true
     ;   
 		% Dispara a regra e registra que foi disparada com estas condicoes
@@ -75,7 +76,7 @@ dispara_regras(N, Facto, [_ | LRegras]) :-
 
 dispara_regras(_, _, []).
 
-% Verificar se o facto est� numa condi��o
+% Verificar se o facto esta numa condicao
 facto_esta_numa_condicao(F, [F e _]).
 facto_esta_numa_condicao(F, [avalia(F1) e _]) :- 
     F =.. [H, H1 | _],
@@ -137,10 +138,12 @@ concluir([cria_facto(F) | Y], ID, LFactos) :-
     !,
     cria_facto(F, ID, LFactos),
     concluir(Y, ID, LFactos).
+
 concluir([remove_facto(F) | Y], ID, LFactos) :-
     !,
     retirar_facto(F),
     concluir(Y, ID, LFactos).
+
 concluir([], _, _) :-
     !.
 
@@ -154,7 +157,7 @@ cria_facto(F, ID, LFactos) :-
     asserta(ultimo_facto(N)),
     assertz(justifica(N, ID, LFactos)),
     assertz(facto(N, F)),
-    write('Foi conclu�do o facto n� '), write(N), write(' -> '), write(F), nl, !.
+    write('Foi concluido o facto numero '), write(N), write(' -> '), write(F), nl, !.
 
 % Avaliar condicoes
 avalia(N, P) :-
@@ -175,23 +178,23 @@ compara(V1, >=, V) :- V1 >= V.
 compara(V1, =<, V) :- V1 =< V.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Visualiza��o da base de factos
+% Visualizacao da base de factos
 mostra_factos :-
     findall(N, facto(N, _), LFactos),
     escreve_factos(LFactos).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Gera��o de explica��es do tipo "Como"
+% Geracao de explicacoes do tipo "Como"
 como(N) :-
     ultimo_facto(Last),
     Last < N,
     !,
-    write('Essa conclus�o n�o foi tirada'), nl, nl.
+    write('Essa conclusao nao foi tirada'), nl, nl.
 como(N) :-
     justifica(N, ID, LFactos),
     !,
     facto(N, F),
-    write('Conclu� o facto n� '), write(N), write(' -> '), write(F), nl,
+    write('Conclui o facto numero '), write(N), write(' -> '), write(F), nl,
     write('pela regra '), write(ID), nl,
     write('por se ter verificado que:'), nl,
     escreve_factos(LFactos),
@@ -199,7 +202,7 @@ como(N) :-
     explica(LFactos).
 como(N) :-
     facto(N, F),
-    write('O facto n� '), write(N), write(' -> '), write(F), nl,
+    write('O facto numero '), write(N), write(' -> '), write(F), nl,
     write('foi conhecido inicialmente'), nl,
     write('********************************************************'), nl.
 
@@ -207,10 +210,10 @@ como(N) :-
 escreve_factos([I | R]) :-
     facto(I, F),
     !,
-    write('O facto n� '), write(I), write(' -> '), write(F), write(' � verdadeiro'), nl,
+    write('O facto numero '), write(I), write(' -> '), write(F), write(' e verdadeiro'), nl,
     escreve_factos(R).
 escreve_factos([I | R]) :-
-    write('A condi��o '), write(I), write(' � verdadeira'), nl,
+    write('A condicao '), write(I), write(' e verdadeira'), nl,
     escreve_factos(R).
 escreve_factos([]).
 
@@ -226,28 +229,28 @@ explica([]) :-
     write('********************************************************'), nl.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Gera��o de explica��es do tipo "Porque nao"
-% Exemplo: ?- whynot(classe(meu_ve�culo,ligeiro)).
+% Geracao de explicacoes do tipo "Porque nao"
+% Exemplo: ?- whynot(classe(meu_veiculo,ligeiro)).
 whynot(Facto) :-
     whynot(Facto, 1).
 
 whynot(Facto, _) :-
     facto(_, Facto),
     !,
-    write('O facto '), write(Facto), write(' n�o � falso!'), nl.
+    write('O facto '), write(Facto), write(' nao e falso!'), nl.
 whynot(Facto, Nivel) :-
     encontra_regras_whynot(Facto, LLPF),
     whynot1(LLPF, Nivel).
 whynot(nao Facto, Nivel) :-
     formata(Nivel),
     write('Porque:'), write(' O facto '), write(Facto),
-    write(' � verdadeiro'), nl.
+    write(' e verdadeiro'), nl.
 whynot(Facto, Nivel) :-
     formata(Nivel),
     write('Porque:'), write(' O facto '), write(Facto),
-    write(' n�o est� definido na base de conhecimento'), nl.
+    write(' nao esta definido na base de conhecimento'), nl.
 	
-%  As explica��es do whynot(Facto) devem considerar todas as regras que poderiam dar origem a conclus�o relativa ao facto Facto
+%  As explicacoes do whynot(Facto) devem considerar todas as regras que poderiam dar origem a conclusao relativa ao facto Facto
 encontra_regras_whynot(Facto, LLPF) :-
     findall(
         (ID, LPF),
@@ -296,26 +299,26 @@ encontra_premissas_falsas([nao X], [nao X]) :-
 encontra_premissas_falsas([X], [X]).
 encontra_premissas_falsas([]).
 
-% Explicar porque n�o
+% Explicar porque nao
 explica_porque_nao([], _).
 explica_porque_nao([nao avalia(X) | LPF], Nivel) :-
     !,
     formata(Nivel),
-    write('A condi��o nao '), write(X), write(' � falsa'), nl,
+    write('A condicao nao '), write(X), write(' e falsa'), nl,
     explica_porque_nao(LPF, Nivel).
 explica_porque_nao([avalia(X) | LPF], Nivel) :-
     !,
     formata(Nivel),
-    write('A condi��o '), write(X), write(' � falsa'), nl,
+    write('A condicao '), write(X), write(' e falsa'), nl,
     explica_porque_nao(LPF, Nivel).
 explica_porque_nao([P | LPF], Nivel) :-
     formata(Nivel),
-    write('A premissa '), write(P), write(' � falsa'), nl,
+    write('A premissa '), write(P), write(' e falsa'), nl,
     Nivel1 is Nivel + 1,
     whynot(P, Nivel1),
     explica_porque_nao(LPF, Nivel).
 
-% Formatar sa�da
+% Formatar saida
 formata(Nivel) :-
     Espacos is (Nivel - 1) * 5,
     tab(Espacos).
@@ -332,30 +335,33 @@ retirar_lista_factos([K1 | LK1]) :-
     retirar_facto(K1),
     retirar_lista_factos(LK1).
 
-% Predicado que inicia o processo de diagn�stico
+% Predicado que inicia o processo de diagnistico
 diagnostico :-
     retractall(factos_processados(_)),
     diagnostico_loop.
 
-% Loop que processa testes pendentes ou exibe o diagn�stico final
+% Loop que processa testes pendentes ou exibe o diagnistico final
 diagnostico_loop :-
     diagnostico_finalizado,
     !,
-    mostrar_diagnostico.
+    mostrar_diagnostico,
+    mostrar_solucao.
+
 diagnostico_loop :-
     problemas_pendentes,
     !,
     diag_problemas,
     ( arranca_motor -> true ; true ),
     diagnostico_loop.
-diagnostico_loop :-
-    write('N�o foi poss�vel chegar a um diagn�stico final.'), nl.
 
-% Verificar se um diagn�stico final foi alcan�ado
+diagnostico_loop :-
+    write('Nao foi possivel chegar a um diagnostico final.'), nl.
+
+% Verificar se um diagnostico final foi alcancado
 diagnostico_finalizado :-
     facto(_, diagnostico(_, _)).
 
-% Verificar se h� problemas pendentes
+% Verificar se ha problemas pendentes
 problemas_pendentes :-
     facto(_, proximo_teste(_, _)).
 
@@ -374,7 +380,7 @@ processar_testes([(Id, Veiculo, Teste) | Rest]) :-
 tratar_problema(Id, Veiculo, Teste) :-
     TesteTermo =.. [Teste, Veiculo, _],
     (perguntavel(TesteTermo) ->
-        texto_pergunta(TesteTermo, Pergunta),
+        pergunta(TesteTermo, Pergunta),
         opcoes_validas(TesteTermo, OpcoesValidas),
         format('~w ~w ', [Pergunta, OpcoesValidas]),
         repeat,
@@ -388,21 +394,21 @@ tratar_problema(Id, Veiculo, Teste) :-
             retract(facto(Id, proximo_teste(Veiculo, Teste))),
             !
         ;   
-            write('Resposta inv�lida. Por favor, responda com uma das op��es: '), write(OpcoesValidas), nl,
+            write('Resposta invalida. Por favor, responda com uma das opcoes: '), write(OpcoesValidas), nl,
             fail
         )
     ;
-        write('Teste n�o � pergunt�vel: '), write(Teste), nl
+        write('Teste nao e perguntavel: '), write(Teste), nl
     ).
 
-% Exibir o diagn�stico final
+% Exibir o diagnostico final
 mostrar_diagnostico :-
-    findall((Veiculo, Diagnostico), facto(_, diagnostico(Veiculo, Diagnostico)), Diagnosticos),
-    mostrar_diagnosticos(Diagnosticos).
+    facto(_, diagnostico(_, Diagnostico)),
+    carro_selecionado(Info),
+    format('Diagnostico para ~w: ~w~n', [Info, Diagnostico]).
 
-mostrar_diagnosticos([]).
-mostrar_diagnosticos([(Veiculo, Diagnostico) | Rest]) :-
-    format('Diagn�stico para ~w: ~w~n', [Veiculo, Diagnostico]),
-    mostrar_diagnosticos(Rest).
-
-
+% Exibir a solução final
+mostrar_solucao :-
+    facto(_, solucao(_, Solucao)),
+    carro_selecionado(Info),
+    format('Solucao para ~w: ~w~n', [Info, Solucao]).
