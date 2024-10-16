@@ -81,20 +81,38 @@ facto_dispara_regras(amortecedores_gastos(_, nao), [77]).
 facto_dispara_regras(fluido_transmissao(_, _), [78,79,710]).
 
 facto_dispara_regras(bomba_agua_defeituosa(_, sim), [81]).
-facto_dispara_regras(bomba_agua_defeituosa(_, nao), [82]).
+facto_dispara_regras(bomba_agua_defeituosa(_, nao), [821,822]).
 
 facto_dispara_regras(velas_ignicao_defeito(_, sim), [83]).
 facto_dispara_regras(velas_ignicao_defeito(_, nao), [84]).
 
-facto_dispara_regras(nivel_fluido_travao(_, baixo), [85]).
-facto_dispara_regras(nivel_fluido_travao(_, alto), [86]).
-facto_dispara_regras(nivel_fluido_travao(_, normal), [87]).
+facto_dispara_regras(fluido_travao(_, _), [85,86,87]).
 
 facto_dispara_regras(embraiagem_gasta(_, sim), [88]).
 facto_dispara_regras(embraiagem_gasta(_, nao), [89]).
 
 facto_dispara_regras(sensores_defeituosos(_, sim), [91]).
 facto_dispara_regras(sensores_defeituosos(_, nao), [92]).
+
+facto_dispara_regras(servofreio(_, sim), [96]).
+facto_dispara_regras(servofreio(_, nao), [97]).
+
+facto_dispara_regras(sistemaABS(_, sim), [103]).
+facto_dispara_regras(sistemaABS(_, nao), [104]).
+
+facto_dispara_regras(alternador_defeito(_, sim), [72]).
+facto_dispara_regras(alternador_defeito(_, nao), [721]).
+
+facto_dispara_regras(compressor_AC(_, sim), [73]).
+facto_dispara_regras(compressor_AC(_, nao), [731]).
+
+facto_dispara_regras(tensores(_, sim), [74]).
+facto_dispara_regras(tensores(_, nao), [75]).
+
+facto_dispara_regras(oleo_motor(_, _), [93, 94, 95]).
+
+facto_dispara_regras(sistema_escape(_, sim), [101]).
+facto_dispara_regras(sistema_escape(_, nao), [102]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Factos perguntaveis
@@ -123,12 +141,19 @@ perguntavel(amortecedores_gastos(_, _)).
 perguntavel(dificuldade_travar(_, _)).
 perguntavel(pastilhas_travao_gastas(_, _)).
 perguntavel(discos_travao_gastos(_, _)).
-perguntavel(nivel_fluido_travao(_, _)).
+perguntavel(fluido_travao(_, _)).
 perguntavel(problemas_caixa_velocidades(_, _)).
 perguntavel(fluido_transmissao(_, _)).
 perguntavel(embraiagem_gasta(_, _)).
 perguntavel(barulho_suspensao_rodas(_, _)).
 perguntavel(problema_pneus_jantes_calcos(_, _)).
+perguntavel(servofreio(_, _)).
+perguntavel(sistemaABS(_, _)).
+perguntavel(alternador_defeito(_, _)).
+perguntavel(compressor_AC(_, _)).
+perguntavel(tensores(_, _)).
+perguntavel(oleo_motor(_, _)).
+perguntavel(sistema_escape(_, _)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mapeamento de perguntas
@@ -192,6 +217,22 @@ texto_pergunta(fluido_transmissao(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'Qual é o nivel do fluido da caixa de velocidade que o Veiculo ~w apresenta?', [Veiculo]).
 texto_pergunta(embraiagem_gasta(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'A embraiagem do Veiculo ~w apresenta sinais de desgaste ou de patinar?', [Veiculo]).
+texto_pergunta(fluido_travao(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'Qual é o nivel do fluido dos travoes do Veiculo ~w?', [Veiculo]).
+texto_pergunta(servofreio(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w tem problema no servofreio?', [Veiculo]).
+texto_pergunta(sistemaABS(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O Veiculo ~w tem problema no sistema de ABS?', [Veiculo]).
+texto_pergunta(alternador_defeito(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O alternador do Veiculo ~w tem defeito?', [Veiculo]).
+texto_pergunta(compressor_AC(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'O compressor de AC do Veiculo ~w tem defeito?', [Veiculo]).
+texto_pergunta(tensores(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'Os tensores do Veiculo ~w tem defeito?', [Veiculo]).
+texto_pergunta(oleo_motor(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'Qual e o nivel de oleo do motor do Veiculo ~w?', [Veiculo]).
+texto_pergunta(sistema_escape(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), '0 Veiculo ~w tem problema no sistema de escape?', [Veiculo]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,12 +262,19 @@ opcoes_validas(amortecedores_gastos(_, _), [sim, nao, nao_sei]).
 opcoes_validas(dificuldade_travar(_, _), [sim, nao, nao_sei]).
 opcoes_validas(pastilhas_travao_gastas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(discos_travao_gastos(_, _), [sim, nao, nao_sei]).
-opcoes_validas(nivel_fluido_travao(_, _), [baixo, normal, alto]).
+opcoes_validas(fluido_travao(_, _), [Valor]).
 opcoes_validas(problemas_caixa_velocidades(_, _), [sim, nao, nao_sei]).
 opcoes_validas(fluido_transmissao(_, _), Valor).
 opcoes_validas(embraiagem_gasta(_, _), [sim, nao, nao_sei]).
 opcoes_validas(barulho_suspensao_rodas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(problema_pneus_jantes_calcos(_, _), [sim, nao, nao_sei]).
+opcoes_validas(servofreio(_, _), [sim, nao, nao_sei]).
+opcoes_validas(sistemaABS(_, _), [sim, nao, nao_sei]).
+opcoes_validas(alternador_defeito(_, _), [sim, nao, nao_sei]).
+opcoes_validas(compressor_AC(_, _), [sim, nao, nao_sei]).
+opcoes_validas(tensores(_, _), [sim, nao, nao_sei]).
+opcoes_validas(oleo_motor(_, _), [Valor]).
+opcoes_validas(sistema_escape(_, _), [Valor]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -379,7 +427,7 @@ regra 57
 
 regra 58
     se [correia_dentada_gasta(Veiculo, nao)]
-    entao [cria_facto(proximo_teste(Veiculo, verifica_componentes_motor))].
+    entao [cria_facto(proximo_teste(Veiculo, bomba_agua_defeituosa))].
 	
 regra 59
     se [barulho_suspensao_rodas(Veiculo, sim)]
@@ -439,7 +487,31 @@ regra 69
 
 regra 610
     se [discos_travao_gastos(Veiculo, nao)]
-    entao [cria_facto(proximo_teste(Veiculo, verifica_fluido_travao))].
+    entao [cria_facto(proximo_teste(Veiculo, fluido_travao))].
+
+regra 72
+    se [alternador_defeito(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Alternador com defeito'))].
+	
+regra 721
+    se [alternador_defeito(Veiculo, nao)]
+    entao [cria_facto(proximo_teste(Veiculo, compressor_AC))].
+	
+regra 73
+    se [compressor_AC(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Compressor de AC com defeito'))].
+	
+regra 731
+    se [compressor_AC(Veiculo, nao)]
+    entao [cria_facto(proximo_teste(Veiculo, tensores))].
+	
+regra 74
+    se [tensores(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Falha nos tensores da correia'))].
+
+regra 75
+    se [tensores(Veiculo, nao)]
+    entao [cria_facto(proximo_teste(Veiculo, oleo_motor))].
 
 regra 76
     se [amortecedores_gastos(Veiculo, sim)]
@@ -460,6 +532,18 @@ regra 79
 regra 710
     se [avalia(fluido_transmissao(Veiculo,>,'Min')) e avalia(fluido_transmissao(Veiculo,<,'Max'))]
 	entao [cria_facto(proximo_teste(Veiculo, embraiagem_gasta))].
+	
+regra 81
+    se [bomba_agua_defeituosa(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Falha na bomba de agua'))].
+
+regra 821
+    se [bomba_agua_defeituosa(Veiculo, nao) e correia_dentada_gasta(Veiculo,nao)]
+    entao [cria_facto(proximo_teste(Veiculo, alternador_defeito))].
+	
+regra 822
+    se [bomba_agua_defeituosa(Veiculo, nao) e termostato_defeituoso(_, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
 
 regra 83
     se [velas_ignicao_defeito(Veiculo, sim)]
@@ -468,14 +552,18 @@ regra 83
 regra 84
     se [velas_ignicao_defeito(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, sensores_defeituosos))].
-	
-regra 81
-    se [bomba_agua_defeituosa(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Falha na bomba de agua'))].
-	
-regra 82
-    se [bomba_agua_defeituosa(Veiculo, nao)]
-    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
+
+regra 85
+    se [avalia(fluido_travao(Veiculo,<,'Min'))]
+	entao [cria_facto(diagnostico(Veiculo,'Nível de fluido insuficiente'))].
+
+regra 86
+    se [avalia(fluido_travao(Veiculo,>,'Max'))]
+	entao [cria_facto(diagnostico(Veiculo,'Excesso de fluido de travão'))].
+
+regra 87
+    se [avalia(fluido_travao(Veiculo,>,'Min')) e avalia(fluido_travao(Veiculo,<,'Max'))]
+	entao [cria_facto(proximo_teste(Veiculo, servofreio))].
 
 regra 88
     se [embraiagem_gasta(Veiculo, sim)]
@@ -485,13 +573,49 @@ regra 89
     se [embraiagem_gasta(Veiculo, nao)]
     entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
 
-
 regra 91
 	se [sensores_defeituosos(Veiculo, sim)]
     entao [cria_facto(diagnostico(Veiculo, 'Sensor dor motor com falha'))].
 
 regra 92
 	se [sensores_defeituosos(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Problema indeterminado'))].
+
+
+regra 93
+    se [avalia(oleo_motor(Veiculo,<,'Min'))]
+	entao [cria_facto(diagnostico(Veiculo,'Nível de óleo insuficiente'))].
+
+regra 94
+    se [avalia(oleo_motor(Veiculo,>,'Max'))]
+	entao [cria_facto(diagnostico(Veiculo,'Excesso de óleo'))].
+
+regra 95
+    se [avalia(oleo_motor(Veiculo,>,'Min')) e avalia(oleo_motor(Veiculo,<,'Max'))]
+	entao [cria_facto(proximo_teste(Veiculo, sistema_escape))].
+
+regra 96
+	se [servofreio(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Servofreio defeituoso'))].
+	
+regra 97
+	se [servofreio(Veiculo, nao)]
+    entao [cria_facto(proximo_teste(Veiculo, sistemaABS))].
+
+regra 101
+	se [sistema_escape(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Vazamento ou bloqueio no sistema de escape'))].
+	
+regra 102
+	se [sistema_escape(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
+
+regra 103
+	se [sistemaABS(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Sistema ABS com defeito'))].
+	
+regra 104
+	se [sistemaABS(Veiculo, nao)]
     entao [cria_facto(diagnostico(Veiculo, 'Problema indeterminado'))].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -602,7 +726,7 @@ liquido_arrefecimento(18, 7, 9).
 liquido_arrefecimento(19, 7.5, 9.5).
 
 % Factos para óleo do motor
-oleo_motor(1, 4, 4.5).
+oleo_motor(1, 4, 5).
 oleo_motor(2, 4.5, 5).
 oleo_motor(3, 5, 5.5).
 oleo_motor(4, 3.5, 4).

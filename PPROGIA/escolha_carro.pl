@@ -57,4 +57,4 @@ obter_numero_carro :-
     
     carro(Numero, Marca, Modelo, Motor),
     write('O número do carro é: '), write(Numero), nl,
-    assertz(facto(Numero, proximo_teste(1, problemas))).
+    assertz(facto(1, proximo_teste(Numero, problemas))).
