@@ -41,9 +41,8 @@ public class DiagnosticService {
     }
 
     // Processa as respostas subsequentes e retorna a próxima pergunta
-    public Resposta processarResposta(Resposta diagResposta, String respostaTexto) {
+    public Resposta processarResposta(Resposta diagResposta) {
         try {
-            diagResposta.setTexto(respostaTexto);
             diagSession.update(respostaHandle, diagResposta);
             diagSession.fireAllRules();
             return diagResposta;

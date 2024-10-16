@@ -54,6 +54,7 @@ rule "D01: Start Diagnostic"
         $resposta : Resposta(estado == "iniciarDiagnostico")
     then
         System.out.println("O carro apresenta algum problema? (Sim/Não)");
+        $resposta.setPergunta("O carro apresenta algum problema? (Sim/Não)");
         $resposta.setEstado("perguntarProblemaInicial");
         $resposta.setTexto(""); 
         update($resposta);
@@ -92,6 +93,7 @@ rule "D04: Ask 'O carro liga a chave?'"
         $resposta : Resposta(estado == "perguntarCarroLigaChave")
     then
         System.out.println("O carro liga a chave? (Sim/Não)");
+        $resposta.setPergunta("O carro liga a chave? (Sim/Não)");
         $resposta.setEstado("processarCarroLigaChave");
         $resposta.setTexto(""); 
         update($resposta);
@@ -110,10 +112,12 @@ rule "D05: Process 'O carro liga a chave?'"
             
         } else if ($resposta.getTexto().equalsIgnoreCase("Não")) {
             System.out.println("O carro não liga a chave. Verifique a bateria e cabos de bateria.");
+            $resposta.setPergunta("O carro não liga a chave. Verifique a bateria e cabos de bateria.");
             $resposta.setEstado("verificarBateriaECabos");
             $resposta.setTexto(""); 
         } else {
             System.out.println("Resposta inválida.");
+            $resposta.setPergunta("Resposta inválida.");
             $resposta.setEstado("processarCarroLigaChave");
             $resposta.setTexto("");
         }
@@ -126,6 +130,7 @@ rule "D06: Processar 'O carro liga a chave? Não'"
         $resposta : Resposta(estado == "verificarBateriaECabos", texto == "")
     then
         System.out.println("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
+        $resposta.setPergunta("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
         $resposta.setEstado("perguntarBateriaFraca");
         $resposta.setTexto(""); 
         update($resposta);
@@ -140,6 +145,7 @@ rule "D07: Verificar a bateria e cabos de bateria"
         Evidence<String, String> ev = new Evidence<>("verificarBateriaECabos", $resposta.getTexto());
         insert(ev);
         System.out.println("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
+        $resposta.setPergunta("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
         $resposta.setEstado("perguntarBateriaFraca");
         $resposta.setTexto(""); 
         update($resposta);
@@ -178,6 +184,7 @@ rule "D10: Verificar motor de arranque e pedal de embraiagem"
         $resposta : Resposta(estado == "verificarMotorArranque", texto == "")
     then
         System.out.println("Verifique o motor de arranque e se o pedal de embraiagem está acionado. O motor de arranque está com defeito? (Sim/Não)");
+        $resposta.setPergunta("Verifique o motor de arranque e se o pedal de embraiagem está acionado. O motor de arranque está com defeito? (Sim/Não)");
         $resposta.setEstado("perguntarMotorArranqueDefeito");
         $resposta.setTexto(""); 
         update($resposta);
@@ -216,6 +223,7 @@ rule "D13: Verificar sistema de ignição"
         $resposta : Resposta(estado == "verificarSistemaIgnicao", texto == "")
     then
         System.out.println("Verifique o sistema de ignição. A ignição está a falhar? (Sim/Não)");
+        $resposta.setPergunta("Verifique o sistema de ignição. A ignição está a falhar? (Sim/Não)");
         $resposta.setEstado("perguntarIgnicaoFalhando");
         $resposta.setTexto(""); 
         update($resposta);
@@ -254,6 +262,7 @@ rule "D16: Verificar sistema de segurança (Imobilizador)"
         $resposta : Resposta(estado == "verificarSistemaSeguranca", texto == "")
     then
         System.out.println("Verifique o sistema de segurança (Imobilizador). O imobilizador ou alarme está a bloquear? (Sim/Não)");
+        $resposta.setPergunta("Verifique o sistema de segurança (Imobilizador). O imobilizador ou alarme está a bloquear? (Sim/Não)");
         $resposta.setEstado("perguntarImobilizadorBloqueando");
         $resposta.setTexto(""); 
         update($resposta);
@@ -292,6 +301,7 @@ rule "D19: Verificar cabo condutor de energia elétrica e fichas de ligação"
         $resposta : Resposta(estado == "verificarCaboCondutor", texto == "")
     then
         System.out.println("Verifique cabos condutores de energia elétrica e fichas de ligação. Há fios danificados? (Sim/Não)");
+        $resposta.setPergunta("Verifique cabos condutores de energia elétrica e fichas de ligação. Há fios danificados? (Sim/Não)");
         $resposta.setEstado("perguntarFiosDanificados");
         $resposta.setTexto(""); 
         update($resposta);
@@ -333,7 +343,8 @@ rule "D22: Perguntar 'O carro liga mas vai abaixo?'"
         $resposta : Resposta(estado == "perguntarCarroLigaMasVaiAbaixo", texto == "")
     then
         System.out.println("O carro liga mas vai abaixo? (Sim/Não)");
-        $resposta.setEstado("processarCarroLigaMasVaiAbaixo");  // Altera o estado para processar a resposta
+        $resposta.setPergunta("O carro liga mas vai abaixo? (Sim/Não)");
+        $resposta.setEstado("processarCarroLigaMasVaiAbaixo");
         $resposta.setTexto(""); 
         update($resposta);
 end
@@ -370,6 +381,7 @@ rule "D25: Verificar sobreaquecimento do motor"
         $resposta : Resposta(estado == "verificarSobreaquecimentoMotor", texto == "")
     then
         System.out.println("O motor está a sobreaquecer? (Sim/Não)");
+        $resposta.setPergunta("O motor está a sobreaquecer? (Sim/Não)");
         $resposta.setEstado("perguntarMotorSobreaquecendo");
         $resposta.setTexto(""); 
         update($resposta);
@@ -405,6 +417,7 @@ rule "D28: Verificar sistema de arrefecimento"
         $resposta : Resposta(estado == "verificarSistemaArrefecimento", texto == "")
     then
         System.out.println("Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito? (Sim/Não)");
+        $resposta.setPergunta("Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito? (Sim/Não)");
         $resposta.setEstado("perguntarRadiadorVentoinhaDefeito");
         $resposta.setTexto(""); 
         update($resposta);
@@ -443,6 +456,7 @@ rule "D31: Verificar fugas no sistema de arrefecimento"
         $resposta : Resposta(estado == "verificarFugasArrefecimento", texto == "")
     then
         System.out.println("Verifique se há fugas no sistema de arrefecimento. Fuga detectada? (Sim/Não)");
+        $resposta.setPergunta("Verifique se há fugas no sistema de arrefecimento. Fuga detectada? (Sim/Não)");
         $resposta.setEstado("perguntarFugaArrefecimento");
         $resposta.setTexto(""); 
         update($resposta);
@@ -481,6 +495,7 @@ rule "D34: Verificar termóstato"
         $resposta : Resposta(estado == "verificarTermostato", texto == "")
     then
         System.out.println("Verifique o termóstato. O termóstato está defeituoso? (Sim/Não)");
+        $resposta.setPergunta("Verifique o termóstato. O termóstato está defeituoso? (Sim/Não)");
         $resposta.setEstado("perguntarTermostatoDefeituoso");
         $resposta.setTexto(""); 
         update($resposta);
@@ -519,6 +534,7 @@ rule "D37: Verificar bomba de água"
         $resposta : Resposta(estado == "verificarBombaAgua", texto == "")
     then
         System.out.println("Verifique a bomba de água. A bomba de água está com defeito? (Sim/Não)");
+        $resposta.setPergunta("Verifique a bomba de água. A bomba de água está com defeito? (Sim/Não)");
         $resposta.setEstado("perguntarBombaAguaDefeito");
         $resposta.setTexto(""); 
         update($resposta);
@@ -560,6 +576,7 @@ rule "D40: Verificar sistema de combustível"
         $resposta : Resposta(estado == "verificarSistemaCombustivel", texto == "")
     then
         System.out.println("Verifique o sistema de combustível. Há falta de combustível ou falha na bomba? (Sim/Não)");
+        $resposta.setPergunta("Verifique o sistema de combustível. Há falta de combustível ou falha na bomba? (Sim/Não)");
         $resposta.setEstado("perguntarFaltaCombustivelOuFalhaBomba");
         $resposta.setTexto(""); 
         update($resposta);
@@ -598,6 +615,7 @@ rule "D43: Verificar filtro de combustível"
         $resposta : Resposta(estado == "verificarFiltroCombustivel", texto == "")
     then
         System.out.println("Verifique o filtro de combustível. O filtro de combustível está entupido? (Sim/Não)");
+        $resposta.setPergunta("Verifique o filtro de combustível. O filtro de combustível está entupido? (Sim/Não)");
         $resposta.setEstado("perguntarFiltroCombustivelEntupido");
         $resposta.setTexto(""); 
         update($resposta);
@@ -635,6 +653,7 @@ rule "D46: Verificar sistema de injeção de combustível"
         $resposta : Resposta(estado == "verificarSistemaInjecaoCombustivel", texto == "")
     then
         System.out.println("Verifique o sistema de injeção de combustível. A injeção de combustível está com defeito? (Sim/Não)");
+        $resposta.setPergunta("Verifique o sistema de injeção de combustível. A injeção de combustível está com defeito? (Sim/Não)");
         $resposta.setEstado("perguntarInjecaoCombustivelDefeito");
         $resposta.setTexto(""); 
         update($resposta);
@@ -673,6 +692,7 @@ rule "D49: Verificar sistema de ignição (novamente)"
         $resposta : Resposta(estado == "verificarSistemaIgnicaoNovamente", texto == "")
     then
         System.out.println("Verifique o sistema de ignição. As velas de ignição estão defeituosas? (Sim/Não)");
+        $resposta.setPergunta("Verifique o sistema de ignição. As velas de ignição estão defeituosas? (Sim/Não)");
         $resposta.setEstado("perguntarVelasIgnicaoDefeituosas");
         $resposta.setTexto(""); 
         update($resposta);
@@ -711,6 +731,7 @@ rule "D52: Verificar sensores do motor"
         $resposta : Resposta(estado == "verificarSensoresMotor", texto == "")
     then
         System.out.println("Verifique os sensores do motor (MAP, MAF, etc.). Há sensores defeituosos? (Sim/Não)");
+        $resposta.setPergunta("Verifique os sensores do motor (MAP, MAF, etc.). Há sensores defeituosos? (Sim/Não)");
         $resposta.setEstado("perguntarSensoresDefeituosos");
         $resposta.setTexto(""); 
         update($resposta);
@@ -752,6 +773,7 @@ rule "D55: Perguntar 'O carro faz barulho anormal?'"
         $resposta : Resposta(estado == "processarCarroFazBarulhoAnormal", texto == "")
     then
         System.out.println("O carro faz barulho anormal? (Sim/Não)");
+        $resposta.setPergunta("O carro faz barulho anormal? (Sim/Não)");
         $resposta.setEstado("perguntarCarroFazBarulhoAnormal");
         $resposta.setTexto(""); 
         update($resposta);
@@ -787,6 +809,7 @@ rule "D58: Verificar motor (barulho)"
         $resposta : Resposta(estado == "verificarMotorBarulho", texto == "")
     then
         System.out.println("Verifique o motor. Há barulho no motor? (Sim/Não)");
+        $resposta.setPergunta("Verifique o motor. Há barulho no motor? (Sim/Não)");
         $resposta.setEstado("perguntarBarulhoNoMotor");
         $resposta.setTexto(""); 
         update($resposta);
@@ -822,6 +845,7 @@ rule "D61: Verificar correias ou corrente dentada"
         $resposta : Resposta(estado == "verificarCorreiasCorrenteDentada", texto == "")
     then
         System.out.println("Verifique as correias ou corrente dentada. A correia dentada está gasta? (Sim/Não)");
+        $resposta.setPergunta("Verifique as correias ou corrente dentada. A correia dentada está gasta? (Sim/Não)");
         $resposta.setEstado("perguntarCorreiaDentadaGasta");
         $resposta.setTexto(""); 
         update($resposta);
@@ -861,12 +885,9 @@ rule "D64: Verificar componentes (Bomba de água, alternador, etc.)"
     then
         Evidence<String, String> ev = new Evidence<>("verificarComponentesBarulhoMotor", $resposta.getTexto());
         insert(ev);
-        System.out.println("Verifique os seguintes componentes:");
-        System.out.println("1. Bomba de água");
-        System.out.println("2. Alternador");
-        System.out.println("3. Compressor de ar condicionado");
-        System.out.println("4. Tensores da correia");
-        System.out.println("Digite o número correspondente ao componente com defeito, ou 0 se nenhum:");
+        String mensagem = "Verifique os seguintes componentes:\n1. Bomba de água\n2. Alternador\n3. Compressor de ar condicionado\n4. Tensores da correia\nDigite o número correspondente ao componente com defeito, ou 0 se nenhum:";
+        System.out.println(mensagem);
+        $resposta.setPergunta(mensagem);
         $resposta.setEstado("perguntarComponenteDefeituoso");
         $resposta.setTexto(""); 
         update($resposta);
@@ -951,6 +972,7 @@ rule "D70: Processar 'Componente defeituoso? Inválido'"
                              texto != "0" && texto != "1" && texto != "2" && texto != "3" && texto != "4" && texto != "")
     then
         System.out.println("Opção inválida. Por favor, digite um número de 0 a 4.");
+        $resposta.setPergunta("Opção inválida. Por favor, digite um número de 0 a 4.");
         $resposta.setEstado("perguntarComponenteDefeituoso");
         $resposta.setTexto(""); 
         update($resposta);
@@ -964,6 +986,7 @@ rule "D71: Verificar lubrificação do motor"
         Evidence<String, String> ev = new Evidence<>("verificarLubrificacaoMotor", $resposta.getTexto());
         insert(ev);
         System.out.println("Verifique o nível de óleo do motor.");
+        $resposta.setPergunta("Verifique o nível de óleo do motor.");
         $resposta.setEstado("verificarNivelOleo");
         $resposta.setTexto(""); 
         update($resposta);
@@ -977,6 +1000,7 @@ rule "D72: Verificar nível de óleo"
     then
         Componente oleoMotor = getComponenteByName($carro, "Óleo do Motor");
         System.out.println("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
+        $resposta.setPergunta("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
         $resposta.setEstado("perguntarNivelOleoAtual");
         $resposta.setTexto("");
         update($resposta);
@@ -1011,6 +1035,7 @@ rule "D73: Avaliar Nível de Óleo"
             }
         } else {
             System.out.println("Valor inválido. Por favor, insira um valor numérico.");
+            $resposta.setPergunta("Valor inválido. Por favor, insira um valor numérico.");
             $resposta.setEstado("perguntarNivelOleoAtual");
             $resposta.setTexto("");
         }
@@ -1069,6 +1094,7 @@ rule "D77: Verificar sistema de escape"
         $resposta : Resposta(estado == "verificarSistemaEscape", texto == "")
     then
         System.out.println("Verifique o sistema de escape. Há problema no sistema de escape? (Sim/Não)");
+        $resposta.setPergunta("Verifique o sistema de escape. Há problema no sistema de escape? (Sim/Não)");
         $resposta.setEstado("perguntarProblemaEscape");
         $resposta.setTexto(""); 
         update($resposta);
