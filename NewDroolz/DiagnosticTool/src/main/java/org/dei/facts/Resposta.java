@@ -15,10 +15,13 @@ import java.util.List;
 public class Resposta {
     private String texto;
     private String estado;
+    private String pergunta;
+
+    private Carro carroSelecionado;
     private String marcaSelecionada;
     private String modeloSelecionado;
     private String motorSelecionado;
-    private Carro carroSelecionado;
+
     private String diagnostico;
     private String solucao;
     private String porque;

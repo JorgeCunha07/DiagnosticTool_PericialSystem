@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ImportFile {
 
-    static List<Carro> carregarBaseDados(String caminhoArquivo) {
+    public static List<Carro> carregarBaseDados(String caminhoArquivo) {
         List<Carro> carros = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
             br.readLine();

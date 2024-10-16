@@ -1,4 +1,4 @@
-package org.dei.diagnostic;
+package org.dei;
 
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
