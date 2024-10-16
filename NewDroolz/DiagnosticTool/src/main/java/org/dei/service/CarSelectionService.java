@@ -2,6 +2,8 @@ package org.dei.service;
 
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
+import org.dei.facts.model.ModeloCarro;
+import org.dei.facts.model.Motor;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -57,9 +59,20 @@ public class CarSelectionService {
 
         if (resposta.getEstado().equals("finalizado")) {
             kSession.dispose();
+            resposta.setCarroSelecionado(getCarroSelecionado(carros,resposta));
         }
         // Retorna a resposta atualizada
         return resposta;
     }
 
+    public Carro getCarroSelecionado(List<Carro> carros, Resposta resposta) {
+        for (Carro carro : carros) {
+            if (carro.getMarca().getNome().equalsIgnoreCase(resposta.getMarcaSelecionada()) &&
+                    carro.getModelo().getNome().equalsIgnoreCase(resposta.getModeloSelecionado()) &&
+                    carro.getMotor().getNome().equalsIgnoreCase(resposta.getMotorSelecionado())) {
+                return carro;
+            }
+        }
+        return null;
+    }
 }

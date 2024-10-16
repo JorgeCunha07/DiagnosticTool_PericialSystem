@@ -55,26 +55,8 @@ rule "R02: Verifica Marca Selecionada"
         exists (Carro( marca.getNome() == $texto ) from carros)
     then
         $resposta.setMarcaSelecionada($texto);
-
-        // Cast carros to List<Carro>
-        List<Carro> carrosList = (List<Carro>) carros;
-
-        // Listar modelos disponíveis para a marca selecionada
-        Set<String> modelosDisponiveis = new HashSet<>();
-        for (Carro carro : carrosList) {
-            if (carro.getMarca().getNome().equals($texto)) {
-                modelosDisponiveis.add(carro.getModelo().getNome());
-            }
-        }
-
-        StringBuilder modelosMsg = new StringBuilder("Modelos disponíveis: ");
-        for (String modelo : modelosDisponiveis) {
-            modelosMsg.append(modelo).append("\n");
-        }
-
-        $resposta.setPergunta("Marca selecionada: " + $texto + "\n" + modelosMsg.toString());
         $resposta.setEstado("aguardandoModelo");
-        $resposta.setTexto(""); // Limpa o texto para a próxima entrada
+        $resposta.setTexto("");
         update($resposta);
 end
 
@@ -85,7 +67,7 @@ rule "R02b: Marca Inválida"
         not (Carro( marca.getNome() == $texto ) from carros)
     then
         $resposta.setPergunta("Marca não encontrada. Por favor, tente novamente.");
-        $resposta.setTexto(""); // Limpa o texto para repetir a pergunta
+        $resposta.setTexto("");
         update($resposta);
 end
 
@@ -106,27 +88,8 @@ rule "R04: Verifica Modelo Selecionado"
         exists (Carro( marca.getNome() == $marcaSelecionada, modelo.getNome() == $texto ) from carros)
     then
         $resposta.setModeloSelecionado($texto);
-
-        // Cast carros to List<Carro>
-        List<Carro> carrosList = (List<Carro>) carros;
-
-        // Listar motores disponíveis para o modelo selecionado
-        Set<String> motoresDisponiveis = new HashSet<>();
-        for (Carro carro : carrosList) {
-            if (carro.getMarca().getNome().equals($marcaSelecionada)
-                && carro.getModelo().getNome().equals($texto)) {
-                motoresDisponiveis.add(carro.getMotor().getNome());
-            }
-        }
-
-        StringBuilder motoresMsg = new StringBuilder("Motores disponíveis: ");
-        for (String motor : motoresDisponiveis) {
-            motoresMsg.append(motor).append("\n");
-        }
-
-        $resposta.setPergunta("Modelo selecionado: " + $texto + "\n" + motoresMsg.toString());
         $resposta.setEstado("aguardandoMotor");
-        $resposta.setTexto(""); // Limpa o texto para a próxima entrada
+        $resposta.setTexto("");
         update($resposta);
 end
 
@@ -164,19 +127,8 @@ rule "R06: Verifica Motor Selecionado"
         ) from carros
     then
         $resposta.setMotorSelecionado($texto);
-        $resposta.setCarroSelecionado($carroSelecionado);
-
-        StringBuilder componentesMsg = new StringBuilder("Componentes disponíveis: ");
-        for (Componente componente : $carroSelecionado.getComponentes()) {
-            componentesMsg.append(componente.getNome())
-                          .append(" (Min Ideal: ").append(componente.getValorMinimoIdeal())
-                          .append(", Max Ideal: ").append(componente.getValorMaximoIdeal())
-                          .append(", Unidade: ").append(componente.getUnidade()).append(")\n");
-        }
-
-        $resposta.setPergunta("Motor selecionado: " + $texto + "\n" + componentesMsg.toString());
         $resposta.setEstado("finalizado");
-        $resposta.setTexto(""); // Limpa o texto
+        $resposta.setTexto("");
         update($resposta);
 end
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/carro")
+@RequestMapping("/api")
 public class CarSelectionController {
 
     private final CarSelectionService carSelectionService;
@@ -21,15 +21,20 @@ public class CarSelectionController {
         this.carros = ImportFile.carregarBaseDados("baseDados.csv");
     }
 
-    @GetMapping("/start")
+    @GetMapping("/carro/start")
     public ResponseEntity<Resposta> iniciarSelecao() {
         Resposta resposta = carSelectionService.processarResposta(carros, "");
         return ResponseEntity.ok(resposta);
     }
 
-    @PostMapping("/selection")
-    public ResponseEntity<Resposta> selecionarMarca(@RequestParam String value) {
+    @PostMapping("/carro/selection")
+    public ResponseEntity<Resposta> processarResposta(@RequestParam String value) {
         Resposta resposta = carSelectionService.processarResposta(carros, value);
         return ResponseEntity.ok(resposta);
+    }
+
+    @GetMapping("/carros")
+    public ResponseEntity<List<Carro>> buscarListaCarros() {
+        return ResponseEntity.ok(carros);
     }
 }
