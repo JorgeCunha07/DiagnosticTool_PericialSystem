@@ -1,0 +1,285 @@
+@startuml
+title Workflow de Diagnóstico Mecânico Completo - Diagnósticos Expandidos
+
+start
+
+:<color:blue>D01</color>: O carro apresenta algum problema?;
+if () then (Sim (regra 01 / <color:blue>D02</color>))
+  :<color:blue>D04</color>:  O carro liga a chave?;
+  if () then (Não (regra 11 / <color:blue>D06</color>))
+    :<color:blue>D07</color>: Verificar a bateria e cabos de bateria;
+    if (Bateria fraca ou sem carga?) then (Sim (regra 21 / <color:blue>D08</color>))
+      :Diagnóstico: Bateria com defeito ou sem carga;
+      :Solução: Substituir ou recarregar a bateria;
+      stop
+    else (Não (regra 22 / <color:blue>D09</color>))
+      :<color:blue>D10</color>: Verificar o motor de arranque e pedal de embraiagem acionado;
+      if (Motor de arranque com defeito?) then (Sim (regra 31 / <color:blue>D11</color>))
+        :Diagnóstico: Falha no motor de arranque;
+        :Solução: Substituir motor de arranque;
+        stop
+      else (Não (regra 32 / <color:blue>D12</color>))
+        :<color:blue>D13</color>: Verificar o sistema de ignição;
+        if (Ignição a falhar?) then (Sim (regra 41 / <color:blue>D14</color>))
+          :Diagnóstico: Sistema de ignição com defeito;
+          :Solução: Verificar chave de ignição, fusíveis, conectores e verificação de alimentação de combustível (pressão de combustível);
+          stop
+        else (Não (regra 42 / <color:blue>D15</color>))
+          :<color:blue>D16</color>: Verificar o sistema de segurança (Imobilizador);
+          if (Imobilizador ou alarme a bloquear?) then (Sim (regra 51 / <color:blue>D17</color>))
+            :Diagnóstico: Sistema de segurança activado;
+            :Solução: Desactivar sistema de segurança;
+            stop
+          else (Não (regra 52 / <color:blue>D18</color>))
+            :<color:blue>D19</color>: Verificar cabo condutor de energia elétrica e fichas de ligação;
+            if (Fios danificados?) then (Sim (regra 61 / <color:blue>D20</color>))
+              :Diagnóstico: fios com corte ou curto-circuito;
+              :Solução: Reparar ou substituir cabo condutor de energia elétrica;
+              stop
+            else (Não (regra 62 / <color:blue>D21</color>))
+              :Diagnóstico: Verificação adicional necessária;
+              :Solução: Seguir protocolo de reparação da marca, consultar especialista;
+              stop
+            endif
+          endif
+        endif
+      endif
+    endif
+  else (Sim (regra 12 / <color:blue>D05</color>))
+    :<color:blue>D22</color>: O carro liga mas vai abaixo?;
+    if () then (Sim (regra 23 / <color:blue>D23</color>))
+      :<color:blue>D25</color>: Verificar sobreaquecimento do motor;
+      if (Motor a sobreaquecer?) then (Sim (regra 33 / <color:blue>D26</color>))
+        :<color:blue>D28</color>: Verificar sistema de arrefecimento;
+        if (Radiador ou ventoinha com defeito?) then (Sim (regra 43 / <color:blue>D29</color>))
+          :Diagnóstico: Problema no radiador ou ventoinha;
+          :Solução: Substituir radiador/ventoinha;
+          stop
+        else (Não (regra 44 / <color:blue>D30</color>))
+          :<color:blue>D31</color>: Verificar fugas no sistema de arrefecimento;
+          if (Fuga detectada?) then (Sim (regra 53 / <color:blue>D32</color>))
+            :Diagnóstico: Fugas no sistema de arrefecimento;
+            :Solução: Reparar fuga e completar fluido;
+            stop
+          else (Não (regra 54  / <color:blue>D33</color>))
+            :<color:blue>D34</color>: Verificar termóstato;
+            if (Termóstato defeituoso?) then (Sim (regra 63 / <color:blue>D35</color>))
+              :Diagnóstico: Termóstato com defeito;
+              :Solução: Substituir termóstato;
+              stop
+            else (Não (regra 64 / <color:blue>D36</color>))
+              :<color:blue>D37</color>: Verificar bomba de água;
+              if (Bomba de água com defeito?) then (Sim (regra 81 / <color:blue>D38</color>))
+                :Diagnóstico: Falha na bomba de água;
+                :Solução: Substituir bomba de água;
+                stop
+              else (Não (regra 82 / <color:blue>D39</color>))
+                :Diagnóstico: Verificação adicional necessária;
+                :Solução: Consultar especialista;
+                stop
+              endif
+            endif
+          endif
+        endif
+      else (Não (regra 34  / <color:blue>D27</color>))
+        :<color:blue>D40</color>: Verificar sistema de combustível;
+        if (Falta de combustível ou falha na bomba?) then (Sim (regra 45 / <color:blue>D41</color>))
+          :Diagnóstico: Falta de combustível ou bomba de combustível com defeito;
+          :Solução: Reabastecer ou substituir a bomba de combustível;
+          stop
+        else (Não (regra 46 / <color:blue>D42</color>))
+          :<color:blue>D43</color>: Verificar filtro de combustível;
+          if (Filtro de combustível entupido?) then (Sim (regra 55 / <color:blue>D44</color>))
+            :Diagnóstico: Filtro de combustível entupido;
+            :Solução: Substituir filtro de combustível;
+            stop
+          else (Não (regra 56 / <color:blue>D45</color>))
+            :<color:blue>D46</color>: Verificar sistema de injeção de combustível;
+            if (Injeção de combustível com defeito?) then (Sim (regra 65 / <color:blue>D47</color>))
+              :Diagnóstico: Injeção de combustível com defeito;
+              :Solução: Limpar ou substituir injetores;
+              stop
+            else (Não (regra 66  / <color:blue>D48</color>))
+              :<color:blue>D49</color>: Verificar sistema de ignição;
+              if (Velas de ignição defeituosas?) then (Sim (regra 83 / <color:blue>D50</color>))
+                :Diagnóstico: Falha nas velas de ignição;
+                :Solução: Substituir velas de ignição;
+                stop
+              else (Não (regra 84 / <color:blue>D51</color>))
+                :<color:blue>D52</color>: Verificar sensores do motor (MAP, MAF, etc.);
+                if (Sensores defeituosos?) then (Sim (regra 91 / <color:blue>D53</color>))
+                  :Diagnóstico: Sensor do motor com falha;
+                  :Solução: Verificar e substituir sensores;
+                  stop
+                else (Não (regra 92 / <color:blue>D54</color>))
+                  :Diagnóstico: Problema indeterminado;
+                  :Solução: Consultar especialista;
+                  stop
+                endif
+              endif
+            endif
+          endif
+        endif
+      endif
+    else (Não  (regra  / <color:blue>D24</color>))
+      :<color:blue>D55</color>: O carro faz barulho anormal?;
+      if () then (Sim (regra 35 / <color:blue>D56</color>))
+        :<color:blue>D58</color>: Verificar motor (barulho);
+        if (Barulho no motor?) then (Sim (regra 47 / <color:blue>D59</color>))
+          :<color:blue>D61</color>: Verificar correias ou corrente dentada;
+          if (Correia dentada gasta?) then (Sim (regra 57 / <color:blue>D62</color>))
+            :Diagnóstico: Correia dentada gasta e rolamentos;
+            :Solução: Substituir kit de distribuição;
+            stop
+          else (Não (regra 58 / <color:blue>D63</color>))
+            :<color:blue>D64</color>: Verificar componentes;
+
+              if (Bomba de água com defeito?) then (Sim (regra 71 / <color:blue>D65</color>))
+                :Diagnóstico: Falha na bomba de água;
+                :Solução: Substituir kit de bomba de água;
+                stop
+              else if (Alternador com defeito?) then (Sim (regra 72 / <color:blue>D66</color>))
+                :Diagnóstico: Alternador com defeito;
+                :Solução: Substituir alternador;
+                stop
+              else if (Compressor de AC com defeito?) then (Sim (regra 73 / <color:blue>D67</color>))
+                :Diagnóstico: Compressor de AC com defeito;
+                :Solução: Substituir compressor de ar condicionado;
+                stop
+              else if (Tensores de correia com defeito?) then (Sim (regra 74 / <color:blue>D68</color>))
+                :Diagnóstico: Falha nos tensores da correia;
+                :Solução: Substituir tensores da correia;
+                stop
+              else (Não (regra 75 / <color:blue>D69</color>))
+                :<color:blue>D71</color>: Verificar lubrificação do motor;
+                :<color:blue>D72</color>: Verificar nível de óleo;
+                if (Nível de óleo < Mínimo) then (Sim (regra 93 / <color:blue>D74</color>))
+                  :Diagnóstico: Nível de óleo insuficiente;
+                  :Solução: Completar nível de óleo;
+                  stop
+                else if (Nível de óleo > Máximo) then (Sim (regra 94 / <color:blue>D75</color>))
+                  :Diagnóstico: Excesso de óleo;
+                  :Solução: Retirar excesso de óleo;
+                  stop
+                else (Normal (regra 95 / <color:blue>D76</color>))
+                  :<color:blue>D77</color>: Verificar sistema de escape;
+                  if (Problema no sistema de escape?) then (Sim (regra 101 / <color:blue>D78</color>))
+                    :Diagnóstico: Vazamento ou bloqueio no sistema de escape;
+                    :Solução: Reparar ou substituir sistema de escape;
+                    stop
+                  else (Não (regra 102 / <color:blue>D79</color>))
+                    :Diagnóstico: Verificação adicional necessária;
+                    :Solução: Consultar especialista;
+                    stop
+                  endif
+
+              endif
+            endif
+          endif
+        else (Não (regra 48 / <color:blue>D60</color>))
+          :<color:magenta>????</color>: Verificar suspensão e rodas;
+          if (Barulho na suspensão ou rodas?) then (Sim (regra 59 / <color:magenta>????</color>))
+            :<color:magenta>????</color>: Verificar rolamentos de roda;
+            if (Problema com pneus, jantes ou calços de travão?) then (Sim (regra 67 / <color:magenta>????</color>))
+              :Diagnóstico: Problema nos pneus, jantes ou calços de travão;
+              :Solução: Reparar ou substituir pneus, jantes ou calços de travão conforme necessário;
+              stop
+            else (Não (regra 68 / <color:magenta>????</color>))
+              if (Amortecedores gastos ou bases de amortecedores?) then (Sim (regra 76 / <color:magenta>????</color>))
+                :Diagnóstico: Amortecedores gastos ou bases de amortecedores gastos;
+                :Solução: Substituir kit de amortecedores;
+                stop
+              else (Não (regra 77 / <color:magenta>????</color>))
+                :Diagnóstico: Problema não identificado;
+                :Solução: Consultar especialista;
+                stop
+              endif
+            endif
+          else (Não (regra 510 / <color:magenta>????</color>))
+            :Diagnóstico: Sem barulhos anormais;
+            stop
+          endif
+        endif
+      else (Não (regra 36 / <color:blue>D57</color>))
+        :<color:magenta>????</color>: O carro apresenta dificuldade ao travar?;
+        if () then (Sim (regra 49 / <color:magenta>????</color>))
+          :<color:magenta>????</color>: Verificar sistema de travões;
+          if (Pastilhas de travão gastas?) then (Sim (regra 511 / <color:magenta>????</color>))
+            :Diagnóstico: Pastilhas de travão gastas;
+            :Solução: Substituir pastilhas de travão;
+            stop
+          else (Não (regra 512 / <color:magenta>????</color>))
+            :<color:magenta>????</color>: Verificar discos de travão;
+            if (Discos de travão gastos?) then (Sim (regra 69 / <color:magenta>????</color>))
+              :Diagnóstico: Discos de travão gastos;
+              :Solução: Substituir discos de travão;
+              stop
+            else (Não (regra 610 / <color:magenta>????</color>))
+              :<color:magenta>????</color>: Verificar fluido de travão;
+              if (Nível de fluido < Mínimo) then (Sim (regra 85 / <color:magenta>????</color>))
+                :Diagnóstico: Nível de fluido insuficiente;
+                :Solução: Completar fluido de travão e corrigir possíveis fugas;
+                stop
+              else if (Nível de fluido > Máximo) then (Sim (regra 86 / <color:magenta>????</color>))
+                :Diagnóstico: Excesso de fluido de travão;
+                :Solução: Ajustar nível de fluido de travão;
+                stop
+              else (Normal (regra 87 / <color:magenta>????</color>))
+                :<color:magenta>????</color>: Verificar servofreio;
+                if (Problema no servofreio?) then (Sim (regra 96 / <color:magenta>????</color>))
+                  :Diagnóstico: Servofreio defeituoso;
+                  :Solução: Reparar ou substituir servofreio;
+                  stop
+                else (Não (regra 97 / <color:magenta>????</color>))
+                  :<color:magenta>????</color>:Verificar sistema ABS;
+                  if (ABS com falha?) then (Sim (regra 103 / <color:magenta>????</color>))
+                    :Diagnóstico: Sistema ABS com defeito;
+                    :Solução: Verificar e reparar sistema ABS com consulta de especialista;
+                    stop
+                  else (Não (regra 104 / <color:magenta>????</color>))
+                    :Diagnóstico: Problema indeterminado;
+                    :Solução: Consultar especialista;
+                    stop
+                  endif
+                endif
+              endif
+            endif
+          endif
+        else (Não (regra 410 / <color:magenta>????</color>))
+          :<color:magenta>????</color>: Problemas na caixa de velocidades?;
+          if () then (Sim (regra 513 / <color:magenta>????</color>))
+            :<color:magenta>????</color>: Verificar nível de fluido de caixa de velocidades;
+            if (Nível de fluido < Mínimo) then (Sim (regra 78 / <color:magenta>????</color>))
+              :Diagnóstico: Nível de fluido de transmissão baixo;
+              :Solução: Completar fluido de transmissão e verificar possíveis fugas;
+              stop
+            else if (Nível de fluido > Máximo) then (Sim (regra 79 / <color:magenta>????</color>))
+              :Diagnóstico: Excesso de fluido de transmissão;
+              :Solução: Ajustar fluido de transmissão;
+              stop
+            else (Normal (regra 710 / <color:magenta>????</color>))
+              :<color:magenta>????</color>: Verificar embraiagem;
+              if (Embraiagem gasta ou a patinar?) then (Sim (regra 88 / <color:magenta>????</color>))
+                :Diagnóstico: Embraiagem com desgaste excessivo ou volante bimassa defeituoso;
+                :Solução: Substituir kit de embraiagem;
+                stop
+              else (Não (regra 89 / <color:magenta>????</color>))
+                :Diagnóstico: Verificação adicional necessária;
+                :Solução: Consultar especialista;
+                stop
+              endif
+            endif
+          else (Não (regra 514 / <color:magenta>????</color>))
+            :Diagnóstico: Nenhum problema identificado;
+            stop
+          endif
+        endif
+      endif
+    endif
+  endif
+else (Não (regra 02 / <color:blue>D03</color>))
+  :Diagnóstico: Sem problemas identificados;
+  stop
+endif
+
+@enduml
