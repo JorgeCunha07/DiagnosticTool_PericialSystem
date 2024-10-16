@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "a73d1dee-250c-4e1e-87d8-0f0b58edfa3b",
+		"name": "AI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30234530"
+	},
+	"item": [
+		{
+			"name": "Iniciar a seleção de um carro",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/carro/start",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"carro",
+						"start"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Selection",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "value",
+						"value": "Opel",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "value",
+						"value": "Astra J",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "value",
+						"value": "1.6 CDTi",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/carro/selection?value=1.6 CDTi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"carro",
+						"selection"
+					],
+					"query": [
+						{
+							"key": "value",
+							"value": "Opel",
+							"disabled": true
+						},
+						{
+							"key": "value",
+							"value": "Astra J",
+							"disabled": true
+						},
+						{
+							"key": "value",
+							"value": "1.6 CDTi"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "value",
+						"value": "Opel",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/carros",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"carros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Iniciar Diagnostico",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "value",
+						"value": "Opel",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"marca\": {\r\n            \"nome\": \"Opel\"\r\n        },\r\n        \"modelo\": {\r\n            \"nome\": \"Astra J\"\r\n        },\r\n        \"motor\": {\r\n            \"nome\": \"1.6 CDTi\"\r\n        },\r\n        \"componentes\": [\r\n            {\r\n                \"nome\": \"Bateria\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 75.0,\r\n                \"valorMinimoIdeal\": 65.0,\r\n                \"valorMaximoIdeal\": 75.0,\r\n                \"unidade\": \"Ah\"\r\n            },\r\n            {\r\n                \"nome\": \"Líquido de Arrefecimento\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 10.0,\r\n                \"valorMinimoIdeal\": 6.0,\r\n                \"valorMaximoIdeal\": 8.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Óleo do Motor\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 8.0,\r\n                \"valorMinimoIdeal\": 4.5,\r\n                \"valorMaximoIdeal\": 5.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Fluido de Travão\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 1.2,\r\n                \"valorMinimoIdeal\": 0.6,\r\n                \"valorMaximoIdeal\": 1.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Fluido de Transmissão\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 3.0,\r\n                \"valorMinimoIdeal\": 2.0,\r\n                \"valorMaximoIdeal\": 2.5,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Motor de Arranque\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 3.0,\r\n                \"valorMinimoIdeal\": 1.4,\r\n                \"valorMaximoIdeal\": 1.4,\r\n                \"unidade\": \"kW\"\r\n            },\r\n            {\r\n                \"nome\": \"Bloco de Motor\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 120.0,\r\n                \"valorMinimoIdeal\": 85.0,\r\n                \"valorMaximoIdeal\": 110.0,\r\n                \"unidade\": \"C\"\r\n            }\r\n        ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/diagnostico/iniciar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"diagnostico",
+						"iniciar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "responder",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "value",
+						"value": "Opel",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"texto\": \"\",\r\n    \"estado\": \"perguntarProblemaInicial\",\r\n    \"pergunta\": \"O carro apresenta algum problema? (Sim/Não)\",\r\n    \"carroSelecionado\": {\r\n        \"marca\": {\r\n            \"nome\": \"Opel\"\r\n        },\r\n        \"modelo\": {\r\n            \"nome\": \"Astra J\"\r\n        },\r\n        \"motor\": {\r\n            \"nome\": \"1.6 CDTi\"\r\n        },\r\n        \"componentes\": [\r\n            {\r\n                \"nome\": \"Bateria\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 75.0,\r\n                \"valorMinimoIdeal\": 65.0,\r\n                \"valorMaximoIdeal\": 75.0,\r\n                \"unidade\": \"Ah\"\r\n            },\r\n            {\r\n                \"nome\": \"Líquido de Arrefecimento\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 10.0,\r\n                \"valorMinimoIdeal\": 6.0,\r\n                \"valorMaximoIdeal\": 8.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Óleo do Motor\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 8.0,\r\n                \"valorMinimoIdeal\": 4.5,\r\n                \"valorMaximoIdeal\": 5.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Fluido de Travão\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 1.2,\r\n                \"valorMinimoIdeal\": 0.6,\r\n                \"valorMaximoIdeal\": 1.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Fluido de Transmissão\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 3.0,\r\n                \"valorMinimoIdeal\": 2.0,\r\n                \"valorMaximoIdeal\": 2.5,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Motor de Arranque\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 3.0,\r\n                \"valorMinimoIdeal\": 1.4,\r\n                \"valorMaximoIdeal\": 1.4,\r\n                \"unidade\": \"kW\"\r\n            },\r\n            {\r\n                \"nome\": \"Bloco de Motor\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 120.0,\r\n                \"valorMinimoIdeal\": 85.0,\r\n                \"valorMaximoIdeal\": 110.0,\r\n                \"unidade\": \"C\"\r\n            }\r\n        ]\r\n    },\r\n    \"marcaSelecionada\": null,\r\n    \"modeloSelecionado\": null,\r\n    \"motorSelecionado\": null,\r\n    \"diagnostico\": null,\r\n    \"solucao\": null,\r\n    \"porque\": null,\r\n    \"porqueNao\": null,\r\n    \"evidencias\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/diagnostico/responder",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"diagnostico",
+						"responder"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
