@@ -18,7 +18,7 @@ public class CarSelectionController {
 
     public CarSelectionController(CarSelectionService carSelectionService) {
         this.carSelectionService = carSelectionService;
-        this.carros = ImportFile.carregarBaseDados("baseDados.csv");
+        this.carros = ImportFile.carregarBaseDados("src/main/resources/baseDados.csv");
     }
 
     @GetMapping("/carro/start")
