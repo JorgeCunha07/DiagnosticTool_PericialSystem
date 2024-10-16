@@ -15,6 +15,31 @@ global java.util.List carros;  // Lista de objetos Carro
 global java.util.List<String> triggeredRules;
 global org.slf4j.Logger LOG;
 
+// Rule 00: Lista marcas disponíveis
+rule "R00: Lista Marcas Disponíveis"
+    when
+        $resposta : Resposta(estado == null || estado == "")
+    then
+        // Cast carros to List<Carro>
+        List<Carro> carrosList = (List<Carro>) carros;
+
+        // Usar um Set para evitar duplicação
+        Set<String> marcasDisponiveis = new HashSet<>();
+        for (Carro carro : carrosList) {
+            marcasDisponiveis.add(carro.getMarca().getNome());
+        }
+
+        // Exibir marcas disponíveis
+        System.out.println("Marcas disponíveis: ");
+        for (String marca : marcasDisponiveis) {
+            System.out.println(marca);
+        }
+
+        // Atualizar estado para iniciar a pergunta sobre a marca
+        $resposta.setEstado("aguardandoMarca");
+        update($resposta);
+end
+
 // Rule 01: Pergunta Marca do Carro
 rule "R01: Pergunta Marca do Carro"
     when

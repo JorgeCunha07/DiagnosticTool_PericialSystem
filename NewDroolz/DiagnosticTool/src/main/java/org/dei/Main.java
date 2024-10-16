@@ -1,14 +1,8 @@
 package org.dei;
 
-import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
-import org.dei.whynot.DroolsWithWhyNot;
-import org.dei.whynot.WhyNot;
-import org.kie.api.KieServices;
-import org.kie.api.runtime.KieContainer;
-import org.kie.api.runtime.KieSession;
-import org.kie.api.runtime.rule.FactHandle;
-import org.slf4j.LoggerFactory;
+import org.dei.service.DiagnosticService;
+import org.dei.service.CarSelectionService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,116 +16,41 @@ public class Main {
         try {
             // Carregar base de dados
             carros = ImportFile.carregarBaseDados("baseDados.csv");
-            if (carros == null || carros.isEmpty()) {
+            if (carros.isEmpty()) {
                 throw new RuntimeException("A lista de carros está vazia ou não foi carregada corretamente.");
             }
 
-            Resposta resposta = new Resposta();
-            resposta.setEstado(""); // Inicializa o estado com uma string vazia
-            resposta.setTexto("");  // Inicializa o texto com uma string vazia
-
-            // Configurar KieServices e KieSession
-            KieServices ks = KieServices.Factory.get();
-            KieContainer kc = ks.getKieClasspathContainer();
-            KieSession kSession = kc.newKieSession("ksession-rules");
-
-            // Definir variáveis globais
-            kSession.setGlobal("carros", carros);
-            kSession.setGlobal("triggeredRules", new ArrayList<String>());
-            kSession.setGlobal("LOG", LoggerFactory.getLogger(Main.class));
-
-            // Inserir o objeto resposta na sessão
-            FactHandle respostaHandle = kSession.insert(resposta);
-
             Scanner scanner = new Scanner(System.in);
+            String continuar;
 
-            while (!"finalizado".equals(resposta.getEstado())) {
-                kSession.fireAllRules();
+            do {
+                // Seleção do carro
+                CarSelectionService carSelectionService = new CarSelectionService();
+                Carro selectedCar = carSelectionService.selecionarCarro(carros);
 
-                String estado = resposta.getEstado();
-                String texto = resposta.getTexto();
+                if (selectedCar != null) {
+                    System.out.println("Carro selecionado:");
+                    System.out.println("Marca: " + selectedCar.getMarca().getNome());
+                    System.out.println("Modelo: " + selectedCar.getModelo().getNome());
+                    System.out.println("Motor: " + selectedCar.getMotor().getNome());
 
-                if (estado != null && estado.startsWith("aguardando") && (texto == null || texto.isEmpty())) {
-                    System.out.print("Digite sua resposta: ");
-                    String input = scanner.nextLine();
-                    resposta.setTexto(input);
-
-                    // Atualiza o objeto resposta na sessão
-                    if (respostaHandle != null) {
-                        kSession.update(respostaHandle, resposta);
-                    } else {
-                        respostaHandle = kSession.insert(resposta);
-                    }
+                    // Iniciar diagnóstico
+                    DiagnosticService diagnosticService = new DiagnosticService();
+                    diagnosticService.iniciarDiagnostico(selectedCar);
+                } else {
+                    System.out.println("Nenhum carro foi selecionado.");
                 }
-            }
 
-            // Após a interação, você pode acessar o carro selecionado
-            Carro selectedCar = resposta.getCarroSelecionado();
-            if (selectedCar != null) {
-                // Armazena o carro selecionado em uma variável para uso posterior
-                System.out.println("Carro selecionado:");
-                System.out.println("Marca: " + selectedCar.getMarca().getNome());
-                System.out.println("Modelo: " + selectedCar.getModelo().getNome());
-                System.out.println("Motor: " + selectedCar.getMotor().getNome());
+                // Perguntar ao usuário se ele quer continuar
+                System.out.print("Deseja realizar outro diagnóstico? (Sim/Não): ");
+                continuar = scanner.nextLine().trim();
 
-                // Begin diagnostic process
-                iniciarDiagnostico(selectedCar);
-            } else {
-                System.out.println("Nenhum carro foi selecionado.");
-            }
+            } while (continuar.equalsIgnoreCase("Sim"));
 
-            kSession.dispose();
+            System.out.println("Programa encerrado.");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    public static void iniciarDiagnostico(Carro selectedCar) {
-        try {
-            // Inicializa a sessão Drools com WhyNot
-            DroolsWithWhyNot drools = DroolsWithWhyNot.init("org.dei.facts");
-            KieSession diagSession = drools.getKieSession();
-
-            // Define o carro selecionado como variável global
-            diagSession.setGlobal("selectedCar", selectedCar);
-
-            // Define a instância do WhyNot como variável global
-            WhyNot whyNot = WhyNot.getInstance();
-            diagSession.setGlobal("whyNot", whyNot);
-
-            // Cria um novo objeto Resposta para a sessão de diagnóstico
-            Resposta diagResposta = new Resposta();
-            diagResposta.setEstado("iniciarDiagnostico");
-            diagResposta.setTexto("");
-            diagResposta.setCarroSelecionado(selectedCar);
-
-            FactHandle respostaHandle = diagSession.insert(diagResposta);
-
-            Scanner scanner = new Scanner(System.in);
-
-            while (!"finalizado".equals(diagResposta.getEstado())) {
-                diagSession.fireAllRules();
-
-                // Verifica o estado e processa a resposta do utilizador
-                if (diagResposta.getEstado().startsWith("perguntar") || diagResposta.getEstado().startsWith("processar")) {
-                    if (diagResposta.getTexto() == null || diagResposta.getTexto().isEmpty() ) {
-                        System.out.print("Digite sua resposta: ");
-                        String input = scanner.nextLine();
-                        diagResposta.setTexto(input);
-                        diagSession.update(respostaHandle, diagResposta);
-
-                    }
-                }
-            }
-
-
-
-            diagSession.dispose();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
