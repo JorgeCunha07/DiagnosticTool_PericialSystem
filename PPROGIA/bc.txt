@@ -78,9 +78,7 @@ facto_dispara_regras(discos_travao_gastos(_, nao), [610]).
 facto_dispara_regras(amortecedores_gastos(_, sim), [76]).
 facto_dispara_regras(amortecedores_gastos(_, nao), [77]).
 
-facto_dispara_regras(nivel_fluido_transmissao(_, baixo), [78]).
-facto_dispara_regras(nivel_fluido_transmissao(_, alto), [79]).
-facto_dispara_regras(nivel_fluido_transmissao(_, normal), [710]).
+facto_dispara_regras(fluido_transmissao(_, _), [78,79,710]).
 
 facto_dispara_regras(bomba_agua_defeituosa(_, sim), [81]).
 facto_dispara_regras(bomba_agua_defeituosa(_, nao), [82]).
@@ -127,7 +125,7 @@ perguntavel(pastilhas_travao_gastas(_, _)).
 perguntavel(discos_travao_gastos(_, _)).
 perguntavel(nivel_fluido_travao(_, _)).
 perguntavel(problemas_caixa_velocidades(_, _)).
-perguntavel(nivel_fluido_transmissao(_, _)).
+perguntavel(fluido_transmissao(_, _)).
 perguntavel(embraiagem_gasta(_, _)).
 perguntavel(barulho_suspensao_rodas(_, _)).
 perguntavel(problema_pneus_jantes_calcos(_, _)).
@@ -190,6 +188,10 @@ texto_pergunta(pastilhas_travao_gastas(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O Veiculo ~w apresenta as pastilhas de travão gastas?', [Veiculo]).
 texto_pergunta(discos_travao_gastos(Veiculo, _), Pergunta) :-
     format(atom(Pergunta), 'O Veiculo ~w apresenta discos de travão gastos?', [Veiculo]).
+texto_pergunta(fluido_transmissao(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'Qual é o nivel do fluido da caixa de velocidade que o Veiculo ~w apresenta?', [Veiculo]).
+texto_pergunta(embraiagem_gasta(Veiculo, _), Pergunta) :-
+    format(atom(Pergunta), 'A embraiagem do Veiculo ~w apresenta sinais de desgaste ou de patinar?', [Veiculo]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,7 +223,7 @@ opcoes_validas(pastilhas_travao_gastas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(discos_travao_gastos(_, _), [sim, nao, nao_sei]).
 opcoes_validas(nivel_fluido_travao(_, _), [baixo, normal, alto]).
 opcoes_validas(problemas_caixa_velocidades(_, _), [sim, nao, nao_sei]).
-opcoes_validas(nivel_fluido_transmissao(_, _), [baixo, normal, alto]).
+opcoes_validas(fluido_transmissao(_, _), Valor).
 opcoes_validas(embraiagem_gasta(_, _), [sim, nao, nao_sei]).
 opcoes_validas(barulho_suspensao_rodas(_, _), [sim, nao, nao_sei]).
 opcoes_validas(problema_pneus_jantes_calcos(_, _), [sim, nao, nao_sei]).
@@ -395,6 +397,10 @@ regra 512
     se [pastilhas_travao_gastas(Veiculo, nao)]
     entao [cria_facto(proximo_teste(Veiculo, discos_travao_gastos))].
 	
+regra 513	
+    se [problemas_caixa_velocidades(Veiculo, sim)]
+	entao [cria_facto(proximo_teste(Veiculo, fluido_transmissao))].
+	
 regra 514
     se [problemas_caixa_velocidades(Veiculo, nao)]
     entao [cria_facto(diagnostico(Veiculo, 'Nenhum problema identificado'))].
@@ -442,7 +448,19 @@ regra 76
 regra 77
     se [amortecedores_gastos(Veiculo, nao)]
     entao [cria_facto(diagnostico(Veiculo, 'Consulta especialista'))].
-	
+
+regra 78
+    se [avalia(fluido_transmissao(Veiculo,<,'Min'))]
+	entao [cria_facto(diagnostico(Veiculo,'Nível de fluido de transmissão baixo'))].
+
+regra 79
+    se [avalia(fluido_transmissao(Veiculo,>,'Max'))]
+	entao [cria_facto(diagnostico(Veiculo,'Excesso de fluido de transmissão'))].
+
+regra 710
+    se [avalia(fluido_transmissao(Veiculo,>,'Min')) e avalia(fluido_transmissao(Veiculo,<,'Max'))]
+	entao [cria_facto(proximo_teste(Veiculo, embraiagem_gasta))].
+
 regra 83
     se [velas_ignicao_defeito(Veiculo, sim)]
     entao [cria_facto(diagnostico(Veiculo, 'Falha nas velas de ignição'))].
@@ -458,6 +476,15 @@ regra 81
 regra 82
     se [bomba_agua_defeituosa(Veiculo, nao)]
     entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
+
+regra 88
+    se [embraiagem_gasta(Veiculo, sim)]
+    entao [cria_facto(diagnostico(Veiculo, 'Embraiagem com desgaste excessivo ou volante bimassa defeituoso'))].
+
+regra 89
+    se [embraiagem_gasta(Veiculo, nao)]
+    entao [cria_facto(diagnostico(Veiculo, 'Verificação adicional necessária'))].
+
 
 regra 91
 	se [sensores_defeituosos(Veiculo, sim)]
@@ -488,6 +515,49 @@ carro(16, 'Peugeot', '3008 II', '1.6 PureTech').
 carro(17, 'Peugeot', '3008 II', '2.0 BlueHDi').
 carro(18, 'Peugeot', '508 II', '1.6 PureTech').
 carro(19, 'Peugeot', '508 II', '1.5 BlueHDi').
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Factos para motor de arranque
+motor_arranque(1, 1.2, 1.2).
+motor_arranque(2, 1.4, 1.4).
+motor_arranque(3, 1.6, 1.6).
+motor_arranque(4, 1.1, 1.1).
+motor_arranque(5, 1.3, 1.3).
+motor_arranque(6, 1.5, 1.5).
+motor_arranque(7, 1.7, 1.7).
+motor_arranque(8, 1.3, 1.3).
+motor_arranque(9, 1.4, 1.4).
+motor_arranque(10, 1.3, 1.3).
+motor_arranque(11, 1.6, 1.6).
+motor_arranque(12, 1.2, 1.2).
+motor_arranque(13, 1.4, 1.4).
+motor_arranque(14, 1.3, 1.3).
+motor_arranque(15, 1.5, 1.5).
+motor_arranque(16, 1.6, 1.6).
+motor_arranque(17, 1.7, 1.7).
+motor_arranque(18, 1.6, 1.6).
+motor_arranque(19, 1.7, 1.7).
+
+% Factos para bloco de motor
+bloco_motor(1, 85, 105).
+bloco_motor(2, 85, 110).
+bloco_motor(3, 85, 110).
+bloco_motor(4, 85, 105).
+bloco_motor(5, 85, 110).
+bloco_motor(6, 85, 105).
+bloco_motor(7, 85, 110).
+bloco_motor(8, 85, 105).
+bloco_motor(9, 85, 110).
+bloco_motor(10, 85, 105).
+bloco_motor(11, 85, 110).
+bloco_motor(12, 85, 105).
+bloco_motor(13, 85, 110).
+bloco_motor(14, 85, 105).
+bloco_motor(15, 85, 110).
+bloco_motor(16, 85, 105).
+bloco_motor(17, 85, 110).
+bloco_motor(18, 85, 105).
+bloco_motor(19, 85, 110).
 
 % Factos para bateria
 bateria(1, 60, 70).
@@ -593,45 +663,3 @@ fluido_transmissao(16, 2, 2.5).
 fluido_transmissao(17, 2.2, 2.8).
 fluido_transmissao(18, 2, 2.5).
 fluido_transmissao(19, 2.2, 2.8).
-
-% Factos para motor de arranque
-motor_arranque(1, 1.2, 1.2).
-motor_arranque(2, 1.4, 1.4).
-motor_arranque(3, 1.6, 1.6).
-motor_arranque(4, 1.1, 1.1).
-motor_arranque(5, 1.3, 1.3).
-motor_arranque(6, 1.5, 1.5).
-motor_arranque(7, 1.7, 1.7).
-motor_arranque(8, 1.3, 1.3).
-motor_arranque(9, 1.4, 1.4).
-motor_arranque(10, 1.3, 1.3).
-motor_arranque(11, 1.6, 1.6).
-motor_arranque(12, 1.2, 1.2).
-motor_arranque(13, 1.4, 1.4).
-motor_arranque(14, 1.3, 1.3).
-motor_arranque(15, 1.5, 1.5).
-motor_arranque(16, 1.6, 1.6).
-motor_arranque(17, 1.7, 1.7).
-motor_arranque(18, 1.6, 1.6).
-motor_arranque(19, 1.7, 1.7).
-
-% Factos para bloco de motor
-bloco_motor(1, 85, 105).
-bloco_motor(2, 85, 110).
-bloco_motor(3, 85, 110).
-bloco_motor(4, 85, 105).
-bloco_motor(5, 85, 110).
-bloco_motor(6, 85, 105).
-bloco_motor(7, 85, 110).
-bloco_motor(8, 85, 105).
-bloco_motor(9, 85, 110).
-bloco_motor(10, 85, 105).
-bloco_motor(11, 85, 110).
-bloco_motor(12, 85, 105).
-bloco_motor(13, 85, 110).
-bloco_motor(14, 85, 105).
-bloco_motor(15, 85, 110).
-bloco_motor(16, 85, 105).
-bloco_motor(17, 85, 110).
-bloco_motor(18, 85, 105).
-bloco_motor(19, 85, 110).
