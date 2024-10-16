@@ -13,16 +13,6 @@ global java.util.List carros;
 global java.util.List<String> triggeredRules;
 global org.slf4j.Logger LOG;
 
-// Rule 00: Lista marcas disponíveis
-rule "R00: Lista Marcas Disponíveis"
-    when
-        $resposta : Resposta(estado == null || estado == "")
-    then
-        $resposta.setPergunta("Marcas disponíveis: ");
-        $resposta.setEstado("aguardandoMarca");
-        update($resposta);
-end
-
 // Rule 01: Pergunta Marca do Carro
 rule "R01: Pergunta Marca do Carro"
     when
