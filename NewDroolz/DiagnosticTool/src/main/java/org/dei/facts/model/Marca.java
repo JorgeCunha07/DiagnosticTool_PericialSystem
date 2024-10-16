@@ -2,7 +2,6 @@ package org.dei.facts.model;
 
 import lombok.*;
 
-import java.util.List;
 
 @Data
 @Getter
@@ -12,5 +11,4 @@ import java.util.List;
 @NoArgsConstructor
 public class Marca {
     private String nome;
-    private List<ModeloCarro> modelos;
 }

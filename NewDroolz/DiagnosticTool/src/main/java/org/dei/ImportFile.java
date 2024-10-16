@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ImportFile {
 
-    static List<Carro> carregarBaseDados(String caminhoArquivo) {
+    public static List<Carro> carregarBaseDados(String caminhoArquivo) {
         List<Carro> carros = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
             br.readLine();
@@ -36,46 +36,13 @@ public class ImportFile {
         double valorMaximo = Double.parseDouble(valores[6].trim());
         String unidade = valores[7].trim();
 
-        Marca marca = obterOuCriarMarca(nomeMarca, carros);
-        ModeloCarro modeloCarro = obterOuCriarModelo(marca, nomeModelo);
-        Motor motor = obterOuCriarMotor(modeloCarro, nomeMotor);
+        Marca marca = new Marca(nomeMarca);
+        ModeloCarro modeloCarro = new ModeloCarro(nomeModelo);
+        Motor motor = new Motor(nomeMotor);
         Carro carro = obterOuCriarCarro(marca, modeloCarro, motor, carros);
 
         Componente componente = new Componente(nomeComponente, valorMinimo, valorMaximo, valorMinimoIdeal, valorMaximoIdeal, unidade);
         carro.adicionarComponente(componente);
-    }
-
-    private static Marca obterOuCriarMarca(String nomeMarca, List<Carro> carros) {
-        return carros.stream()
-                .map(Carro::getMarca)
-                .filter(marca -> marca.getNome().equals(nomeMarca))
-                .findFirst()
-                .orElseGet(() -> {
-                    Marca novaMarca = new Marca(nomeMarca, new ArrayList<>());
-                    return novaMarca;
-                });
-    }
-
-    private static ModeloCarro obterOuCriarModelo(Marca marca, String nomeModelo) {
-        return marca.getModelos().stream()
-                .filter(m -> m.getNome().equals(nomeModelo))
-                .findFirst()
-                .orElseGet(() -> {
-                    ModeloCarro novoModelo = new ModeloCarro(nomeModelo, new ArrayList<>());
-                    marca.getModelos().add(novoModelo);
-                    return novoModelo;
-                });
-    }
-
-    private static Motor obterOuCriarMotor(ModeloCarro modeloCarro, String nomeMotor) {
-        return modeloCarro.getMotores().stream()
-                .filter(m -> m.getNome().equals(nomeMotor))
-                .findFirst()
-                .orElseGet(() -> {
-                    Motor novoMotor = new Motor(nomeMotor);
-                    modeloCarro.getMotores().add(novoMotor);
-                    return novoMotor;
-                });
     }
 
     private static Carro obterOuCriarCarro(Marca marca, ModeloCarro modeloCarro, Motor motor, List<Carro> carros) {
@@ -88,5 +55,4 @@ public class ImportFile {
                     return novoCarro;
                 });
     }
-
 }

@@ -2,73 +2,77 @@ package org.dei.service;
 
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
+import org.dei.facts.model.ModeloCarro;
+import org.dei.facts.model.Motor;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
+@Service
 public class CarSelectionService {
 
-    public Carro selecionarCarro(List<Carro> carros) {
-        try {
-            // Configurar KieServices e KieSession
-            KieServices ks = KieServices.Factory.get();
-            KieContainer kc = ks.getKieClasspathContainer();
-            KieSession kSession = kc.newKieSession("ksession-rules");
+    private KieSession kSession;
+    private Resposta resposta;
+    private FactHandle respostaHandle;
 
-            // Inicializa o objeto resposta
-            Resposta resposta = new Resposta();
-            resposta.setEstado(""); // Inicializa o estado com uma string vazia
-            resposta.setTexto("");  // Inicializa o texto com uma string vazia
+    public CarSelectionService() {
+        // Configurar KieServices e KieSession
+        KieServices ks = KieServices.Factory.get();
+        KieContainer kc = ks.getKieClasspathContainer();
+        this.kSession = kc.newKieSession("ksession-rules");
 
-            // Definir variáveis globais
-            kSession.setGlobal("carros", carros);
-            kSession.setGlobal("triggeredRules", new ArrayList<String>());
-            kSession.setGlobal("LOG", LoggerFactory.getLogger(CarSelectionService.class));
+        // Inicializa o objeto resposta
+        this.resposta = new Resposta();
+        resposta.setEstado(""); // Inicializa o estado com uma string vazia
+        resposta.setTexto("");  // Inicializa o texto com uma string vazia
 
-            // Inserir o objeto resposta na sessão
-            FactHandle respostaHandle = kSession.insert(resposta);
+        // Definir variáveis globais
+        kSession.setGlobal("triggeredRules", new ArrayList<String>());
+        kSession.setGlobal("LOG", LoggerFactory.getLogger(CarSelectionService.class));
 
-            Scanner scanner = new Scanner(System.in);
+        // Inserir o objeto resposta na sessão
+        this.respostaHandle = kSession.insert(resposta);
+    }
 
-            // Loop para processar as regras e interagir com o usuário até o diagnóstico ser finalizado
-            while (!"finalizado".equals(resposta.getEstado())) {
-                kSession.fireAllRules();
+    public Resposta processarResposta(List<Carro> carros, String inputTexto) {
+        // Definir a lista de carros como variável global
+        kSession.setGlobal("carros", carros);
 
-                String estado = resposta.getEstado();
-                String texto = resposta.getTexto();
+        // Atualiza o texto da resposta
+        resposta.setTexto(inputTexto);
 
-                // Pergunta ao usuário quando o sistema estiver aguardando uma resposta
-                if (estado != null && estado.startsWith("aguardando") && (texto == null || texto.isEmpty())) {
-                    System.out.print("Digite sua resposta: ");
-                    String input = scanner.nextLine();
-                    resposta.setTexto(input);
-
-                    // Atualiza o objeto resposta na sessão
-                    if (respostaHandle != null) {
-                        kSession.update(respostaHandle, resposta);
-                    } else {
-                        respostaHandle = kSession.insert(resposta);
-                    }
-                }
-            }
-
-            // Após a interação, retornar o carro selecionado
-            Carro selectedCar = resposta.getCarroSelecionado();
-
-            // Encerrar a sessão
-            kSession.dispose();
-
-            return selectedCar;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        // Atualiza o objeto resposta na sessão
+        if (respostaHandle != null) {
+            kSession.update(respostaHandle, resposta);
+        } else {
+            respostaHandle = kSession.insert(resposta);
         }
+
+        // Processa as regras
+        kSession.fireAllRules();
+
+        if (resposta.getEstado().equals("finalizado")) {
+            kSession.dispose();
+            resposta.setCarroSelecionado(getCarroSelecionado(carros,resposta));
+        }
+        // Retorna a resposta atualizada
+        return resposta;
+    }
+
+    public Carro getCarroSelecionado(List<Carro> carros, Resposta resposta) {
+        for (Carro carro : carros) {
+            if (carro.getMarca().getNome().equalsIgnoreCase(resposta.getMarcaSelecionada()) &&
+                    carro.getModelo().getNome().equalsIgnoreCase(resposta.getModeloSelecionado()) &&
+                    carro.getMotor().getNome().equalsIgnoreCase(resposta.getMotorSelecionado())) {
+                return carro;
+            }
+        }
+        return null;
     }
 }

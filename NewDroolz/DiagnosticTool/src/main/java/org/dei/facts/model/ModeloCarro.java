@@ -13,6 +13,4 @@ import java.util.List;
 @NoArgsConstructor
 public class ModeloCarro {
     private String nome;
-    private List<Motor> motores;
-
 }

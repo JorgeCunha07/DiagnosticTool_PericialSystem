@@ -17,6 +17,7 @@
     <drools-version>7.73.0.Final</drools-version>
     <slf4j-version>1.7.32</slf4j-version>
     <junit-version>4.13.2</junit-version>
+    <spring-boot-version>2.7.5</spring-boot-version>
   </properties>
 
   <dependencyManagement>
@@ -32,6 +33,7 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- Drools Dependencies -->
     <dependency>
       <groupId>org.drools</groupId>
       <artifactId>drools-core</artifactId>
@@ -78,16 +80,43 @@
       <version>${drools-version}</version>
     </dependency>
 
-    <!-- Logging dependencies -->
+    <!-- Spring Boot Dependencies -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>${spring-boot-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-to-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j-version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+      <version>${spring-boot-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-to-slf4j</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Log4j 2 with SLF4J -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <version>2.14.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -97,11 +126,6 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.14.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
       <version>2.14.1</version>
     </dependency>
 
@@ -127,12 +151,14 @@
       <version>${drools-version}</version>
     </dependency>
 
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>1.18.34</version>
-        <scope>provided</scope>
-      </dependency>
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.34</version>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- jBPM Dependencies -->
     <dependency>
       <groupId>org.jbpm</groupId>
@@ -149,7 +175,9 @@
       <artifactId>jbpm-flow-builder</artifactId>
       <version>${drools-version}</version>
     </dependency>
+
   </dependencies>
+
   <repositories>
     <repository>
       <id>central</id>
@@ -162,6 +190,7 @@
       <plugin>
         <groupId>org.kie</groupId>
         <artifactId>kie-maven-plugin</artifactId>
+
         <version>${drools-version}</version>
         <executions>
           <execution>
@@ -171,6 +200,13 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot-version}</version>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
