@@ -798,7 +798,7 @@ rule "D57: Processar 'O carro faz barulho anormal? Não'"
     then
         Evidence<String, String> ev = new Evidence<>("perguntarCarroFazBarulhoAnormal", $resposta.getTexto());
         insert(ev);
-        $resposta.setEstado("perguntarCarroDificuldadeTravar");
+        $resposta.setEstado("processarCarroDificuldadeTravar");
         $resposta.setTexto("");
         update($resposta);
 end
@@ -1130,6 +1130,444 @@ rule "D79: Problema no sistema de escape - Não"
 
         update($resposta);
 end
+
+// Rule D80: Verificar Suspensão e Rodas
+rule "D80: Verificar Suspensão e Rodas"
+    when
+        $resposta : Resposta(estado == "verificarSuspensaoRodas", texto == "")
+    then
+        System.out.println("Barulho na suspensão ou rodas? (Sim/Não)");
+        $resposta.setPergunta("Barulho na suspensão ou rodas? (Sim/Não)");
+        $resposta.setEstado("perguntarsuspensaoerodas");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D81: Processar 'Barulho na suspensão ou rodas? Não"
+rule "D81: Processar 'Barulho na suspensão ou rodas? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarsuspensaoerodas", texto == "Não")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarsuspensaoerodas", $resposta.getTexto());
+        insert(ev);
+        $resposta.setDiagnostico("Sem barulho na suspensão ou rodas");
+        $resposta.setSolucao("Consultar especialista");
+        $resposta.setPorque("Não foi identificado o problema");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D82: Processar 'Barulho na suspensão ou rodas? Sim'"
+rule "D82: Processar 'Barulho na suspensão ou rodas? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarsuspensaoerodas", texto == "Sim")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarsuspensaoerodas", $resposta.getTexto());
+        insert(ev);
+        $resposta.setEstado("verificarproblema_pneu_jantes_calcos");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+
+
+// Rule D83: Verificar Pneus, Jantes e Calços"
+rule "D83: Verificar Pneus, Jantes e Calços"
+    when
+        $resposta : Resposta(estado == "verificarproblema_pneu_jantes_calcos", texto == "")
+    then
+        System.out.println("Verifique os pneus, jantes e calços. Há problema identificado? (Sim/Não)");
+        $resposta.setPergunta("Verifique os pneus, jantes e calços. Há problema identificado? (Sim/Não)");
+        $resposta.setEstado("perguntarproblema_pneu_jantes_calcos");
+        $resposta.setTexto("");
+        update($resposta);
+
+end
+
+
+// Rule D84: Processar 'Problema nos pneus, jantes ou calços? Sim'"
+rule "D84: Processar 'Problema nos pneus, jantes ou calços? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Sim")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarproblema_pneu_jantes_calcos", $resposta.getTexto());
+        insert(ev);
+        $resposta.setDiagnostico("Problema nos pneus, jantes ou calços");
+        $resposta.setSolucao("Verificar e substituir pneus, jantes ou calços");
+        $resposta.setPorque("Foi identificado um problema nos pneus, jantes ou calços");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+
+end
+
+// Rule D85: Processar 'Problema nos pneus, jantes ou calços? Não'"
+rule "D85: Processar 'Problema nos pneus, jantes ou calços? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Não")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarproblema_pneu_jantes_calcos", $resposta.getTexto());
+        insert(ev);
+        $resposta.setEstado("verificarAmortecedores");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+
+// Rule D86: Verificar Amortecedores gastos ou bases de amortecedores gastos"
+rule "D86: Verificar Amortecedores gastos ou bases de amortecedores gastos"
+    when
+        $resposta : Resposta(estado == "verificarAmortecedores", texto == "")
+    then
+        System.out.println("Verifique os amortecedores e as bases dos amortecedores. Há problema identificado? (Sim/Não)");
+        $resposta.setPergunta("Verifique os amortecedores e as bases dos amortecedores. Há problema identificado? (Sim/Não)");
+        $resposta.setEstado("perguntarproblema_amortecedores");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+
+// Rule D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim'"
+rule "D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarproblema_amortecedores", texto == "Sim")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarproblema_amortecedores", $resposta.getTexto());
+        insert(ev);
+        $resposta.setDiagnostico("Amortecedores gastos ou bases de amortecedores gastos");
+        $resposta.setSolucao("Verificar e substituir amortecedores ou bases de amortecedores");
+        $resposta.setPorque("Foi identificado um problema nos amortecedores ou bases de amortecedores");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Não'"
+rule "D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Não")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarproblema_amortecedores", $resposta.getTexto());
+        insert(ev);
+        $resposta.setDiagnostico("Amortecedores gastos ou bases de amortecedores gastos");
+        $resposta.setDiagnostico("Sem Amortecedores gastos ou bases de amortecedores gastos");
+        $resposta.setSolucao("Consultar especialista");
+        $resposta.setPorque("Não foi identificado o problema");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D89: Verificar Carro Dificuldade Travar"
+rule "D89: Verificar Carro Dificuldade Travar"
+    when
+        $resposta : Resposta(estado == "processarCarroDificuldadeTravar", texto == "")
+    then
+        System.out.println("O carro tem dificuldade em travar? (Sim/Não)");
+        $resposta.setPergunta("O carro tem dificuldade em travar? (Sim/Não)");
+        $resposta.setEstado("perguntarCarroDificuldadeTravar");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D102: Processar 'Verificar Carro Dificuldade Travar? Não'"
+rule "D102: Processar 'Verificar Carro Dificuldade Travar? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Não")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarCarroDificuldadeTravar", $resposta.getTexto());
+        insert(ev);
+        $resposta.setEstado("verificarcaixadevelocidades");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D103: Processar 'Verificar Carro Dificuldade Travar? Sim'"
+rule "D103: Processar 'Verificar Carro Dificuldade Travar? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Sim")
+    then
+        Evidence<String, String> ev = new Evidence<>("perguntarCarroDificuldadeTravar", $resposta.getTexto());
+        insert(ev);
+        $resposta.setEstado("verificarSistemaTravoes");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+
+// Rule D90: Verificar sistema de travões
+rule "D90: Verificar sistema de travões"
+    when
+        $resposta : Resposta(estado == "verificarSistemaTravoes", texto == "")
+    then
+        System.out.println("Verificar sistema de travões.");
+        $resposta.setPergunta("Pastilhas de travão gastas? (Sim/Não)");
+        $resposta.setEstado("perguntarPastilhasTravaoGastas");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D91: Processar "Pastilhas de travão gastas? Sim"
+rule "D91: Processar 'Pastilhas de travão gastas? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarPastilhasTravaoGastas", texto == "Sim")
+    then
+        System.out.println("Diagnóstico: Pastilhas de travão gastas.");
+        $resposta.setDiagnostico("Pastilhas de travão gastas");
+        $resposta.setSolucao("Substituir pastilhas de travão");
+        $resposta.setPorque("Pastilhas de travão gastas");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D92: Processar "Pastilhas de travão gastas? Não"
+rule "D92: Processar 'Pastilhas de travão gastas? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarPastilhasTravaoGastas", texto == "Não")
+    then
+        System.out.println("Verificar discos de travão.");
+        $resposta.setPergunta("Discos de travão gastos? (Sim/Não)");
+        $resposta.setEstado("perguntarDiscosTravaoGastos");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D93: Processar "Discos de travão gastos? Sim"
+rule "D93: Processar 'Discos de travão gastos? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarDiscosTravaoGastos", texto == "Sim")
+    then
+        System.out.println("Diagnóstico: Discos de travão gastos.");
+        $resposta.setDiagnostico("Discos de travão gastos");
+        $resposta.setSolucao("Substituir discos de travão");
+        $resposta.setPorque("Discos de travão gastos");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D94: Processar "Discos de travão gastos? Não"
+rule "D94: Processar 'Discos de travão gastos? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarDiscosTravaoGastos", texto == "Não")
+    then
+        System.out.println("Verificar fluido de travão.");
+        $resposta.setPergunta("Nível de fluido de travão? (Baixo/Alto/Normal)");
+        $resposta.setEstado("perguntarNivelFluidoTravao");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D95: Processar "Nível de fluido de travão baixo"
+rule "D95: Processar 'Nível de fluido de travão baixo'"
+    when
+        $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Baixo")
+    then
+        System.out.println("Diagnóstico: Nível de fluido insuficiente.");
+        $resposta.setDiagnostico("Nível de fluido insuficiente");
+        $resposta.setSolucao("Completar fluido de travão e corrigir possíveis fugas");
+        $resposta.setPorque("Nível de fluido insuficiente");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D96: Processar "Nível de fluido de travão alto"
+rule "D96: Processar 'Nível de fluido de travão alto'"
+    when
+        $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Alto")
+    then
+        System.out.println("Diagnóstico: Excesso de fluido de travão.");
+        $resposta.setDiagnostico("Excesso de fluido de travão");
+        $resposta.setSolucao("Ajustar nível de fluido de travão");
+        $resposta.setPorque("Nível de fluido excessivo");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D97: Processar "Nível de fluido de travão normal"
+rule "D97: Processar 'Nível de fluido de travão normal'"
+    when
+        $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Normal")
+    then
+        System.out.println("Verificar servofreio.");
+        $resposta.setPergunta("Problema no servofreio? (Sim/Não)");
+        $resposta.setEstado("perguntarProblemaServoFreio");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D98: Processar "Problema no servofreio? Sim"
+rule "D98: Processar 'Problema no servofreio? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarProblemaServoFreio", texto == "Sim")
+    then
+        System.out.println("Diagnóstico: Servofreio defeituoso.");
+        $resposta.setDiagnostico("Servo freio defeituoso");
+        $resposta.setSolucao("Reparar ou substituir servofreio");
+        $resposta.setPorque("Servo freio defeituoso");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D99: Processar "Problema no servofreio? Não"
+rule "D99: Processar 'Problema no servofreio? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarProblemaServoFreio", texto == "Não")
+    then
+        System.out.println("Verificar sistema ABS.");
+        $resposta.setPergunta("ABS com falha? (Sim/Não)");
+        $resposta.setEstado("perguntarFalhaABS");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D100: Processar "ABS com falha? Sim"
+rule "D100: Processar 'ABS com falha? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarFalhaABS", texto == "Sim")
+    then
+        System.out.println("Diagnóstico: Sistema ABS com defeito.");
+        $resposta.setDiagnostico("Sistema ABS com defeito");
+        $resposta.setSolucao("Verificar e reparar sistema ABS com consulta de especialista");
+        $resposta.setPorque("Sistema ABS com defeito");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D101: Processar "ABS com falha? Não"
+rule "D101: Processar 'ABS com falha? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarFalhaABS", texto == "Não")
+    then
+        System.out.println("Diagnóstico: Problema indeterminado.");
+        $resposta.setDiagnostico("Problema indeterminado");
+        $resposta.setSolucao("Consultar especialista");
+        $resposta.setPorque("Problema indeterminado");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+
+
+
+
+
+// Rule D104: Verificar problemas na caixa de velocidades"
+rule "D104: Verificar problemas na caixa de velocidades"
+    when
+        $resposta : Resposta(estado == "verificarcaixadevelocidades", texto == "")
+    then
+        System.out.println("Verificar problemas na caixa de velocidades.");
+        $resposta.setPergunta("Verificar problemas na caixa de velocidades.");
+        $resposta.setEstado("perguntarcaixadevelocidades");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+// Rule D105: Processar 'Verificar problemas na caixa de velocidades? Não'
+rule "D105: Processar 'Verificar problemas na caixa de velocidades? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarcaixadevelocidades", texto == "Não")
+    then
+        System.out.println("Diagnóstico: Nenhum problema identificado.");
+        $resposta.setDiagnostico("Nenhum problema identificado");
+        $resposta.setSolucao("Nenhuma ação necessária");
+        $resposta.setPorque("Nenhum problema foi identificado na caixa de velocidades");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D106: Processar 'Verificar problemas na caixa de velocidades? Sim'
+rule "D106: Processar 'Verificar problemas na caixa de velocidades? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarcaixadevelocidades", texto == "Sim")
+    then
+        System.out.println("Verificar nível de fluido de caixa de velocidades.");
+        $resposta.setPergunta("Nível de fluido < Mínimo, > Máximo ou Normal? (Minimo/Maximo/Normal)");
+        $resposta.setEstado("perguntarNivelFluidoCaixa");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+
+// Rule D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'
+rule "D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'"
+    when
+        $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Minimo")
+    then
+        System.out.println("Diagnóstico: Nível de fluido de transmissão baixo.");
+        $resposta.setDiagnostico("Nível de fluido de transmissão baixo");
+        $resposta.setSolucao("Completar fluido de transmissão e verificar possíveis fugas");
+        $resposta.setPorque("Nível de fluido de transmissão está abaixo do mínimo");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'
+rule "D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'"
+    when
+        $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Maximo")
+    then
+        System.out.println("Diagnóstico: Excesso de fluido de transmissão.");
+        $resposta.setDiagnostico("Excesso de fluido de transmissão");
+        $resposta.setSolucao("Ajustar fluido de transmissão");
+        $resposta.setPorque("Nível de fluido de transmissão está acima do máximo");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D109: Processar 'Nível de fluido de caixa de velocidades Normal'
+rule "D109: Processar 'Nível de fluido de caixa de velocidades Normal'"
+    when
+        $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Normal")
+    then
+        System.out.println("Verificar embraiagem.");
+        $resposta.setPergunta("Embraiagem gasta ou a patinar? (Sim/Não)");
+        $resposta.setEstado("perguntarEmbraiagem");
+        $resposta.setTexto("");
+        update($resposta);
+end
+
+
+// Rule D110: Processar 'Embraiagem gasta ou a patinar? Sim'
+rule "D110: Processar 'Embraiagem gasta ou a patinar? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarEmbraiagem", texto == "Sim")
+    then
+        System.out.println("Diagnóstico: Embraiagem com desgaste excessivo ou volante bimassa defeituoso.");
+        $resposta.setDiagnostico("Embraiagem com desgaste excessivo ou volante bimassa defeituoso");
+        $resposta.setSolucao("Substituir kit de embraiagem");
+        $resposta.setPorque("Embraiagem gasta ou a patinar");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+// Rule D111: Processar 'Embraiagem gasta ou a patinar? Não'
+rule "D111: Processar 'Embraiagem gasta ou a patinar? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarEmbraiagem", texto == "Não")
+    then
+        System.out.println("Diagnóstico: Verificação adicional necessária.");
+        $resposta.setDiagnostico("Verificação adicional necessária");
+        $resposta.setSolucao("Consultar especialista");
+        $resposta.setPorque("Embraiagem não está gasta ou a patinar");
+        $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
+        $resposta.setEstado("diagnosticoConcluido");
+        update($resposta);
+end
+
+
 
 // Rule DX: Diagnóstico Concluído
 rule "DX: Diagnóstico Concluído"
