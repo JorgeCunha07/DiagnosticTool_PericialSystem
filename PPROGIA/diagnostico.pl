@@ -2,6 +2,11 @@
 diagnostico :-
     retractall(factos_processados(_)),
     diagnostico_loop.
+	
+% Predicado que inicia APENAS uma pergunta do diagnostico
+diagnostico2 :-
+    diag_problemas,
+	arranca_motor.
 
 % Loop que processa testes pendentes ou exibe o diagnostico final
 diagnostico_loop :-
@@ -35,9 +40,9 @@ diag_problemas :-
 
 % Processar cada teste
 processar_testes([]).
-processar_testes([(Id, Veiculo, Teste) | Rest]) :-
+processar_testes([(Id, Veiculo, Teste) | Resto]) :-
     tratar_problema(Id, Veiculo, Teste),
-    processar_testes(Rest).
+    processar_testes(Resto).
 
 % Tratar cada problema individualmente
 tratar_problema(Id, Veiculo, Teste) :-
