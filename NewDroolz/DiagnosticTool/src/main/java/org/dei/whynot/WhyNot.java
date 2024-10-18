@@ -1,147 +1,31 @@
 package org.dei.whynot;
 
-import org.drools.compiler.lang.descr.BaseDescr;
-import org.drools.compiler.lang.descr.PatternDescr;
-import org.drools.core.util.StringUtils;
-import org.kie.api.runtime.KieSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.List;
 
-// Singleton pattern with configurable initialization
-
-/**
- * WhyNot class implements the singleton pattern to ensure the creation of an unique instance.
- * Used to build whynot explanations in text format
- */
 public class WhyNot {
+    private static WhyNot instance;
+    private DroolsWithWhyNot droolsWithWhyNot;
 
-    private static WhyNot singleton = null;
-    /**
-     * Logger reference
-     */
-    static final Logger LOG = LoggerFactory.getLogger(WhyNot.class);
-    /**
-     * Drools session reference
-     */
-    private final KieSession session;
-    /**
-     * Reference to a KnowledgeBase object containing a representation in memory of DRL file contents,
-     * and utils' methods
-     */
-    private final KnowledgeBase kb;
-    /**
-     * Reference to a CheckWorkingMemory object providing the mechanisms to check rule conditions
-     */
-    private final CheckWorkingMemory chkWM;
-
-    /**
-     * Constructor for class WhyNot used to build whynot explanations
-     * @param session Drools session
-     * @param kb KnowledgeBase object containing a description of the Knowledge Base
-     */
-    private WhyNot(KieSession session, KnowledgeBase kb) {
-        this.session = session;
-        this.kb = kb;
-        this.chkWM = CheckWorkingMemory.init(session, kb);
+    public WhyNot(DroolsWithWhyNot droolsWithWhyNot) {
+        this.droolsWithWhyNot = droolsWithWhyNot;
     }
 
-    /**
-     * Returns the singleton object
-     * @return WhyNot instance
-     */
-    public static WhyNot getInstance() {
-        if(singleton == null) {
-            throw new AssertionError("You have to call init() first");
+    public synchronized static WhyNot init(DroolsWithWhyNot droolsWithWhyNot) {
+        if (instance == null) {
+            instance = new WhyNot(droolsWithWhyNot);
         }
-
-        return singleton;
+        return instance;
     }
 
-    /**
-     * Method that ensures the creation of a unique instance of WhyNot class
-     * @param drools DroolsInit object used to create a session with the environment needed to build whynot explanations
-     * @return WhyNot singleton object
-     */
-    public synchronized static WhyNot init(DroolsWithWhyNot drools) {
-        if (singleton != null)
-        {
-            // ensure that we only ever get the same instance when we call getInstance
-            throw new AssertionError("You already initialized me");
-        }
-
-        singleton = new WhyNot(drools.getKieSession(), drools.getKnowledgeBase());
-        return singleton;
-    }
-
-    /**
-     * Method used to obtain a whynot explanation
-     * @param expectedConclusion The expected conclusion in class constructor format
-     * @return The whynot explanation text
-     */
     public String getWhyNotExplanation(String expectedConclusion) {
-        StringBuffer explanation = new StringBuffer();
+        List<String> untriggeredRules = droolsWithWhyNot.getUntriggeredRules();
 
-        String DRLconclusion = null;
-        try {
-            DRLconclusion = kb.convertConstructorToDRL(expectedConclusion);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            System.exit(0);
+        // Check if the expected conclusion's rule is in the list of untriggered rules
+        if (untriggeredRules.contains(expectedConclusion)) {
+            return "The rule '" + expectedConclusion + "' did not fire because some conditions were not met.";
         }
-
-        try {
-            generateExplanation(expectedConclusion, DRLconclusion, explanation, 0);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            System.exit(0);
-        }
-
-        return explanation.toString();
+        return "The rule '" + expectedConclusion + "' was not found in the list of untriggered rules.";
     }
 
-    private void generateExplanation(String expectedConclusion, String DRLConclusion, StringBuffer explanation, int level) throws Exception {
-        String tabs = StringUtils.repeat("\t", level * 2);
-
-        if (kb.isBasicFact(expectedConclusion)) {
-            explanation.append(tabs);
-            explanation.append(DRLConclusion);
-            explanation.append(" is a basic fact not defined\n");
-            return;
-        }
-
-        final String functor = expectedConclusion.split("\\(")[0];
-        List<String> rules = kb.getRulesObtainingConclusion(functor);
-
-        for (String ruleName : rules) {
-            RuleWM rule = kb.getRuleByName(ruleName);
-
-            if (chkWM.conclusionFromRuleDoesNotExist(ruleName, functor, DRLConclusion)) {
-                explanation.append(tabs);
-                explanation.append(DRLConclusion);
-                explanation.append(" was not concluded because rule ");
-                explanation.append(ruleName);
-                explanation.append(" did not fire due to:\n");
-
-                int condNoLocal = 1;
-                List<PatternDescr> conditions = rule.getRuleConditions();
-                for (PatternDescr patt : conditions) {
-                    String drlCondition = patt.getObjectType() + "(" + patt.getDescrs().stream()
-                            .map(BaseDescr::getText)
-                            .reduce((s1, s2) -> s1 + " , " + s2)
-                            .orElse("") + ")";
-
-                    if (chkWM.conditionIsFalse(drlCondition)) {
-                        explanation.append(tabs).append("\t").append("Rule condition ").append(condNoLocal).append(": ")
-                                .append(drlCondition).append(" is false\n");
-                        String conc = kb.convertDRLPatternToConstructor(patt);
-                        generateExplanation(conc, drlCondition, explanation, level + 1);
-                    }
-                    condNoLocal++;
-                }
-            }
-        }
-    }
 
 }

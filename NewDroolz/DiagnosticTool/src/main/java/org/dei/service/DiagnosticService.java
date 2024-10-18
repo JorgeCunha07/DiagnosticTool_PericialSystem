@@ -3,6 +3,7 @@ package org.dei.service;
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
 import org.dei.whynot.DroolsWithWhyNot;
+import org.dei.whynot.WhyNot;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,8 @@ public class DiagnosticService {
             DroolsWithWhyNot drools = DroolsWithWhyNot.init("org.dei.facts");
             this.diagSession = drools.getKieSession();
 
-            // Define o carro selecionado como variável global
+            WhyNot whyNot = new WhyNot(drools);
+            diagSession.setGlobal("whyNot", whyNot);
             diagSession.setGlobal("selectedCar", selectedCar);
 
             // Cria um novo objeto Resposta para a sessão de diagnóstico
