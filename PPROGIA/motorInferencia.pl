@@ -13,8 +13,8 @@
 :- dynamic factos_processados/1.
 :- dynamic carro_selecionado/1.
 
-:- consult('bc.txt').
-:- consult('escolha_carro.pl').
+% :- consult('bc.txt').
+% :- consult('escolha_carro.pl').
 :- consult('diagnostico.pl').
 :- consult('como.pl').
 :- consult('porque_nao.pl').
