@@ -19,7 +19,8 @@ servidor(Port) :-
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [method(post)]).
-:- http_handler(root(diagnostico), diagnostico2_handler, []).
+:- http_handler(root(diagnostico), diagnostico2_handler, [method(get)]).
+:- http_handler(root(factos), factos_handler, [method(get)]).
 
 log_message(Message) :-
     open('server.log', append, Stream),
@@ -65,15 +66,17 @@ http_hanlder_procurar_numero_carro(Request) :-
 
 http_handler_escolher_carro(Request) :-
     http_read_json_dict(Request, JsonIn),
-    atom_string(Numero, JsonIn.numero),
-    log_message('Dados recebidos: ' + Numero),
-    carro(Numero, Marca, Modelo, Motor),
-    format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]),
+    Numero = JsonIn.numero,
+    procurar_carro(Numero, Carro),
     log_message('Carro selecionado: ' + Carro),
     retractall(carro_selecionado(_)),
     assertz(carro_selecionado(Carro)),
     retractall(facto(_, _)),
     assertz(facto(1, proximo_teste(Numero, problemas))).
+
+procurar_carro(Numero, Carro) :-
+    carro(Numero, Marca, Modelo, Motor),
+    format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
         
 diagnostico2_handler(_Request) :-
     % Chamar a função diagnostico2
