@@ -1,5 +1,7 @@
 package org.dei.service;
 
+import lombok.extern.slf4j.Slf4j;
+import org.dei.facts.How;
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
 import org.dei.whynot.DroolsWithWhyNot;
@@ -7,6 +9,7 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class DiagnosticService {
 
@@ -35,7 +38,7 @@ public class DiagnosticService {
             diagSession.fireAllRules();
             return diagResposta;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -43,11 +46,16 @@ public class DiagnosticService {
     // Processa as respostas subsequentes e retorna a próxima pergunta
     public Resposta processarResposta(Resposta diagResposta) {
         try {
+            if (!diagResposta.isDiagnosticoConcluido()){
             diagSession.update(respostaHandle, diagResposta);
             diagSession.fireAllRules();
+            }else {
+            diagSession.dispose();
+            diagResposta.setComo(How.gerarExplicacao(diagResposta.getEvidencias()));
+            }
             return diagResposta;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return null;
         }
     }

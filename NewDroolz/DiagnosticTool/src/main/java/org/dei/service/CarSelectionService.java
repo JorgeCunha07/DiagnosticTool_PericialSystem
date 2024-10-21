@@ -2,8 +2,6 @@ package org.dei.service;
 
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
-import org.dei.facts.model.ModeloCarro;
-import org.dei.facts.model.Motor;
 import org.kie.api.KieServices;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
