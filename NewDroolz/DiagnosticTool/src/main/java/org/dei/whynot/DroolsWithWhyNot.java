@@ -17,9 +17,12 @@ public class DroolsWithWhyNot {
     private final String factsPackage;
     private KieSession session;
     private KnowledgeBase kb;
-    // Get untriggered rules for whyNot explanation
+
+    // List of triggered and untriggered rules for whyNot explanation
     @Getter
     private List<String> untriggeredRules = new ArrayList<>();
+    @Getter
+    private List<String> triggeredRules = new ArrayList<>(); // Nova lista para regras disparadas
 
     private DroolsWithWhyNot(String factsPackage) {
         this.factsPackage = factsPackage;
@@ -55,7 +58,7 @@ public class DroolsWithWhyNot {
             LOG.info("Creating kieSession");
             session = kieBase.newKieSession();
 
-            // Add Agenda Event Listener to track untriggered rules
+            // Add Agenda Event Listener to track triggered and untriggered rules
             session.addEventListener(new DefaultAgendaEventListener() {
                 @Override
                 public void matchCreated(MatchCreatedEvent event) {
@@ -67,6 +70,12 @@ public class DroolsWithWhyNot {
                     LOG.info("Rule {} was cancelled and will not fire", event.getMatch().getRule().getName());
                     untriggeredRules.add(event.getMatch().getRule().getName());
                 }
+
+                @Override
+                public void afterMatchFired(AfterMatchFiredEvent event) {
+                    LOG.info("Rule {} was fired", event.getMatch().getRule().getName());
+                    triggeredRules.add(event.getMatch().getRule().getName()); // Armazena regras disparadas
+                }
             });
             return session;
         } catch (Exception e) {
@@ -74,5 +83,4 @@ public class DroolsWithWhyNot {
             throw new RuntimeException("Error creating KieSession", e);
         }
     }
-
 }

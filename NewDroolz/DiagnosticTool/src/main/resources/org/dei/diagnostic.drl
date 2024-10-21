@@ -74,6 +74,8 @@ rule "D01: Start Diagnostic"
         $resposta.setPergunta("O carro apresenta algum problema? (Sim/Não)");
         $resposta.setEstado("perguntarProblemaInicial");
         $resposta.setTexto(""); 
+        $resposta.addPerguntaWhyNot("O carro apresenta algum problema? (Sim/Não)");
+        $resposta.addRegraDisparada("D01: Start Diagnostic");
         update($resposta);
 end
 
@@ -84,8 +86,9 @@ rule "D02: Process response - Carro tem problema 'Sim'"
     then
         $resposta.setEstado("perguntarCarroLigaChave");
         Evidence<String, String> ev = new Evidence<>("problemaInicial", "Sim");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
         $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D02: Process response - Carro tem problema 'Sim'");
         update($resposta);
 end
 
@@ -100,6 +103,7 @@ rule "D03: Process response - Carro tem problema 'Não'"
         $resposta.setPorqueNao("Nenhum problema foi relatado");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Sem problemas identificados");
+        $resposta.addRegraDisparada("D03: Process response - Carro tem problema 'Não'");
         update($resposta);
 end
 
@@ -108,10 +112,13 @@ rule "D04: Ask 'O carro liga a chave?'"
     when
         $resposta : Resposta(estado == "perguntarCarroLigaChave")
     then
-        System.out.println("O carro liga a chave? (Sim/Não)");
-        $resposta.setPergunta("O carro liga a chave? (Sim/Não)");
+        String pergunta = "O carro liga a chave? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("processarCarroLigaChave");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D04: Ask 'O carro liga a chave?'");
         update($resposta);
 end
 
@@ -124,35 +131,38 @@ rule "D05: Process 'O carro liga a chave?'"
         $resposta.addEvidencia(new Evidence<>("processarCarroLigaChave", $resposta.getTexto()));
         if ($resposta.getTexto().equalsIgnoreCase("Sim")) {
             $resposta.setEstado("perguntarCarroLigaMasVaiAbaixo");
-            $resposta.setTexto(""); 
-            
-            
+            $resposta.setTexto("");
         } else if ($resposta.getTexto().equalsIgnoreCase("Não")) {
-            System.out.println("O carro não liga a chave. Verifique a bateria e cabos de bateria.");
-            $resposta.setPergunta("O carro não liga a chave. Verifique a bateria e cabos de bateria.");
+            String pergunta = "O carro não liga a chave. Verifique a bateria e cabos de bateria.";
+            System.out.println(pergunta);
+            $resposta.setPergunta(pergunta);
             $resposta.setEstado("verificarBateriaECabos");
-            $resposta.setTexto(""); 
+            $resposta.setTexto("");
+            $resposta.addPerguntaWhyNot(pergunta);
         } else {
-            System.out.println("Resposta inválida.");
-            $resposta.setPergunta("Resposta inválida.");
+            String perguntaInvalida = "Resposta inválida.";
+            System.out.println(perguntaInvalida);
+            $resposta.setPergunta(perguntaInvalida);
             $resposta.setEstado("processarCarroLigaChave");
             $resposta.setTexto("");
         }
+        $resposta.addRegraDisparada("D05: Process 'O carro liga a chave?'");
         update($resposta);
 end
-
 // Rule D06: Processar 'O carro liga a chave? Não'
 rule "D06: Processar 'O carro liga a chave? Não'"
     when
         $resposta : Resposta(estado == "verificarBateriaECabos", texto == "")
     then
-        System.out.println("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
-        $resposta.setPergunta("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
+        String pergunta = "Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarBateriaFraca");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D06: Processar 'O carro liga a chave? Não'");
         update($resposta);
 end
-
 
 // Rule D07: Verificar a bateria e cabos de bateria
 rule "D07: Verificar a bateria e cabos de bateria"
@@ -161,14 +171,17 @@ rule "D07: Verificar a bateria e cabos de bateria"
     then
         Evidence<String, String> ev = new Evidence<>("verificarBateriaECabos", $resposta.getTexto());
         $resposta.addEvidencia(ev);
-        System.out.println("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
-        $resposta.setPergunta("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
+        String pergunta = "Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarBateriaFraca");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D07: Verificar a bateria e cabos de bateria");
         update($resposta);
 end
 
-// Regra D08: Bateria fraca ou sem carga
+// Rule D08: Processar 'Bateria fraca ou sem carga? Sim'
 rule "D08: Processar 'Bateria fraca ou sem carga? Sim'"
     when
         $resposta : Resposta(estado == "perguntarBateriaFraca", texto == "Sim")
@@ -181,10 +194,11 @@ rule "D08: Processar 'Bateria fraca ou sem carga? Sim'"
         $resposta.setPorqueNao("Outros componentes estão funcionando corretamente");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Bateria com defeito ou sem carga");
+        $resposta.addRegraDisparada("D08: Processar 'Bateria fraca ou sem carga? Sim'");
         update($resposta);
 end
 
-// Rule D09: Processar "Bateria fraca ou sem carga? Não"
+// Rule D09: Processar 'Bateria fraca ou sem carga? Não'
 rule "D09: Processar 'Bateria fraca ou sem carga? Não'"
     when
         $resposta : Resposta(estado == "perguntarBateriaFraca", texto == "Não")
@@ -192,7 +206,8 @@ rule "D09: Processar 'Bateria fraca ou sem carga? Não'"
         Evidence<String, String> ev = new Evidence<>("perguntarBateriaFraca", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarMotorArranque");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D09: Processar 'Bateria fraca ou sem carga? Não'");
         update($resposta);
 end
 
@@ -201,14 +216,17 @@ rule "D10: Verificar motor de arranque e pedal de embraiagem"
     when
         $resposta : Resposta(estado == "verificarMotorArranque", texto == "")
     then
-        System.out.println("Verifique o motor de arranque e se o pedal de embraiagem está acionado. O motor de arranque está com defeito? (Sim/Não)");
-        $resposta.setPergunta("Verifique o motor de arranque e se o pedal de embraiagem está acionado. O motor de arranque está com defeito? (Sim/Não)");
+        String pergunta = "Verifique o motor de arranque e se o pedal de embraiagem está acionado. O motor de arranque está com defeito? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarMotorArranqueDefeito");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D10: Verificar motor de arranque e pedal de embraiagem");
         update($resposta);
 end
 
-// Regra D11: Motor de arranque com defeito
+// Rule D11: Processar 'Motor de arranque com defeito? Sim'
 rule "D11: Processar 'Motor de arranque com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarMotorArranqueDefeito", texto == "Sim")
@@ -221,10 +239,11 @@ rule "D11: Processar 'Motor de arranque com defeito? Sim'"
         $resposta.setPorqueNao("A bateria está funcionando corretamente");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Falha no motor de arranque");
+        $resposta.addRegraDisparada("D11: Processar 'Motor de arranque com defeito? Sim'");
         update($resposta);
 end
 
-// Rule D12: Processar "Motor de arranque com defeito? Não"
+// Rule D12: Processar 'Motor de arranque com defeito? Não'
 rule "D12: Processar 'Motor de arranque com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarMotorArranqueDefeito", texto == "Não")
@@ -232,7 +251,8 @@ rule "D12: Processar 'Motor de arranque com defeito? Não'"
         Evidence<String, String> ev = new Evidence<>("perguntarMotorArranqueDefeito", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaIgnicao");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D12: Processar 'Motor de arranque com defeito? Não'");
         update($resposta);
 end
 
@@ -241,14 +261,17 @@ rule "D13: Verificar sistema de ignição"
     when
         $resposta : Resposta(estado == "verificarSistemaIgnicao", texto == "")
     then
-        System.out.println("Verifique o sistema de ignição. A ignição está a falhar? (Sim/Não)");
-        $resposta.setPergunta("Verifique o sistema de ignição. A ignição está a falhar? (Sim/Não)");
+        String pergunta = "Verifique o sistema de ignição. A ignição está a falhar? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarIgnicaoFalhando");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D13: Verificar sistema de ignição");
         update($resposta);
 end
 
-// Rule D14: Processar "Ignição a falhar? Sim"
+// Rule D14: Processar 'Ignição a falhar? Sim'
 rule "D14: Processar 'Ignição a falhar? Sim'"
     when
         $resposta : Resposta(estado == "perguntarIgnicaoFalhando", texto == "Sim")
@@ -261,10 +284,11 @@ rule "D14: Processar 'Ignição a falhar? Sim'"
         $resposta.setPorqueNao("Bateria e motor de arranque estão funcionando");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Sistema de ignição com defeito");
+        $resposta.addRegraDisparada("D14: Processar 'Ignição a falhar? Sim'");
         update($resposta);
 end
 
-// Rule D15: Processar "Ignição a falhar? Não"
+// Rule D15: Processar 'Ignição a falhar? Não'
 rule "D15: Processar 'Ignição a falhar? Não'"
     when
         $resposta : Resposta(estado == "perguntarIgnicaoFalhando", texto == "Não")
@@ -272,7 +296,8 @@ rule "D15: Processar 'Ignição a falhar? Não'"
         Evidence<String, String> ev = new Evidence<>("perguntarIgnicaoFalhando", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaSeguranca");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D15: Processar 'Ignição a falhar? Não'");
         update($resposta);
 end
 
@@ -281,14 +306,17 @@ rule "D16: Verificar sistema de segurança (Imobilizador)"
     when
         $resposta : Resposta(estado == "verificarSistemaSeguranca", texto == "")
     then
-        System.out.println("Verifique o sistema de segurança (Imobilizador). O imobilizador ou alarme está a bloquear? (Sim/Não)");
-        $resposta.setPergunta("Verifique o sistema de segurança (Imobilizador). O imobilizador ou alarme está a bloquear? (Sim/Não)");
+        String pergunta = "Verifique o sistema de segurança (Imobilizador). O imobilizador ou alarme está a bloquear? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarImobilizadorBloqueando");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D16: Verificar sistema de segurança (Imobilizador)");
         update($resposta);
 end
 
-// Regra D17: Sistema de segurança ativado
+// Rule D17: Processar 'Imobilizador ou alarme a bloquear? Sim'
 rule "D17: Processar 'Imobilizador ou alarme a bloquear? Sim'"
     when
         $resposta : Resposta(estado == "perguntarImobilizadorBloqueando", texto == "Sim")
@@ -301,10 +329,11 @@ rule "D17: Processar 'Imobilizador ou alarme a bloquear? Sim'"
         $resposta.setPorqueNao("Bateria, motor de arranque e ignição estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Sistema de segurança ativado");
+        $resposta.addRegraDisparada("D17: Processar 'Imobilizador ou alarme a bloquear? Sim'");
         update($resposta);
 end
 
-// Rule D18: Processar "Imobilizador ou alarme a bloquear? Não"
+// Rule D18: Processar 'Imobilizador ou alarme a bloquear? Não'
 rule "D18: Processar 'Imobilizador ou alarme a bloquear? Não'"
     when
         $resposta : Resposta(estado == "perguntarImobilizadorBloqueando", texto == "Não")
@@ -312,23 +341,27 @@ rule "D18: Processar 'Imobilizador ou alarme a bloquear? Não'"
         Evidence<String, String> ev = new Evidence<>("perguntarImobilizadorBloqueando", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarCaboCondutor");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D18: Processar 'Imobilizador ou alarme a bloquear? Não'");
         update($resposta);
 end
 
-// Rule D19: Verificar cabo condutor de energia elétrica e fichas de ligação
-rule "D19: Verificar cabo condutor de energia elétrica e fichas de ligação"
+// Rule D19: Verificar cabos condutores de energia elétrica
+rule "D19: Verificar cabos condutores de energia elétrica"
     when
         $resposta : Resposta(estado == "verificarCaboCondutor", texto == "")
     then
-        System.out.println("Verifique cabos condutores de energia elétrica e fichas de ligação. Há fios danificados? (Sim/Não)");
-        $resposta.setPergunta("Verifique cabos condutores de energia elétrica e fichas de ligação. Há fios danificados? (Sim/Não)");
+        String pergunta = "Verifique cabos condutores de energia elétrica e fichas de ligação. Há fios danificados? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarFiosDanificados");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D19: Verificar cabos condutores de energia elétrica");
         update($resposta);
 end
 
-// Regra D20: Fios com corte ou curto-circuito
+// Rule D20: Processar 'Fios danificados? Sim'
 rule "D20: Processar 'Fios danificados? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFiosDanificados", texto == "Sim")
@@ -341,38 +374,39 @@ rule "D20: Processar 'Fios danificados? Sim'"
         $resposta.setPorqueNao("Outros sistemas elétricos estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Fios com corte ou curto-circuito");
+        $resposta.addRegraDisparada("D20: Processar 'Fios danificados? Sim'");
         update($resposta);
 end
 
-// Rule D21: Processar "Fios danificados? Não"
+// Rule D21: Processar 'Fios danificados? Não'
 rule "D21: Processar 'Fios danificados? Não'"
     when
         $resposta : Resposta(estado == "perguntarFiosDanificados", texto == "Não")
     then
         Evidence<String, String> ev = new Evidence<>("perguntarFiosDanificados", $resposta.getTexto());
         $resposta.addEvidencia(ev);
-        $resposta.setDiagnostico("Verificação adicional necessária");
-        $resposta.setSolucao("Seguir protocolo de reparação da marca, consultar especialista");
-        $resposta.setPorque("Nenhum problema específico foi identificado");
-        $resposta.setPorqueNao("As verificações anteriores não apontaram falhas claras");
-        $resposta.setEstado("diagnosticoConcluido");
-        generateWhyNotExplanation(whyNot, $resposta, "Verificação adicional necessária");
+        $resposta.setEstado("verificarTermostato");
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D21: Processar 'Fios danificados? Não'");
         update($resposta);
 end
 
-// Rule D22: Perguntar "O carro liga mas vai abaixo?"
+// Rule D22: Perguntar 'O carro liga mas vai abaixo?'
 rule "D22: Perguntar 'O carro liga mas vai abaixo?'"
     when
         $resposta : Resposta(estado == "perguntarCarroLigaMasVaiAbaixo", texto == "")
     then
-        System.out.println("O carro liga mas vai abaixo? (Sim/Não)");
-        $resposta.setPergunta("O carro liga mas vai abaixo? (Sim/Não)");
+        String pergunta = "O carro liga mas vai abaixo? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("processarCarroLigaMasVaiAbaixo");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D22: Perguntar 'O carro liga mas vai abaixo?'");
         update($resposta);
 end
 
-// Rule D23: Processar "O carro liga mas vai abaixo? Sim"
+// Rule D23: Processar 'O carro liga mas vai abaixo? Sim'
 rule "D23: Processar 'O carro liga mas vai abaixo? Sim'"
     when
         $resposta : Resposta(estado == "processarCarroLigaMasVaiAbaixo", texto.equalsIgnoreCase("Sim"))
@@ -380,11 +414,12 @@ rule "D23: Processar 'O carro liga mas vai abaixo? Sim'"
         Evidence<String, String> ev = new Evidence<>("processarCarroLigaMasVaiAbaixo", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSobreaquecimentoMotor");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D23: Processar 'O carro liga mas vai abaixo? Sim'");
         update($resposta);
 end
 
-// Rule D24: Processar "O carro liga mas vai abaixo? Não"
+// Rule D24: Processar 'O carro liga mas vai abaixo? Não'
 rule "D24: Processar 'O carro liga mas vai abaixo? Não'"
     when
         $resposta : Resposta(estado == "processarCarroLigaMasVaiAbaixo", texto.equalsIgnoreCase("Não"))
@@ -392,25 +427,26 @@ rule "D24: Processar 'O carro liga mas vai abaixo? Não'"
         Evidence<String, String> ev = new Evidence<>("processarCarroLigaMasVaiAbaixo", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("processarCarroFazBarulhoAnormal");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D24: Processar 'O carro liga mas vai abaixo? Não'");
         update($resposta);
 end
-
-
-
 // Rule D25: Verificar sobreaquecimento do motor
 rule "D25: Verificar sobreaquecimento do motor"
     when
         $resposta : Resposta(estado == "verificarSobreaquecimentoMotor", texto == "")
     then
-        System.out.println("O motor está a sobreaquecer? (Sim/Não)");
-        $resposta.setPergunta("O motor está a sobreaquecer? (Sim/Não)");
+        String pergunta = "O motor está a sobreaquecer? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarMotorSobreaquecendo");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D25: Verificar sobreaquecimento do motor");
         update($resposta);
 end
 
-// Rule D26: Processar "Motor a sobreaquecer? Sim"
+// Rule D26: Processar 'Motor a sobreaquecer? Sim'
 rule "D26: Processar 'Motor a sobreaquecer? Sim'"
     when
         $resposta : Resposta(estado == "perguntarMotorSobreaquecendo", texto == "Sim")
@@ -419,10 +455,11 @@ rule "D26: Processar 'Motor a sobreaquecer? Sim'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaArrefecimento");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D26: Processar 'Motor a sobreaquecer? Sim'");
         update($resposta);
 end
 
-// Rule D27: Processar "Motor a sobreaquecer? Não"
+// Rule D27: Processar 'Motor a sobreaquecer? Não'
 rule "D27: Processar 'Motor a sobreaquecer? Não'"
     when
         $resposta : Resposta(estado == "perguntarMotorSobreaquecendo", texto == "Não")
@@ -431,6 +468,7 @@ rule "D27: Processar 'Motor a sobreaquecer? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaCombustivel");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D27: Processar 'Motor a sobreaquecer? Não'");
         update($resposta);
 end
 
@@ -439,14 +477,17 @@ rule "D28: Verificar sistema de arrefecimento"
     when
         $resposta : Resposta(estado == "verificarSistemaArrefecimento", texto == "")
     then
-        System.out.println("Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito? (Sim/Não)");
-        $resposta.setPergunta("Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito? (Sim/Não)");
+        String pergunta = "Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarRadiadorVentoinhaDefeito");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D28: Verificar sistema de arrefecimento");
         update($resposta);
 end
 
-// Regra D29: Problema no radiador ou ventoinha
+// Rule D29: Processar 'Radiador ou ventoinha com defeito? Sim'
 rule "D29: Processar 'Radiador ou ventoinha com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarRadiadorVentoinhaDefeito", texto == "Sim")
@@ -459,9 +500,11 @@ rule "D29: Processar 'Radiador ou ventoinha com defeito? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de arrefecimento estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Problema no radiador ou ventoinha");
+        $resposta.addRegraDisparada("D29: Processar 'Radiador ou ventoinha com defeito? Sim'");
         update($resposta);
 end
-// Rule D30: Processar "Radiador ou ventoinha com defeito? Não"
+
+// Rule D30: Processar 'Radiador ou ventoinha com defeito? Não'
 rule "D30: Processar 'Radiador ou ventoinha com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarRadiadorVentoinhaDefeito", texto == "Não")
@@ -470,6 +513,7 @@ rule "D30: Processar 'Radiador ou ventoinha com defeito? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarFugasArrefecimento");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D30: Processar 'Radiador ou ventoinha com defeito? Não'");
         update($resposta);
 end
 
@@ -478,14 +522,17 @@ rule "D31: Verificar fugas no sistema de arrefecimento"
     when
         $resposta : Resposta(estado == "verificarFugasArrefecimento", texto == "")
     then
-        System.out.println("Verifique se há fugas no sistema de arrefecimento. Fuga detectada? (Sim/Não)");
-        $resposta.setPergunta("Verifique se há fugas no sistema de arrefecimento. Fuga detectada? (Sim/Não)");
+        String pergunta = "Verifique se há fugas no sistema de arrefecimento. Fuga detectada? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarFugaArrefecimento");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D31: Verificar fugas no sistema de arrefecimento");
         update($resposta);
 end
 
-// Regra D32: Fugas no sistema de arrefecimento
+// Rule D32: Processar 'Fuga detectada? Sim'
 rule "D32: Processar 'Fuga detectada? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFugaArrefecimento", texto == "Sim")
@@ -498,10 +545,11 @@ rule "D32: Processar 'Fuga detectada? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de arrefecimento estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Fugas no sistema de arrefecimento");
+        $resposta.addRegraDisparada("D32: Processar 'Fuga detectada? Sim'");
         update($resposta);
 end
 
-// Rule D33: Processar "Fuga detectada? Não"
+// Rule D33: Processar 'Fuga detectada? Não'
 rule "D33: Processar 'Fuga detectada? Não'"
     when
         $resposta : Resposta(estado == "perguntarFugaArrefecimento", texto == "Não")
@@ -510,6 +558,7 @@ rule "D33: Processar 'Fuga detectada? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarTermostato");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D33: Processar 'Fuga detectada? Não'");
         update($resposta);
 end
 
@@ -518,14 +567,17 @@ rule "D34: Verificar termóstato"
     when
         $resposta : Resposta(estado == "verificarTermostato", texto == "")
     then
-        System.out.println("Verifique o termóstato. O termóstato está defeituoso? (Sim/Não)");
-        $resposta.setPergunta("Verifique o termóstato. O termóstato está defeituoso? (Sim/Não)");
+        String pergunta = "Verifique o termóstato. O termóstato está defeituoso? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarTermostatoDefeituoso");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D34: Verificar termóstato");
         update($resposta);
 end
 
-// Regra D35: Termóstato defeituoso
+// Rule D35: Processar 'Termóstato defeituoso? Sim'
 rule "D35: Processar 'Termóstato defeituoso? Sim'"
     when
         $resposta : Resposta(estado == "perguntarTermostatoDefeituoso", texto == "Sim")
@@ -538,10 +590,11 @@ rule "D35: Processar 'Termóstato defeituoso? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de arrefecimento estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Termóstato com defeito");
+        $resposta.addRegraDisparada("D35: Processar 'Termóstato defeituoso? Sim'");
         update($resposta);
 end
 
-// Rule D36: Processar "Termóstato defeituoso? Não"
+// Rule D36: Processar 'Termóstato defeituoso? Não'
 rule "D36: Processar 'Termóstato defeituoso? Não'"
     when
         $resposta : Resposta(estado == "perguntarTermostatoDefeituoso", texto == "Não")
@@ -550,22 +603,25 @@ rule "D36: Processar 'Termóstato defeituoso? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarBombaAgua");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D36: Processar 'Termóstato defeituoso? Não'");
         update($resposta);
 end
-
 // Rule D37: Verificar bomba de água
 rule "D37: Verificar bomba de água"
     when
         $resposta : Resposta(estado == "verificarBombaAgua", texto == "")
     then
-        System.out.println("Verifique a bomba de água. A bomba de água está com defeito? (Sim/Não)");
-        $resposta.setPergunta("Verifique a bomba de água. A bomba de água está com defeito? (Sim/Não)");
+        String pergunta = "Verifique a bomba de água. A bomba de água está com defeito? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarBombaAguaDefeito");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D37: Verificar bomba de água");
         update($resposta);
 end
 
-// Regra D38: Falha na bomba de água
+// Regra D38: Processar 'Bomba de água com defeito? Sim'
 rule "D38: Processar 'Bomba de água com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarBombaAguaDefeito", texto == "Sim")
@@ -578,10 +634,11 @@ rule "D38: Processar 'Bomba de água com defeito? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de arrefecimento estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Falha na bomba de água");
+        $resposta.addRegraDisparada("D38: Processar 'Bomba de água com defeito? Sim'");
         update($resposta);
 end
 
-// Rule D39: Processar "Bomba de água com defeito? Não"
+// Rule D39: Processar 'Bomba de água com defeito? Não'
 rule "D39: Processar 'Bomba de água com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarBombaAguaDefeito", texto == "Não")
@@ -594,6 +651,7 @@ rule "D39: Processar 'Bomba de água com defeito? Não'"
         $resposta.setPorqueNao("As verificações anteriores não apontaram falhas claras");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Verificação adicional necessária");
+        $resposta.addRegraDisparada("D39: Processar 'Bomba de água com defeito? Não'");
         update($resposta);
 end
 
@@ -602,14 +660,17 @@ rule "D40: Verificar sistema de combustível"
     when
         $resposta : Resposta(estado == "verificarSistemaCombustivel", texto == "")
     then
-        System.out.println("Verifique o sistema de combustível. Há falta de combustível ou falha na bomba? (Sim/Não)");
-        $resposta.setPergunta("Verifique o sistema de combustível. Há falta de combustível ou falha na bomba? (Sim/Não)");
+        String pergunta = "Verifique o sistema de combustível. Há falta de combustível ou falha na bomba? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarFaltaCombustivelOuFalhaBomba");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D40: Verificar sistema de combustível");
         update($resposta);
 end
 
-// Regra D41: Falta de combustível ou falha na bomba
+// Regra D41: Processar 'Falta de combustível ou falha na bomba? Sim'
 rule "D41: Processar 'Falta de combustível ou falha na bomba? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFaltaCombustivelOuFalhaBomba", texto == "Sim")
@@ -622,10 +683,11 @@ rule "D41: Processar 'Falta de combustível ou falha na bomba? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de combustível estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Falta de combustível ou bomba de combustível com defeito");
+        $resposta.addRegraDisparada("D41: Processar 'Falta de combustível ou falha na bomba? Sim'");
         update($resposta);
 end
 
-// Rule D42: Processar "Falta de combustível ou falha na bomba? Não"
+// Rule D42: Processar 'Falta de combustível ou falha na bomba? Não'
 rule "D42: Processar 'Falta de combustível ou falha na bomba? Não'"
     when
         $resposta : Resposta(estado == "perguntarFaltaCombustivelOuFalhaBomba", texto == "Não")
@@ -634,6 +696,7 @@ rule "D42: Processar 'Falta de combustível ou falha na bomba? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarFiltroCombustivel");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D42: Processar 'Falta de combustível ou falha na bomba? Não'");
         update($resposta);
 end
 
@@ -642,14 +705,17 @@ rule "D43: Verificar filtro de combustível"
     when
         $resposta : Resposta(estado == "verificarFiltroCombustivel", texto == "")
     then
-        System.out.println("Verifique o filtro de combustível. O filtro de combustível está entupido? (Sim/Não)");
-        $resposta.setPergunta("Verifique o filtro de combustível. O filtro de combustível está entupido? (Sim/Não)");
+        String pergunta = "Verifique o filtro de combustível. O filtro de combustível está entupido? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarFiltroCombustivelEntupido");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D43: Verificar filtro de combustível");
         update($resposta);
 end
 
-// Regra D44: Filtro de combustível entupido
+// Regra D44: Processar 'Filtro de combustível entupido? Sim'
 rule "D44: Processar 'Filtro de combustível entupido? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFiltroCombustivelEntupido", texto == "Sim")
@@ -662,10 +728,11 @@ rule "D44: Processar 'Filtro de combustível entupido? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de combustível estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Filtro de combustível entupido");
+        $resposta.addRegraDisparada("D44: Processar 'Filtro de combustível entupido? Sim'");
         update($resposta);
 end
 
-// Rule D45: Processar "Filtro de combustível entupido? Não"
+// Rule D45: Processar 'Filtro de combustível entupido? Não'
 rule "D45: Processar 'Filtro de combustível entupido? Não'"
     when
         $resposta : Resposta(estado == "perguntarFiltroCombustivelEntupido", texto == "Não")
@@ -674,6 +741,7 @@ rule "D45: Processar 'Filtro de combustível entupido? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaInjecaoCombustivel");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D45: Processar 'Filtro de combustível entupido? Não'");
         update($resposta);
 end
 
@@ -682,14 +750,17 @@ rule "D46: Verificar sistema de injeção de combustível"
     when
         $resposta : Resposta(estado == "verificarSistemaInjecaoCombustivel", texto == "")
     then
-        System.out.println("Verifique o sistema de injeção de combustível. A injeção de combustível está com defeito? (Sim/Não)");
-        $resposta.setPergunta("Verifique o sistema de injeção de combustível. A injeção de combustível está com defeito? (Sim/Não)");
+        String pergunta = "Verifique o sistema de injeção de combustível. A injeção de combustível está com defeito? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarInjecaoCombustivelDefeito");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D46: Verificar sistema de injeção de combustível");
         update($resposta);
 end
 
-// Regra D47: Injeção de combustível com defeito
+// Regra D47: Processar 'Injeção de combustível com defeito? Sim'
 rule "D47: Processar 'Injeção de combustível com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarInjecaoCombustivelDefeito", texto == "Sim")
@@ -702,10 +773,11 @@ rule "D47: Processar 'Injeção de combustível com defeito? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de combustível estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Injeção de combustível com defeito");
+        $resposta.addRegraDisparada("D47: Processar 'Injeção de combustível com defeito? Sim'");
         update($resposta);
 end
 
-// Rule D48: Processar "Injeção de combustível com defeito? Não"
+// Rule D48: Processar 'Injeção de combustível com defeito? Não'
 rule "D48: Processar 'Injeção de combustível com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarInjecaoCombustivelDefeito", texto == "Não")
@@ -714,6 +786,7 @@ rule "D48: Processar 'Injeção de combustível com defeito? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaIgnicaoNovamente");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D48: Processar 'Injeção de combustível com defeito? Não'");
         update($resposta);
 end
 
@@ -722,14 +795,17 @@ rule "D49: Verificar sistema de ignição (novamente)"
     when
         $resposta : Resposta(estado == "verificarSistemaIgnicaoNovamente", texto == "")
     then
-        System.out.println("Verifique o sistema de ignição. As velas de ignição estão defeituosas? (Sim/Não)");
-        $resposta.setPergunta("Verifique o sistema de ignição. As velas de ignição estão defeituosas? (Sim/Não)");
+        String pergunta = "Verifique o sistema de ignição. As velas de ignição estão defeituosas? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarVelasIgnicaoDefeituosas");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D49: Verificar sistema de ignição (novamente)");
         update($resposta);
 end
 
-// Rule D50: Processar "Velas de ignição defeituosas? Sim"
+// Regra D50: Processar 'Velas de ignição defeituosas? Sim'
 rule "D50: Processar 'Velas de ignição defeituosas? Sim'"
     when
         $resposta : Resposta(estado == "perguntarVelasIgnicaoDefeituosas", texto == "Sim")
@@ -742,10 +818,11 @@ rule "D50: Processar 'Velas de ignição defeituosas? Sim'"
         $resposta.setPorqueNao("Outros componentes do sistema de ignição estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Falha nas velas de ignição");
+        $resposta.addRegraDisparada("D50: Processar 'Velas de ignição defeituosas? Sim'");
         update($resposta);
 end
 
-// Rule D51: Processar "Velas de ignição defeituosas? Não"
+// Rule D51: Processar 'Velas de ignição defeituosas? Não'
 rule "D51: Processar 'Velas de ignição defeituosas? Não'"
     when
         $resposta : Resposta(estado == "perguntarVelasIgnicaoDefeituosas", texto == "Não")
@@ -754,6 +831,7 @@ rule "D51: Processar 'Velas de ignição defeituosas? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSensoresMotor");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D51: Processar 'Velas de ignição defeituosas? Não'");
         update($resposta);
 end
 
@@ -762,14 +840,17 @@ rule "D52: Verificar sensores do motor"
     when
         $resposta : Resposta(estado == "verificarSensoresMotor", texto == "")
     then
-        System.out.println("Verifique os sensores do motor (MAP, MAF, etc.). Há sensores defeituosos? (Sim/Não)");
-        $resposta.setPergunta("Verifique os sensores do motor (MAP, MAF, etc.). Há sensores defeituosos? (Sim/Não)");
+        String pergunta = "Verifique os sensores do motor (MAP, MAF, etc.). Há sensores defeituosos? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarSensoresDefeituosos");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D52: Verificar sensores do motor");
         update($resposta);
 end
 
-// Regra D53: Sensor do motor com falha
+// Regra D53: Processar 'Sensores defeituosos? Sim'
 rule "D53: Processar 'Sensores defeituosos? Sim'"
     when
         $resposta : Resposta(estado == "perguntarSensoresDefeituosos", texto == "Sim")
@@ -782,10 +863,11 @@ rule "D53: Processar 'Sensores defeituosos? Sim'"
         $resposta.setPorqueNao("Outros componentes do motor estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Sensor do motor com falha");
+        $resposta.addRegraDisparada("D53: Processar 'Sensores defeituosos? Sim'");
         update($resposta);
 end
 
-// Rule D54: Processar "Sensores defeituosos? Não"
+// Rule D54: Processar 'Sensores defeituosos? Não'
 rule "D54: Processar 'Sensores defeituosos? Não'"
     when
         $resposta : Resposta(estado == "perguntarSensoresDefeituosos", texto == "Não")
@@ -798,22 +880,26 @@ rule "D54: Processar 'Sensores defeituosos? Não'"
         $resposta.setPorqueNao("As verificações anteriores não apontaram falhas claras");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Problema indeterminado");
+        $resposta.addRegraDisparada("D54: Processar 'Sensores defeituosos? Não'");
         update($resposta);
 end
 
-// Rule D55: Perguntar "O carro faz barulho anormal?"
+// Rule D55: Perguntar 'O carro faz barulho anormal?'
 rule "D55: Perguntar 'O carro faz barulho anormal?'"
     when
         $resposta : Resposta(estado == "processarCarroFazBarulhoAnormal", texto == "")
     then
-        System.out.println("O carro faz barulho anormal? (Sim/Não)");
-        $resposta.setPergunta("O carro faz barulho anormal? (Sim/Não)");
+        String pergunta = "O carro faz barulho anormal? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarCarroFazBarulhoAnormal");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D55: Perguntar 'O carro faz barulho anormal?'");
         update($resposta);
 end
 
-// Rule D56: Processar "O carro faz barulho anormal? Sim"
+// Rule D56: Processar 'O carro faz barulho anormal? Sim'
 rule "D56: Processar 'O carro faz barulho anormal? Sim'"
     when
         $resposta : Resposta(estado == "perguntarCarroFazBarulhoAnormal", texto == "Sim")
@@ -822,10 +908,11 @@ rule "D56: Processar 'O carro faz barulho anormal? Sim'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarMotorBarulho");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D56: Processar 'O carro faz barulho anormal? Sim'");
         update($resposta);
 end
 
-// Rule D57: Processar "O carro faz barulho anormal? Não"
+// Rule D57: Processar 'O carro faz barulho anormal? Não'
 rule "D57: Processar 'O carro faz barulho anormal? Não'"
     when
         $resposta : Resposta(estado == "perguntarCarroFazBarulhoAnormal", texto == "Não")
@@ -834,6 +921,7 @@ rule "D57: Processar 'O carro faz barulho anormal? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("processarCarroDificuldadeTravar");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D57: Processar 'O carro faz barulho anormal? Não'");
         update($resposta);
 end
 
@@ -842,14 +930,17 @@ rule "D58: Verificar motor (barulho)"
     when
         $resposta : Resposta(estado == "verificarMotorBarulho", texto == "")
     then
-        System.out.println("Verifique o motor. Há barulho no motor? (Sim/Não)");
-        $resposta.setPergunta("Verifique o motor. Há barulho no motor? (Sim/Não)");
+        String pergunta = "Verifique o motor. Há barulho no motor? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarBarulhoNoMotor");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D58: Verificar motor (barulho)");
         update($resposta);
 end
 
-// Rule D59: Processar "Barulho no motor? Sim"
+// Rule D59: Processar 'Barulho no motor? Sim'
 rule "D59: Processar 'Barulho no motor? Sim'"
     when
         $resposta : Resposta(estado == "perguntarBarulhoNoMotor", texto == "Sim")
@@ -858,10 +949,11 @@ rule "D59: Processar 'Barulho no motor? Sim'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarCorreiasCorrenteDentada");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D59: Processar 'Barulho no motor? Sim'");
         update($resposta);
 end
 
-// Rule D60: Processar "Barulho no motor? Não"
+// Rule D60: Processar 'Barulho no motor? Não'
 rule "D60: Processar 'Barulho no motor? Não'"
     when
         $resposta : Resposta(estado == "perguntarBarulhoNoMotor", texto == "Não")
@@ -870,6 +962,7 @@ rule "D60: Processar 'Barulho no motor? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSuspensaoRodas");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D60: Processar 'Barulho no motor? Não'");
         update($resposta);
 end
 
@@ -878,14 +971,17 @@ rule "D61: Verificar correias ou corrente dentada"
     when
         $resposta : Resposta(estado == "verificarCorreiasCorrenteDentada", texto == "")
     then
-        System.out.println("Verifique as correias ou corrente dentada. A correia dentada está gasta? (Sim/Não)");
-        $resposta.setPergunta("Verifique as correias ou corrente dentada. A correia dentada está gasta? (Sim/Não)");
+        String pergunta = "Verifique as correias ou corrente dentada. A correia dentada está gasta? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarCorreiaDentadaGasta");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D61: Verificar correias ou corrente dentada");
         update($resposta);
 end
 
-// Regra D62: Correia dentada gasta e rolamentos
+// Regra D62: Processar 'Correia dentada gasta? Sim'
 rule "D62: Processar 'Correia dentada gasta? Sim'"
     when
         $resposta : Resposta(estado == "perguntarCorreiaDentadaGasta", texto == "Sim")
@@ -898,10 +994,11 @@ rule "D62: Processar 'Correia dentada gasta? Sim'"
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Correia dentada gasta e rolamentos");
+        $resposta.addRegraDisparada("D62: Processar 'Correia dentada gasta? Sim'");
         update($resposta);
 end
 
-// Rule D63: Processar "Correia dentada gasta? Não"
+// Rule D63: Processar 'Correia dentada gasta? Não'
 rule "D63: Processar 'Correia dentada gasta? Não'"
     when
         $resposta : Resposta(estado == "perguntarCorreiaDentadaGasta", texto == "Não")
@@ -910,6 +1007,7 @@ rule "D63: Processar 'Correia dentada gasta? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarComponentesBarulhoMotor");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D63: Processar 'Correia dentada gasta? Não'");
         update($resposta);
 end
 
@@ -924,11 +1022,13 @@ rule "D64: Verificar componentes (Bomba de água, alternador, etc.)"
         System.out.println(mensagem);
         $resposta.setPergunta(mensagem);
         $resposta.setEstado("perguntarComponenteDefeituoso");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(mensagem);
+        $resposta.addRegraDisparada("D64: Verificar componentes (Bomba de água, alternador, etc.)");
         update($resposta);
 end
 
-// Regra D65: Falha na bomba de água
+// Regra D65: Processar 'Componente defeituoso? 1'
 rule "D65: Processar 'Componente defeituoso? 1'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "1")
@@ -941,10 +1041,11 @@ rule "D65: Processar 'Componente defeituoso? 1'"
         $resposta.setPorqueNao("Outros componentes estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Falha na bomba de água");
+        $resposta.addRegraDisparada("D65: Processar 'Componente defeituoso? 1'");
         update($resposta);
 end
 
-// Regra D66: Alternador com defeito
+// Regra D66: Processar 'Componente defeituoso? 2'
 rule "D66: Processar 'Componente defeituoso? 2'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "2")
@@ -957,10 +1058,11 @@ rule "D66: Processar 'Componente defeituoso? 2'"
         $resposta.setPorqueNao("Outros componentes estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Alternador com defeito");
+        $resposta.addRegraDisparada("D66: Processar 'Componente defeituoso? 2'");
         update($resposta);
 end
 
-// Regra D67: Compressor de ar condicionado com defeito
+// Regra D67: Processar 'Componente defeituoso? 3'
 rule "D67: Processar 'Componente defeituoso? 3'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "3")
@@ -973,10 +1075,11 @@ rule "D67: Processar 'Componente defeituoso? 3'"
         $resposta.setPorqueNao("Outros componentes estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Compressor de ar condicionado com defeito");
+        $resposta.addRegraDisparada("D67: Processar 'Componente defeituoso? 3'");
         update($resposta);
 end
 
-// Rule D68: Processar "Componente defeituoso? 4"
+// Rule D68: Processar 'Componente defeituoso? 4'
 rule "D68: Processar 'Componente defeituoso? 4'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "4")
@@ -989,10 +1092,11 @@ rule "D68: Processar 'Componente defeituoso? 4'"
         $resposta.setPorqueNao("Outros componentes estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Falha nos tensores da correia");
+        $resposta.addRegraDisparada("D68: Processar 'Componente defeituoso? 4'");
         update($resposta);
 end
 
-// Rule D69: Processar "Componente defeituoso? 0"
+// Regra D69: Processar 'Componente defeituoso? 0'
 rule "D69: Processar 'Componente defeituoso? 0'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "0")
@@ -1001,10 +1105,11 @@ rule "D69: Processar 'Componente defeituoso? 0'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarLubrificacaoMotor");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D69: Processar 'Componente defeituoso? 0'");
         update($resposta);
 end
 
-// Rule D70: Processar "Componente defeituoso? Inválido"
+// Regra D70: Processar 'Componente defeituoso? Inválido'
 rule "D70: Processar 'Componente defeituoso? Inválido'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso",
@@ -1013,9 +1118,10 @@ rule "D70: Processar 'Componente defeituoso? Inválido'"
         System.out.println("Opção inválida. Por favor, digite um número de 0 a 4.");
         $resposta.setPergunta("Opção inválida. Por favor, digite um número de 0 a 4.");
         $resposta.setEstado("perguntarComponenteDefeituoso");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
         update($resposta);
 end
+
 
 // Rule D71: Verificar lubrificação do motor
 rule "D71: Verificar lubrificação do motor"
@@ -1024,10 +1130,13 @@ rule "D71: Verificar lubrificação do motor"
     then
         Evidence<String, String> ev = new Evidence<>("verificarLubrificacaoMotor", $resposta.getTexto());
         $resposta.addEvidencia(ev);
-        System.out.println("Verifique o nível de óleo do motor.");
-        $resposta.setPergunta("Verifique o nível de óleo do motor.");
+        String pergunta = "Verifique o nível de óleo do motor.";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("verificarNivelOleo");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D71: Verificar lubrificação do motor");
         update($resposta);
 end
 
@@ -1038,10 +1147,13 @@ rule "D72: Verificar nível de óleo"
         $carro : Carro() from selectedCar
     then
         Componente oleoMotor = getComponenteByName($carro, "Óleo do Motor");
-        System.out.println("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
-        $resposta.setPergunta("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
+        String pergunta = "Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarNivelOleoAtual");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D72: Verificar nível de óleo");
         update($resposta);
 end
 
@@ -1052,8 +1164,6 @@ rule "D73: Avaliar Nível de Óleo"
         $carro : Carro() from selectedCar
     then
         Componente oleoMotor = getComponenteByName($carro, "Óleo do Motor");
-
-        // Substituir vírgula por ponto e validar
         String valorOleo = substituirVirgulaPorPonto($resposta.getTexto());
         System.out.println("Valor de óleo recebido: " + valorOleo);
         Evidence<String, String> ev = new Evidence<>("perguntarNivelOleoAtual", $resposta.getTexto());
@@ -1061,7 +1171,6 @@ rule "D73: Avaliar Nível de Óleo"
 
         if (isNumeric(valorOleo)) {
             double nivelOleo = Double.parseDouble(valorOleo);
-            // Verifica nível de óleo e direciona para as regras apropriadas
             if (nivelOleo < oleoMotor.getValorMinimoIdeal()) {
                 $resposta.setEstado("nivelOleoBaixo");
                 $resposta.setTexto("");
@@ -1073,22 +1182,22 @@ rule "D73: Avaliar Nível de Óleo"
                 $resposta.setTexto("");
             }
         } else {
-            System.out.println("Valor inválido. Por favor, insira um valor numérico.");
-            $resposta.setPergunta("Valor inválido. Por favor, insira um valor numérico.");
+            String erro = "Valor inválido. Por favor, insira um valor numérico.";
+            System.out.println(erro);
+            $resposta.setPergunta(erro);
             $resposta.setEstado("perguntarNivelOleoAtual");
             $resposta.setTexto("");
         }
+        $resposta.addRegraDisparada("D73: Avaliar Nível de Óleo");
         update($resposta);
 end
 
-
-
-// Regra para Nível de Óleo Baixo
+// Regra D74: Nível de óleo baixo
 rule "D74: Nível de óleo baixo"
     when
         $resposta : Resposta(estado == "nivelOleoBaixo")
     then
-        Evidence<String, String> ev = new Evidence<>("perguntarNivelOleoAtual", $resposta.getTexto());
+        Evidence<String, String> ev = new Evidence<>("nivelOleoBaixo", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Nível de óleo insuficiente");
         $resposta.setSolucao("Completar nível de óleo");
@@ -1096,11 +1205,11 @@ rule "D74: Nível de óleo baixo"
         $resposta.setPorqueNao("O nível de óleo não está acima do máximo ideal");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Nível de óleo insuficiente");
+        $resposta.addRegraDisparada("D74: Nível de óleo baixo");
         update($resposta);
 end
 
-
-// Regra para Nível de Óleo Alto
+// Regra D75: Nível de óleo alto
 rule "D75: Nível de óleo alto"
     when
         $resposta : Resposta(estado == "nivelOleoAlto")
@@ -1113,10 +1222,11 @@ rule "D75: Nível de óleo alto"
         $resposta.setPorqueNao("O nível de óleo não está abaixo do mínimo ideal");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Excesso de óleo");
+        $resposta.addRegraDisparada("D75: Nível de óleo alto");
         update($resposta);
 end
 
-// Regra para Nível de Óleo Normal
+// Regra D76: Nível de óleo normal
 rule "D76: Nível de óleo normal"
     when
         $resposta : Resposta(estado == "nivelOleoNormal")
@@ -1125,23 +1235,26 @@ rule "D76: Nível de óleo normal"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaEscape");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D76: Nível de óleo normal");
         update($resposta);
 end
 
-
-// Rule D76: Verificar sistema de escape
+// Rule D77: Verificar sistema de escape
 rule "D77: Verificar sistema de escape"
     when
         $resposta : Resposta(estado == "verificarSistemaEscape", texto == "")
     then
-        System.out.println("Verifique o sistema de escape. Há problema no sistema de escape? (Sim/Não)");
-        $resposta.setPergunta("Verifique o sistema de escape. Há problema no sistema de escape? (Sim/Não)");
+        String pergunta = "Verifique o sistema de escape. Há problema no sistema de escape? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarProblemaEscape");
-        $resposta.setTexto(""); 
+        $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D77: Verificar sistema de escape");
         update($resposta);
 end
 
-// Rule D77: Problema no sistema de escape - Sim
+// Rule D78: Problema no sistema de escape - Sim
 rule "D78: Problema no sistema de escape - Sim"
     when
         $resposta : Resposta(estado == "perguntarProblemaEscape", texto == "Sim")
@@ -1154,10 +1267,11 @@ rule "D78: Problema no sistema de escape - Sim"
         $resposta.setPorqueNao("Outros sistemas estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Vazamento ou bloqueio no sistema de escape");
+        $resposta.addRegraDisparada("D78: Problema no sistema de escape - Sim");
         update($resposta);
 end
 
-// Rule D78: Problema no sistema de escape - Não
+// Rule D79: Problema no sistema de escape - Não
 rule "D79: Problema no sistema de escape - Não"
     when
         $resposta : Resposta(estado == "perguntarProblemaEscape", texto == "Não")
@@ -1170,6 +1284,7 @@ rule "D79: Problema no sistema de escape - Não"
         $resposta.setPorqueNao("As verificações anteriores não apontaram falhas claras");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Verificação adicional necessária");
+        $resposta.addRegraDisparada("D79: Problema no sistema de escape - Não");
         update($resposta);
 end
 
@@ -1178,14 +1293,17 @@ rule "D80: Verificar Suspensão e Rodas"
     when
         $resposta : Resposta(estado == "verificarSuspensaoRodas", texto == "")
     then
-        System.out.println("Barulho na suspensão ou rodas? (Sim/Não)");
-        $resposta.setPergunta("Barulho na suspensão ou rodas? (Sim/Não)");
+        String pergunta = "Barulho na suspensão ou rodas? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarsuspensaoerodas");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D80: Verificar Suspensão e Rodas");
         update($resposta);
 end
 
-// Rule D81: Processar 'Barulho na suspensão ou rodas? Não"
+// Regra D81: Processar 'Barulho na suspensão ou rodas? Não'
 rule "D81: Processar 'Barulho na suspensão ou rodas? Não'"
     when
         $resposta : Resposta(estado == "perguntarsuspensaoerodas", texto == "Não")
@@ -1198,10 +1316,11 @@ rule "D81: Processar 'Barulho na suspensão ou rodas? Não'"
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Sem barulho na suspensão ou rodas");
+        $resposta.addRegraDisparada("D81: Processar 'Barulho na suspensão ou rodas? Não'");
         update($resposta);
 end
 
-// Rule D82: Processar 'Barulho na suspensão ou rodas? Sim'"
+// Regra D82: Processar 'Barulho na suspensão ou rodas? Sim'
 rule "D82: Processar 'Barulho na suspensão ou rodas? Sim'"
     when
         $resposta : Resposta(estado == "perguntarsuspensaoerodas", texto == "Sim")
@@ -1210,26 +1329,26 @@ rule "D82: Processar 'Barulho na suspensão ou rodas? Sim'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarproblema_pneu_jantes_calcos");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D82: Processar 'Barulho na suspensão ou rodas? Sim'");
         update($resposta);
 end
 
-
-
-// Rule D83: Verificar Pneus, Jantes e Calços"
+// Regra D83: Verificar Pneus, Jantes e Calços
 rule "D83: Verificar Pneus, Jantes e Calços"
     when
         $resposta : Resposta(estado == "verificarproblema_pneu_jantes_calcos", texto == "")
     then
-        System.out.println("Verifique os pneus, jantes e calços. Há problema identificado? (Sim/Não)");
-        $resposta.setPergunta("Verifique os pneus, jantes e calços. Há problema identificado? (Sim/Não)");
+        String pergunta = "Verifique os pneus, jantes e calços. Há problema identificado? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarproblema_pneu_jantes_calcos");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D83: Verificar Pneus, Jantes e Calços");
         update($resposta);
-
 end
 
-
-// Rule D84: Processar 'Problema nos pneus, jantes ou calços? Sim'"
+// Regra D84: Processar 'Problema nos pneus, jantes ou calços? Sim'
 rule "D84: Processar 'Problema nos pneus, jantes ou calços? Sim'"
     when
         $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Sim")
@@ -1242,11 +1361,11 @@ rule "D84: Processar 'Problema nos pneus, jantes ou calços? Sim'"
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Problema nos pneus, jantes ou calços");
+        $resposta.addRegraDisparada("D84: Processar 'Problema nos pneus, jantes ou calços? Sim'");
         update($resposta);
-
 end
 
-// Rule D85: Processar 'Problema nos pneus, jantes ou calços? Não'"
+// Regra D85: Processar 'Problema nos pneus, jantes ou calços? Não'
 rule "D85: Processar 'Problema nos pneus, jantes ou calços? Não'"
     when
         $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Não")
@@ -1255,24 +1374,26 @@ rule "D85: Processar 'Problema nos pneus, jantes ou calços? Não'"
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarAmortecedores");
         $resposta.setTexto("");
+        $resposta.addRegraDisparada("D85: Processar 'Problema nos pneus, jantes ou calços? Não'");
         update($resposta);
 end
 
-
-// Rule D86: Verificar Amortecedores gastos ou bases de amortecedores gastos"
+// Regra D86: Verificar Amortecedores gastos ou bases de amortecedores gastos
 rule "D86: Verificar Amortecedores gastos ou bases de amortecedores gastos"
     when
         $resposta : Resposta(estado == "verificarAmortecedores", texto == "")
     then
-        System.out.println("Verifique os amortecedores e as bases dos amortecedores. Há problema identificado? (Sim/Não)");
-        $resposta.setPergunta("Verifique os amortecedores e as bases dos amortecedores. Há problema identificado? (Sim/Não)");
+        String pergunta = "Verifique os amortecedores e as bases dos amortecedores. Há problema identificado? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarproblema_amortecedores");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D86: Verificar Amortecedores gastos ou bases de amortecedores gastos");
         update($resposta);
 end
 
-
-// Rule D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim'"
+// Regra D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim'
 rule "D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim'"
     when
         $resposta : Resposta(estado == "perguntarproblema_amortecedores", texto == "Sim")
@@ -1285,234 +1406,256 @@ rule "D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Amortecedores gastos ou bases de amortecedores gastos");
+        $resposta.addRegraDisparada("D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim'");
         update($resposta);
 end
 
-// Rule D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Não'"
+// Regra D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Não'
 rule "D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Não'"
     when
-        $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Não")
+        $resposta : Resposta(estado == "perguntarproblema_amortecedores", texto == "Não")
     then
         Evidence<String, String> ev = new Evidence<>("perguntarproblema_amortecedores", $resposta.getTexto());
         $resposta.addEvidencia(ev);
-        $resposta.setDiagnostico("Amortecedores gastos ou bases de amortecedores gastos");
         $resposta.setDiagnostico("Sem Amortecedores gastos ou bases de amortecedores gastos");
         $resposta.setSolucao("Consultar especialista");
         $resposta.setPorque("Não foi identificado o problema");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Sem Amortecedores gastos ou bases de amortecedores gastos");
+        $resposta.addRegraDisparada("D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Não'");
         update($resposta);
 end
 
-// Rule D89: Verificar Carro Dificuldade Travar"
+// Regra D89: Verificar Carro Dificuldade Travar
 rule "D89: Verificar Carro Dificuldade Travar"
     when
         $resposta : Resposta(estado == "processarCarroDificuldadeTravar", texto == "")
     then
-        System.out.println("O carro tem dificuldade em travar? (Sim/Não)");
-        $resposta.setPergunta("O carro tem dificuldade em travar? (Sim/Não)");
+        String pergunta = "O carro tem dificuldade em travar? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarCarroDificuldadeTravar");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D89: Verificar Carro Dificuldade Travar");
         update($resposta);
 end
 
-// Rule D102: Processar 'Verificar Carro Dificuldade Travar? Não'"
-rule "D102: Processar 'Verificar Carro Dificuldade Travar? Não'"
-    when
-        $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Não")
-    then
-        Evidence<String, String> ev = new Evidence<>("perguntarCarroDificuldadeTravar", $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.setEstado("verificarcaixadevelocidades");
-        $resposta.setTexto("");
-        update($resposta);
-end
-
-// Rule D103: Processar 'Verificar Carro Dificuldade Travar? Sim'"
-rule "D103: Processar 'Verificar Carro Dificuldade Travar? Sim'"
-    when
-        $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Sim")
-    then
-        Evidence<String, String> ev = new Evidence<>("perguntarCarroDificuldadeTravar", $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.setEstado("verificarSistemaTravoes");
-        $resposta.setTexto("");
-        update($resposta);
-end
-
-
-// Rule D90: Verificar sistema de travões
+// Regra D90: Verificar sistema de travões
 rule "D90: Verificar sistema de travões"
     when
         $resposta : Resposta(estado == "verificarSistemaTravoes", texto == "")
     then
-        System.out.println("Verificar sistema de travões.");
-        $resposta.setPergunta("Pastilhas de travão gastas? (Sim/Não)");
+        String pergunta = "Pastilhas de travão gastas? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarPastilhasTravaoGastas");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D90: Verificar sistema de travões");
         update($resposta);
 end
 
-// Rule D91: Processar "Pastilhas de travão gastas? Sim"
+// Regra D91: Processar 'Pastilhas de travão gastas? Sim'
 rule "D91: Processar 'Pastilhas de travão gastas? Sim'"
     when
         $resposta : Resposta(estado == "perguntarPastilhasTravaoGastas", texto == "Sim")
     then
-        System.out.println("Diagnóstico: Pastilhas de travão gastas.");
+        Evidence<String, String> ev = new Evidence<>("perguntarPastilhasTravaoGastas", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Pastilhas de travão gastas");
         $resposta.setSolucao("Substituir pastilhas de travão");
         $resposta.setPorque("Pastilhas de travão gastas");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Pastilhas de travão gastas");
+        $resposta.addRegraDisparada("D91: Processar 'Pastilhas de travão gastas? Sim'");
         update($resposta);
 end
 
-// Rule D92: Processar "Pastilhas de travão gastas? Não"
+// Regra D92: Processar 'Pastilhas de travão gastas? Não'
 rule "D92: Processar 'Pastilhas de travão gastas? Não'"
     when
         $resposta : Resposta(estado == "perguntarPastilhasTravaoGastas", texto == "Não")
     then
-        System.out.println("Verificar discos de travão.");
-        $resposta.setPergunta("Discos de travão gastos? (Sim/Não)");
+        String pergunta = "Discos de travão gastos? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarDiscosTravaoGastos");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D92: Processar 'Pastilhas de travão gastas? Não'");
         update($resposta);
 end
 
-// Rule D93: Processar "Discos de travão gastos? Sim"
 rule "D93: Processar 'Discos de travão gastos? Sim'"
     when
         $resposta : Resposta(estado == "perguntarDiscosTravaoGastos", texto == "Sim")
     then
-        System.out.println("Diagnóstico: Discos de travão gastos.");
+        Evidence<String, String> ev = new Evidence<>("perguntarDiscosTravaoGastos", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Discos de travão gastos");
         $resposta.setSolucao("Substituir discos de travão");
         $resposta.setPorque("Discos de travão gastos");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Discos de travão gastos");
+        $resposta.addRegraDisparada("D93: Processar 'Discos de travão gastos? Sim'");
         update($resposta);
 end
 
-// Rule D94: Processar "Discos de travão gastos? Não"
+// Regra D94: Processar 'Discos de travão gastos? Não'
 rule "D94: Processar 'Discos de travão gastos? Não'"
     when
         $resposta : Resposta(estado == "perguntarDiscosTravaoGastos", texto == "Não")
     then
-        System.out.println("Verificar fluido de travão.");
-        $resposta.setPergunta("Nível de fluido de travão? (Baixo/Alto/Normal)");
+        String pergunta = "Nível de fluido de travão? (Baixo/Alto/Normal)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarNivelFluidoTravao");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D94: Processar 'Discos de travão gastos? Não'");
         update($resposta);
 end
 
-// Rule D95: Processar "Nível de fluido de travão baixo"
+// Regra D95: Processar 'Nível de fluido de travão baixo'
 rule "D95: Processar 'Nível de fluido de travão baixo'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Baixo")
     then
-        System.out.println("Diagnóstico: Nível de fluido insuficiente.");
+        Evidence<String, String> ev = new Evidence<>("perguntarNivelFluidoTravao", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Nível de fluido insuficiente");
         $resposta.setSolucao("Completar fluido de travão e corrigir possíveis fugas");
         $resposta.setPorque("Nível de fluido insuficiente");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Nível de fluido insuficiente");
+        $resposta.addRegraDisparada("D95: Processar 'Nível de fluido de travão baixo'");
         update($resposta);
 end
 
-// Rule D96: Processar "Nível de fluido de travão alto"
+// Regra D96: Processar 'Nível de fluido de travão alto'
 rule "D96: Processar 'Nível de fluido de travão alto'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Alto")
     then
-        System.out.println("Diagnóstico: Excesso de fluido de travão.");
+        Evidence<String, String> ev = new Evidence<>("perguntarNivelFluidoTravao", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Excesso de fluido de travão");
         $resposta.setSolucao("Ajustar nível de fluido de travão");
         $resposta.setPorque("Nível de fluido excessivo");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Excesso de fluido de travão");
+        $resposta.addRegraDisparada("D96: Processar 'Nível de fluido de travão alto'");
         update($resposta);
 end
 
-// Rule D97: Processar "Nível de fluido de travão normal"
+// Regra D97: Processar 'Nível de fluido de travão normal'
 rule "D97: Processar 'Nível de fluido de travão normal'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Normal")
     then
-        System.out.println("Verificar servofreio.");
-        $resposta.setPergunta("Problema no servofreio? (Sim/Não)");
+        String pergunta = "Problema no servofreio? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarProblemaServoFreio");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D97: Processar 'Nível de fluido de travão normal'");
         update($resposta);
 end
 
-// Rule D98: Processar "Problema no servofreio? Sim"
+// Regra D98: Processar 'Problema no servofreio? Sim'
 rule "D98: Processar 'Problema no servofreio? Sim'"
     when
         $resposta : Resposta(estado == "perguntarProblemaServoFreio", texto == "Sim")
     then
-        System.out.println("Diagnóstico: Servofreio defeituoso.");
+        Evidence<String, String> ev = new Evidence<>("perguntarProblemaServoFreio", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Servo freio defeituoso");
         $resposta.setSolucao("Reparar ou substituir servofreio");
         $resposta.setPorque("Servo freio defeituoso");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Servo freio defeituoso");
+        $resposta.addRegraDisparada("D98: Processar 'Problema no servofreio? Sim'");
         update($resposta);
 end
 
-// Rule D99: Processar "Problema no servofreio? Não"
+// Regra D99: Processar 'Problema no servofreio? Não'
 rule "D99: Processar 'Problema no servofreio? Não'"
     when
         $resposta : Resposta(estado == "perguntarProblemaServoFreio", texto == "Não")
     then
-        System.out.println("Verificar sistema ABS.");
-        $resposta.setPergunta("ABS com falha? (Sim/Não)");
+        String pergunta = "ABS com falha? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarFalhaABS");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D99: Processar 'Problema no servofreio? Não'");
         update($resposta);
 end
 
-// Rule D100: Processar "ABS com falha? Sim"
+// Regra D100: Processar 'ABS com falha? Sim'
 rule "D100: Processar 'ABS com falha? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFalhaABS", texto == "Sim")
     then
-        System.out.println("Diagnóstico: Sistema ABS com defeito.");
+        Evidence<String, String> ev = new Evidence<>("perguntarFalhaABS", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Sistema ABS com defeito");
         $resposta.setSolucao("Verificar e reparar sistema ABS com consulta de especialista");
         $resposta.setPorque("Sistema ABS com defeito");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Sistema ABS com defeito");
+        $resposta.addRegraDisparada("D100: Processar 'ABS com falha? Sim'");
         update($resposta);
 end
 
-// Rule D101: Processar "ABS com falha? Não"
+// Regra D101: Processar 'ABS com falha? Não'
 rule "D101: Processar 'ABS com falha? Não'"
     when
         $resposta : Resposta(estado == "perguntarFalhaABS", texto == "Não")
     then
-        System.out.println("Diagnóstico: Problema indeterminado.");
         $resposta.setDiagnostico("Problema indeterminado");
         $resposta.setSolucao("Consultar especialista");
         $resposta.setPorque("Problema indeterminado");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Problema indeterminado");
+        $resposta.addRegraDisparada("D101: Processar 'ABS com falha? Não'");
         update($resposta);
 end
 
+// Regra D102: Processar 'Verificar Carro Dificuldade Travar? Não'
+rule "D102: Processar 'Verificar Carro Dificuldade Travar? Não'"
+    when
+        $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Não")
+    then
+        $resposta.setEstado("verificarcaixadevelocidades");
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D102: Processar 'Verificar Carro Dificuldade Travar? Não'");
+        update($resposta);
+end
 
+// Regra D103: Processar 'Verificar Carro Dificuldade Travar? Sim'
+rule "D103: Processar 'Verificar Carro Dificuldade Travar? Sim'"
+    when
+        $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Sim")
+    then
+        $resposta.setEstado("verificarSistemaTravoes");
+        $resposta.setTexto("");
+        $resposta.addRegraDisparada("D103: Processar 'Verificar Carro Dificuldade Travar? Sim'");
+        update($resposta);
+end
 
-
-
-
-// Rule D104: Verificar problemas na caixa de velocidades"
+// Regra D104: Verificar problemas na caixa de velocidades
 rule "D104: Verificar problemas na caixa de velocidades"
     when
         $resposta : Resposta(estado == "verificarcaixadevelocidades", texto == "")
@@ -1521,107 +1664,119 @@ rule "D104: Verificar problemas na caixa de velocidades"
         $resposta.setPergunta("Verificar problemas na caixa de velocidades.");
         $resposta.setEstado("perguntarcaixadevelocidades");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot("Verificar problemas na caixa de velocidades.");
+        $resposta.addRegraDisparada("D104: Verificar problemas na caixa de velocidades");
         update($resposta);
 end
 
-// Rule D105: Processar 'Verificar problemas na caixa de velocidades? Não'
+// Regra D105: Processar 'Verificar problemas na caixa de velocidades? Não'
 rule "D105: Processar 'Verificar problemas na caixa de velocidades? Não'"
     when
         $resposta : Resposta(estado == "perguntarcaixadevelocidades", texto == "Não")
     then
-        System.out.println("Diagnóstico: Nenhum problema identificado.");
         $resposta.setDiagnostico("Nenhum problema identificado");
         $resposta.setSolucao("Nenhuma ação necessária");
         $resposta.setPorque("Nenhum problema foi identificado na caixa de velocidades");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Nenhum problema identificado");
+        $resposta.addRegraDisparada("D105: Processar 'Verificar problemas na caixa de velocidades? Não'");
         update($resposta);
 end
 
-// Rule D106: Processar 'Verificar problemas na caixa de velocidades? Sim'
+// Regra D106: Processar 'Verificar problemas na caixa de velocidades? Sim'
 rule "D106: Processar 'Verificar problemas na caixa de velocidades? Sim'"
     when
         $resposta : Resposta(estado == "perguntarcaixadevelocidades", texto == "Sim")
     then
-        System.out.println("Verificar nível de fluido de caixa de velocidades.");
-        $resposta.setPergunta("Nível de fluido < Mínimo, > Máximo ou Normal? (Minimo/Maximo/Normal)");
+        String pergunta = "Nível de fluido < Mínimo, > Máximo ou Normal? (Minimo/Maximo/Normal)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarNivelFluidoCaixa");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D106: Processar 'Verificar problemas na caixa de velocidades? Sim'");
         update($resposta);
 end
 
-
-// Rule D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'
+// Regra D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'
 rule "D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Minimo")
     then
-        System.out.println("Diagnóstico: Nível de fluido de transmissão baixo.");
+        Evidence<String, String> ev = new Evidence<>("perguntarNivelFluidoCaixa", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Nível de fluido de transmissão baixo");
         $resposta.setSolucao("Completar fluido de transmissão e verificar possíveis fugas");
         $resposta.setPorque("Nível de fluido de transmissão está abaixo do mínimo");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Nível de fluido de transmissão baixo");
+        $resposta.addRegraDisparada("D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'");
         update($resposta);
 end
 
-// Rule D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'
+// Regra D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'
 rule "D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Maximo")
     then
-        System.out.println("Diagnóstico: Excesso de fluido de transmissão.");
+        Evidence<String, String> ev = new Evidence<>("perguntarNivelFluidoCaixa", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Excesso de fluido de transmissão");
         $resposta.setSolucao("Ajustar fluido de transmissão");
         $resposta.setPorque("Nível de fluido de transmissão está acima do máximo");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Excesso de fluido de transmissão");
+        $resposta.addRegraDisparada("D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'");
         update($resposta);
 end
 
-// Rule D109: Processar 'Nível de fluido de caixa de velocidades Normal'
+// Regra D109: Processar 'Nível de fluido de caixa de velocidades Normal'
 rule "D109: Processar 'Nível de fluido de caixa de velocidades Normal'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Normal")
     then
-        System.out.println("Verificar embraiagem.");
-        $resposta.setPergunta("Embraiagem gasta ou a patinar? (Sim/Não)");
+        String pergunta = "Embraiagem gasta ou a patinar? (Sim/Não)";
+        System.out.println(pergunta);
+        $resposta.setPergunta(pergunta);
         $resposta.setEstado("perguntarEmbraiagem");
         $resposta.setTexto("");
+        $resposta.addPerguntaWhyNot(pergunta);
+        $resposta.addRegraDisparada("D109: Processar 'Nível de fluido de caixa de velocidades Normal'");
         update($resposta);
 end
 
-
-// Rule D110: Processar 'Embraiagem gasta ou a patinar? Sim'
+// Regra D110: Processar 'Embraiagem gasta ou a patinar? Sim'
 rule "D110: Processar 'Embraiagem gasta ou a patinar? Sim'"
     when
         $resposta : Resposta(estado == "perguntarEmbraiagem", texto == "Sim")
     then
-        System.out.println("Diagnóstico: Embraiagem com desgaste excessivo ou volante bimassa defeituoso.");
+        Evidence<String, String> ev = new Evidence<>("perguntarEmbraiagem", $resposta.getTexto());
+        $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Embraiagem com desgaste excessivo ou volante bimassa defeituoso");
         $resposta.setSolucao("Substituir kit de embraiagem");
         $resposta.setPorque("Embraiagem gasta ou a patinar");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Embraiagem com desgaste excessivo ou volante bimassa defeituoso");
+        $resposta.addRegraDisparada("D110: Processar 'Embraiagem gasta ou a patinar? Sim'");
         update($resposta);
 end
 
-// Rule D111: Processar 'Embraiagem gasta ou a patinar? Não'
+// Regra D111: Processar 'Embraiagem gasta ou a patinar? Não'
 rule "D111: Processar 'Embraiagem gasta ou a patinar? Não'"
     when
         $resposta : Resposta(estado == "perguntarEmbraiagem", texto == "Não")
     then
-        System.out.println("Diagnóstico: Verificação adicional necessária.");
         $resposta.setDiagnostico("Verificação adicional necessária");
         $resposta.setSolucao("Consultar especialista");
         $resposta.setPorque("Embraiagem não está gasta ou a patinar");
         $resposta.setPorqueNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
         generateWhyNotExplanation(whyNot, $resposta, "Verificação adicional necessária");
+        $resposta.addRegraDisparada("D111: Processar 'Embraiagem gasta ou a patinar? Não'");
         update($resposta);
 end
 
