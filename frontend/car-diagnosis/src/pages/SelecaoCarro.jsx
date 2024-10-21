@@ -1,93 +1,28 @@
-import { Box, Button, Card, CardContent, Container, FormControl, Grid, InputLabel, List, ListItem, MenuItem, Select, Typography, useTheme } from "@mui/material";
-import axios from 'axios';
+import { Box, Button, Card, CardContent, Container, FormControl, Grid, InputLabel, List, ListItem, MenuItem, Select, Typography } from "@mui/material";
 import * as React from 'react';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Gauge from "../components/Gauge";
 import TituloLinha from "../components/TituloLinha";
-
+import useSelecao from '../hooks/useSelecao';
 
 const SelecaoCarro = () => {
-  const [carData, setCarData] = useState([]);
-  const [marca, setMarca] = useState('');
-  const [modelo, setModelo] = useState('');
-  const [motor, setMotor] = useState('');
-  const [modelos, setModelos] = useState([]);
-  const [motores, setMotores] = useState([]);
-  const [componentes, setComponentes] = useState([]);
-  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const {
+    marcas,
+    marca,
+    modelo,
+    motor,
+    modelos,
+    motores,
+    componentes,
+    error,
+    handleMarcaChange,
+    handleModeloChange,
+    handleMotorChange,
+    iniciarDiagnostico,
+  } = useSelecao();
 
-  const navigate = useNavigate();  // Use this hook to navigate to another page
-  const theme = useTheme();
-
-  const API_URL = 'http://localhost:8080/api';
   const tamanho_img = '280px';
-
-  // Fetch data from API
-  useEffect(() => {
-    const fetchCarData = async () => {
-      try {
-        const response = await axios.get(API_URL + '/carros');
-        setCarData(response.data);
-      } catch (error) {
-        console.error("Error fetching data from API", error);
-      }
-    };
-    fetchCarData();
-  }, []);
-
-  // Get unique marcas
-  const marcas = [...new Set(carData.map(car => car.marca.nome))];
-
-  const handleMarcaChange = (e) => {
-    const selectedMarca = e.target.value;
-    setMarca(selectedMarca);
-    setModelo('');
-    setMotor('');
-
-    const filteredModelos = carData.filter(car => car.marca.nome === selectedMarca);
-    const uniqueModelos = [...new Set(filteredModelos.map(car => car.modelo.nome))];
-    setModelos(uniqueModelos);
-    setMotores([]);
-    setComponentes([]);
-  };
-
-  const handleModeloChange = (e) => {
-    const selectedModelo = e.target.value;
-    setModelo(selectedModelo);
-    setMotor('');
-
-    const filteredMotores = carData.filter(car => car.marca.nome === marca && car.modelo.nome === selectedModelo);
-    const uniqueMotores = [...new Set(filteredMotores.map(car => car.motor.nome))];
-    setMotores(uniqueMotores);
-    setComponentes([]);
-  };
-
-  const handleMotorChange = (e) => {
-    const selectedMotor = e.target.value;
-    setMotor(selectedMotor);
-
-    const filteredCar = carData.find(car => car.marca.nome === marca && car.modelo.nome === modelo && car.motor.nome === selectedMotor);
-    setComponentes(filteredCar ? filteredCar.componentes : []);
-  };
-
-  // POST request para "Iniciar Diagnostico"
-  const iniciarDiagnostico = async () => {
-    const body = {
-      marca: { nome: marca },
-      modelo: { nome: modelo },
-      motor: { nome: motor },
-      componentes: componentes
-    };
-
-    try {
-      const response = await axios.post(API_URL + '/diagnostico/iniciar', body);
-      // Navigate to the diagnostic page and pass the response data
-      navigate('/diagnostico', { state: { diagnosticoData: response.data } });
-    } catch (err) {
-      setError('Falha ao iniciar diagnostico');
-    }
-  };
 
   const getImagePath = () => {
     try {
@@ -95,12 +30,8 @@ const SelecaoCarro = () => {
         return require(`../assets/img/carros/${marca}/${modelo}.png`);
       }
     } catch (err) {
-      console.error('Image not found, displaying placeholder', err);
+      console.error('Imagem nao encontrada', err);
     }
-
-    // if (theme.palette.mode === 'dark') {
-    //   return require(`../assets/img/carros/question-car-dark.png`);
-    // }
 
     return require(`../assets/img/carros/question-car.png`);
   };
@@ -120,7 +51,6 @@ const SelecaoCarro = () => {
               padding={2}
               sx={{ width: '850px', margin: 'auto'}}
             >
-              
               <Grid item xs={12} md={6} sx={{ width:tamanho_img, margin: 'auto'}}>
                 <Box mt={2}>
                   <img src={getImagePath()} alt="Carro Selecionado" style={{ width:tamanho_img }} />
@@ -199,7 +129,6 @@ const SelecaoCarro = () => {
                             label={comp.nome}
                             units={comp.unidade}
                           />
-                          {/* <Typography>{comp.valorMinimoIdeal} a {comp.valorMaximoIdeal}</Typography> */}
                       </Grid>
                     ))}
                   </Grid>
@@ -210,7 +139,7 @@ const SelecaoCarro = () => {
               <><Box
                 sx={{ height: '0.5px', background: 'white', marginBottom: '30px' }} />
                 <Button
-                  onClick={iniciarDiagnostico}
+                  onClick={() => iniciarDiagnostico(navigate)}
                   color="primary"
                   variant="contained"
                   sx={{ width: '300px', height: '50px', fontSize: '1.2rem' }}
