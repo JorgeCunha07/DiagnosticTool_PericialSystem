@@ -1,9 +1,11 @@
-import { Box, Button, Card, CardActions, CardContent, Container, FormControl, InputLabel, List, ListItem, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Container, FormControl, Grid, InputLabel, List, ListItem, MenuItem, Select, Typography, useTheme } from "@mui/material";
 import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Add this for navigation
+import { useNavigate } from 'react-router-dom';
 import Gauge from "../components/Gauge";
+import TituloLinha from "../components/TituloLinha";
+
 
 const SelecaoCarro = () => {
   const [carData, setCarData] = useState([]);
@@ -16,8 +18,10 @@ const SelecaoCarro = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();  // Use this hook to navigate to another page
+  const theme = useTheme();
 
   const API_URL = 'http://localhost:8080/api';
+  const tamanho_img = '280px';
 
   // Fetch data from API
   useEffect(() => {
@@ -67,7 +71,7 @@ const SelecaoCarro = () => {
     setComponentes(filteredCar ? filteredCar.componentes : []);
   };
 
-  // POST request to initiate diagnostic
+  // POST request para "Iniciar Diagnostico"
   const iniciarDiagnostico = async () => {
     const body = {
       marca: { nome: marca },
@@ -87,7 +91,6 @@ const SelecaoCarro = () => {
 
   const getImagePath = () => {
     try {
-      // If both Marca and Modelo are selected, return the car image
       if (marca && modelo) {
         return require(`../assets/img/carros/${marca}/${modelo}.png`);
       }
@@ -95,105 +98,132 @@ const SelecaoCarro = () => {
       console.error('Image not found, displaying placeholder', err);
     }
 
-    // Return placeholder by default
+    // if (theme.palette.mode === 'dark') {
+    //   return require(`../assets/img/carros/question-car-dark.png`);
+    // }
+
     return require(`../assets/img/carros/question-car.png`);
   };
 
   return (
-    <Container>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
-        <Card lg={{ minWidth: 600 }}>
-          <CardContent>
-            <Typography variant="h4" component="h1">
-              Seleção do Carro
+    <Container sx={{ width: '1000px', margin: 'auto', padding: '20px'}}>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <Card sx={{ maxWidth: 900 }}>
+          <CardContent padding={2}>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Diagnóstico de Carro
             </Typography>
-            <List>
-              <ListItem>
-                <FormControl fullWidth>
-                  <InputLabel>Marca</InputLabel>
-                  <Select value={marca} onChange={handleMarcaChange}>
-                    <MenuItem value=""><em>Selecione Marca</em></MenuItem>
-                    {marcas.map((m, idx) => (
-                      <MenuItem key={idx} value={m}>{m}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </ListItem>
+            <TituloLinha title="Selecione o Carro" lineColor="white" icon="DirectionsCar" position="13px" />
+            <Grid 
+              container 
+              spacing={2} 
+              padding={2}
+              sx={{ width: '850px', margin: 'auto'}}
+            >
+              
+              <Grid item xs={12} md={6} sx={{ width:tamanho_img, margin: 'auto'}}>
+                <Box mt={2}>
+                  <img src={getImagePath()} alt="Carro Selecionado" style={{ width:tamanho_img }} />
+                </Box>
+              </Grid>
 
-              <ListItem>
-                {modelos.length > 0 && (
-                  <FormControl fullWidth>
-                    <InputLabel>Modelo</InputLabel>
-                    <Select value={modelo} onChange={handleModeloChange}>
-                      <MenuItem value=""><em>Selecione Modelo</em></MenuItem>
-                      {modelos.map((m, idx) => (
-                        <MenuItem key={idx} value={m}>{m}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </ListItem>
+              <Grid item xs={12} md={6} sx={{ height:'220px', margin: 'auto'}}>
+                <List>
+                  <ListItem>
+                    <FormControl fullWidth>
+                      <InputLabel>Marca</InputLabel>
+                      <Select value={marca} onChange={handleMarcaChange}>
+                        <MenuItem value="">
+                          <em>Selecione Marca</em>
+                        </MenuItem>
+                        {marcas.map((m, idx) => (
+                          <MenuItem key={idx} value={m}>
+                            {m}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </ListItem>
 
-              <ListItem>
-                {motores.length > 0 && (
-                  <FormControl fullWidth>
-                    <InputLabel>Motor</InputLabel>
-                    <Select value={motor} onChange={handleMotorChange}>
-                      <MenuItem value=""><em>Selecione Motor</em></MenuItem>
-                      {motores.map((m, idx) => (
-                        <MenuItem key={idx} value={m}>{m}</MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </ListItem>
-            </List>
+                  <ListItem>
+                    {modelos.length > 0 && (
+                      <FormControl fullWidth>
+                        <InputLabel>Modelo</InputLabel>
+                        <Select value={modelo} onChange={handleModeloChange}>
+                          <MenuItem value="">
+                            <em>Selecione Modelo</em>
+                          </MenuItem>
+                          {modelos.map((m, idx) => (
+                            <MenuItem key={idx} value={m}>
+                              {m}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                  </ListItem>
 
-            {/* Display the image if Marca and Modelo are selected */}
-            {marca && modelo && (
-              <Box mt={2}>
-                <img src={getImagePath()} alt="Selected Car or Placeholder" style={{ width: '300px' }} />
-              </Box>
-            )}
+                  <ListItem>
+                    {motores.length > 0 && (
+                      <FormControl fullWidth>
+                        <InputLabel>Motor</InputLabel>
+                        <Select value={motor} onChange={handleMotorChange}>
+                          <MenuItem value="">
+                            <em>Selecione Motor</em>
+                          </MenuItem>
+                          {motores.map((m, idx) => (
+                            <MenuItem key={idx} value={m}>
+                              {m}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                  </ListItem>
+                </List>
+              </Grid>
+            </Grid>
 
             {componentes.length > 0 && (
-              <Box mt={2}>
-                <Typography variant="h5" component="h2">Componentes</Typography>
-                <List>
-                  {componentes.map((comp, idx) => (
-                    <ListItem key={idx}>
-                      <Gauge
-                        value={comp.valorMinimoIdeal}
-                        min={comp.valorMinimo}
-                        max={comp.valorMaximo}
-                        max_ideal={comp.valorMaximoIdeal}
-                        label={comp.nome}
-                        units={comp.unidade}
-                      />
-                      <strong>{comp.nome}</strong>: {comp.valorMinimoIdeal} - {comp.valorMaximoIdeal} {comp.unidade}
-                    </ListItem>
-                  ))}
-                </List>
+              <Box mt={2} padding={2}>
+                <TituloLinha title="Níveis Ideais dos Componentes" lineColor="white" icon="Settings"/>
+                <Box>
+                  <Grid container spacing={2}>
+                    {componentes.map((comp, idx) => (
+                      <Grid item xs={12} md={3} key={idx}>
+                          <Gauge
+                            value={comp.valorMinimoIdeal}
+                            min={comp.valorMinimo}
+                            max={comp.valorMaximo}
+                            max_ideal={comp.valorMaximoIdeal}
+                            label={comp.nome}
+                            units={comp.unidade}
+                          />
+                          {/* <Typography>{comp.valorMinimoIdeal} a {comp.valorMaximoIdeal}</Typography> */}
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
               </Box>
             )}
-          </CardContent>
-          <CardActions>
             {marca && modelo && motor && componentes.length > 0 && (
-              <Button onClick={iniciarDiagnostico} color="primary" variant="contained">
-                Iniciar Diagnostico
-              </Button>
+              <><Box
+                sx={{ height: '0.5px', background: 'white', marginBottom: '30px' }} />
+                <Button
+                  onClick={iniciarDiagnostico}
+                  color="primary"
+                  variant="contained"
+                  sx={{ width: '300px', height: '50px', fontSize: '1.2rem' }}
+                >
+                  Iniciar Diagnostico
+                </Button></>
             )}
             {error && (
               <Typography variant="caption" color="error" gutterBottom sx={{ display: 'block' }}>
                 {error}
               </Typography>
             )}
-          </CardActions>
+          </CardContent>
         </Card>
       </Box>
     </Container>
