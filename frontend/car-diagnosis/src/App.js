@@ -3,6 +3,8 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import DiagnosticoCarro from './pages/DiagnosticoCarro';
+import DiagnosticoConclusao from './pages/DiagnosticoConclusao';
+import DiagnosticoErro from './pages/DiagnosticoErro';
 import SelecaoCarro from './pages/SelecaoCarro';
 
 const darkTheme = createTheme({
@@ -31,7 +33,8 @@ function App() {
             {/* <Route path="/" element={<IdentificacaoUsuario />} /> */}
             <Route path="/" element={<SelecaoCarro />} />
             <Route path="/diagnostico" element={<DiagnosticoCarro />} />
-            {/* <Route path="/conclusao" element={<Conclusao />} /> */}
+            <Route path="/error" element={<DiagnosticoErro />} />
+            <Route path="/conclusao" element={<DiagnosticoConclusao />} />
           </Routes>
         </Router>
       </div>

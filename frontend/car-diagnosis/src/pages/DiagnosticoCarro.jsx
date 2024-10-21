@@ -1,22 +1,22 @@
 import { Alert, Box, Button, Card, CardContent, CircularProgress, Container, Typography } from "@mui/material";
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const API_URL = 'http://localhost:8080/api';
 
 const DiagnosticoCarro = () => {
   const location = useLocation();
-  const { diagnosticoData } = location.state; // Get the data passed from the previous page
-  const [diagnostico, setDiagnostico] = useState(diagnosticoData); // Initialize with passed data
+  const { diagnosticoData } = location.state;
+  const [diagnostico, setDiagnostico] = useState(diagnosticoData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   if (!diagnosticoData) return null;
 
-  // Function to handle the button click and send the POST request
   const handleAnswer = async (answer) => {
-    setLoading(true); // Show loading while the request is being processed
+    setLoading(true);
 
 
     const requestBody = {
@@ -28,11 +28,15 @@ const DiagnosticoCarro = () => {
 
     try {
       const response = await axios.post(`${API_URL}/diagnostico/responder`, requestBody);
+
+      if (!response.data || !response.data.carroSelecionado.marca || !response.data.carroSelecionado.hasOwnProperty("marca")) {
+        navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
+      } else {
+        setDiagnostico(response.data);
+      }
       
-      // Update state with new diagnostic data
-      setDiagnostico(response.data);
     } catch (err) {
-      setError('Failed to send the response.');
+      setError('Falha ao enviar resposta.');
     } finally {
       setLoading(false); // Hide loading when the request is complete
     }
@@ -44,15 +48,12 @@ const DiagnosticoCarro = () => {
 
   const getImagePath = () => {
     try {
-      // If both Marca and Modelo are selected, return the car image
       if (marca && modelo) {
         return require(`../assets/img/carros/${marca}/${modelo}.png`);
       }
     } catch (err) {
       console.error('Image not found, displaying placeholder', err);
     }
-
-    // Return placeholder by default
     return require(`../assets/img/carros/question-car.png`);
   };
 
@@ -70,33 +71,28 @@ const DiagnosticoCarro = () => {
         Questionario Diagnostico
       </Typography>
 
-      {/* Display car information */}
       <Typography variant="h6" component="h2">
       <Box mt={2}>
                 <img src={getImagePath()} alt="Selected Car or Placeholder" style={{ width: '300px' }} />
               </Box>{marca}, {modelo}, {motor}
       </Typography>
 
-      {/* Display the diagnostic question */}
       <Typography variant="h4" component="h3" sx={{ mt: 2 }}>
        {diagnostico.pergunta}
       </Typography>
 
-      {/* Loading indicator */}
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
           <CircularProgress />
         </Box>
       )}
 
-      {/* Error message */}
       {error && (
         <Box sx={{ mt: 2 }}>
           <Alert severity="error">{error}</Alert>
         </Box>
       )}
 
-      {/* Show Sim/Não buttons only if the question includes "(Sim/Não)" and not loading */}
       {diagnostico.pergunta.includes("(Sim/Não)") && !loading && (
         <Box sx={{ mt: 3 }}>
           <Button 
