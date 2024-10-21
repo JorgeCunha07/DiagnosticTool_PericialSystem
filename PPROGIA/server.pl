@@ -73,10 +73,22 @@ http_handler_escolher_carro(Request) :-
     assertz(carro_selecionado(Carro)),
     retractall(facto(_, _)),
     assertz(facto(1, proximo_teste(Numero, problemas))).
+    assertz(facto(1, proximo_teste(Numero, problemas))),
+    reply_json(_{ carro_escolhido: Carro }).
 
 procurar_carro(Numero, Carro) :-
     carro(Numero, Marca, Modelo, Motor),
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
+
+factos_handler(_Request) :-
+    findall(Facto, facto(_, Facto), Factos),
+    log_message(Factos),
+    maplist(facto_to_text, Factos, FactosJson),
+    reply_json(FactosJson).
+
+% Converter cada facto para texto sem mutação
+facto_to_text(Facto, Texto) :-
+    term_to_atom(Facto, Texto).
         
 diagnostico2_handler(_Request) :-
     % Chamar a função diagnostico2
