@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.dei.facts.model.Carro;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,9 +25,27 @@ public class Resposta {
 
     private String diagnostico;
     private String solucao;
-    private String porque;
-    private String porqueNao;
+    private String explicacaoGeral;
+    private String explicacaoGeralNao;
+    private String como;
     private List<Evidence<?,?>> evidencias;
+    private List<String> triggeredRules;
 
+    public void addEvidencia(Evidence<?, ?> evidencia) {
+        if (this.evidencias == null) {
+            this.evidencias = new ArrayList<>();
+        }
+        this.evidencias.add(evidencia);
+    }
 
+    public void addRegraDisparada(String regra) {
+        if (this.triggeredRules == null) {
+            this.triggeredRules = new ArrayList<>();
+        }
+        this.triggeredRules.add(regra);
+    }
+
+    public boolean isDiagnosticoConcluido() {
+        return "finalizado".equalsIgnoreCase(this.estado);
+    }
 }
