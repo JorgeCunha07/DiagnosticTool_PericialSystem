@@ -67,7 +67,7 @@ rule "D02: Process response - Carro tem problema 'Sim'"
         $resposta : Resposta(estado == "perguntarProblemaInicial", texto.equalsIgnoreCase("Sim"))
     then
         $resposta.setEstado("perguntarCarroLigaChave");
-        Evidence<String, String> ev = new Evidence<>("O carro apresenta algum problema?", "Sim");
+        Evidence<?, ?> ev = new Evidence<>("","O carro apresenta algum problema?", $resposta.getTexto());
         $resposta.setTexto(""); 
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D02: Process response - Carro tem problema 'Sim'");
@@ -84,7 +84,7 @@ rule "D03: Process response - Carro tem problema 'Não'"
         $resposta.setExplicacaoGeral("O usuário indicou que o carro não apresenta problemas");
         $resposta.setExplicacaoGeralNao("Nenhum problema foi relatado");
         $resposta.setEstado("diagnosticoConcluido");
-        Evidence<String, String> ev = new Evidence<>("O carro apresenta algum problema?", "Não");
+        Evidence<?, ?> ev = new Evidence<>("","O carro apresenta algum problema?", $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D03: Process response - Carro tem problema 'Não'");
         update($resposta);
@@ -108,7 +108,7 @@ rule "D05: Process 'O carro liga a chave?'"
     when
         $resposta : Resposta(estado == "processarCarroLigaChave", texto != null && texto != "")
     then
-        Evidence<String, String> ev = new Evidence<>("O carro liga a chave?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O carro liga a chave?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         if ($resposta.getTexto().equalsIgnoreCase("Sim")) {
             $resposta.setEstado("perguntarCarroLigaMasVaiAbaixo");
@@ -134,7 +134,6 @@ rule "D06: Processar 'O carro liga a chave? Não'"
     when
         $resposta : Resposta(estado == "verificarBateriaECabos", texto == "")
     then
-        $resposta.addRegraDisparada("D06: Processar 'O carro liga a chave? Não'");
         System.out.println("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
         $resposta.setPergunta("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga? (Sim/Não)");
         $resposta.setEstado("perguntarBateriaFraca");
@@ -162,7 +161,7 @@ rule "D08: Processar 'Bateria fraca ou sem carga? Sim'"
     when
         $resposta : Resposta(estado == "perguntarBateriaFraca", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","A bateria está fraca ou sem carga?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Bateria com defeito ou sem carga");
         $resposta.setSolucao("Substituir ou recarregar a bateria");
@@ -178,7 +177,7 @@ rule "D09: Processar 'Bateria fraca ou sem carga? Não'"
     when
         $resposta : Resposta(estado == "perguntarBateriaFraca", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique a bateria e cabos de bateria. A bateria está fraca ou sem carga?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","A bateria está fraca ou sem carga?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarMotorArranque");
         $resposta.setTexto("");
@@ -204,7 +203,7 @@ rule "D11: Processar 'Motor de arranque com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarMotorArranqueDefeito", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Motor de arranque com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Motor de arranque com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D11: Processar 'Motor de arranque com defeito? Sim'");
         $resposta.setDiagnostico("Falha no motor de arranque");
@@ -221,7 +220,7 @@ rule "D12: Processar 'Motor de arranque com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarMotorArranqueDefeito", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Motor de arranque com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Motor de arranque com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaIgnicao");
         $resposta.setTexto("");
@@ -247,7 +246,7 @@ rule "D14: Processar 'Ignição a falhar? Sim'"
     when
         $resposta : Resposta(estado == "perguntarIgnicaoFalhando", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o sistema de ignição. A ignição está a falhar?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","A ignição está a falhar?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Sistema de ignição com defeito");
         $resposta.setSolucao("Verificar chave de ignição, fusíveis, conectores e alimentação de combustível");
@@ -263,7 +262,7 @@ rule "D15: Processar 'Ignição a falhar? Não'"
     when
         $resposta : Resposta(estado == "perguntarIgnicaoFalhando", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o sistema de ignição. A ignição está a falhar?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>(""," A ignição está a falhar?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setEstado("verificarSistemaSeguranca");
         $resposta.setTexto("");
@@ -290,7 +289,7 @@ rule "D17: Processar 'Imobilizador ou alarme a bloquear? Sim'"
     when
         $resposta : Resposta(estado == "perguntarImobilizadorBloqueando", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Imobilizador ou alarme a bloquear?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Imobilizador ou alarme a bloquear?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.setDiagnostico("Sistema de segurança ativado");
         $resposta.setSolucao("Desativar sistema de segurança");
@@ -305,7 +304,7 @@ rule "D18: Processar 'Imobilizador ou alarme a bloquear? Não'"
     when
         $resposta : Resposta(estado == "perguntarImobilizadorBloqueando", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Imobilizador ou alarme a bloquear?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Imobilizador ou alarme a bloquear?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D18: Processar 'Imobilizador ou alarme a bloquear? Não'");
         $resposta.setEstado("verificarCaboCondutor");
@@ -331,7 +330,7 @@ rule "D20: Processar 'Fios danificados? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFiosDanificados", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique cabos condutores de energia elétrica e fichas de ligação. Há fios danificados?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Há fios danificados?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D20: Processar 'Fios danificados? Sim'");
         $resposta.setDiagnostico("Fios com corte ou curto-circuito");
@@ -347,7 +346,7 @@ rule "D21: Processar 'Fios danificados? Não'"
     when
         $resposta : Resposta(estado == "perguntarFiosDanificados", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique cabos condutores de energia elétrica e fichas de ligação. Há fios danificados?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Há fios danificados?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D21: Processar 'Fios danificados? Não'");
         $resposta.setDiagnostico("Verificação adicional necessária");
@@ -376,7 +375,7 @@ rule "D23: Processar 'O carro liga mas vai abaixo? Sim'"
     when
         $resposta : Resposta(estado == "processarCarroLigaMasVaiAbaixo", texto.equalsIgnoreCase("Sim"))
     then
-        Evidence<String, String> ev = new Evidence<>("O carro liga mas vai abaixo?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O carro liga mas vai abaixo?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D23: Processar 'O carro liga mas vai abaixo? Sim'");
         $resposta.setEstado("verificarSobreaquecimentoMotor");
@@ -389,7 +388,7 @@ rule "D24: Processar 'O carro liga mas vai abaixo? Não'"
     when
         $resposta : Resposta(estado == "processarCarroLigaMasVaiAbaixo", texto.equalsIgnoreCase("Não"))
     then
-        Evidence<String, String> ev = new Evidence<>("O carro liga mas vai abaixo?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O carro liga mas vai abaixo?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D24: Processar 'O carro liga mas vai abaixo? Não'");
         $resposta.setEstado("processarCarroFazBarulhoAnormal");
@@ -417,7 +416,7 @@ rule "D26: Processar 'Motor a sobreaquecer? Sim'"
     when
         $resposta : Resposta(estado == "perguntarMotorSobreaquecendo", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Motor a sobreaquecer?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Motor a sobreaquecer?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D26: Processar 'Motor a sobreaquecer? Sim'");
         $resposta.setEstado("verificarSistemaArrefecimento");
@@ -430,7 +429,7 @@ rule "D27: Processar 'Motor a sobreaquecer? Não'"
     when
         $resposta : Resposta(estado == "perguntarMotorSobreaquecendo", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Motor a sobreaquecer?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Motor a sobreaquecer?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D27: Processar 'Motor a sobreaquecer? Não'");
         $resposta.setEstado("verificarSistemaCombustivel");
@@ -456,7 +455,7 @@ rule "D29: Processar 'Radiador ou ventoinha com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarRadiadorVentoinhaDefeito", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O radiador ou ventoinha está com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D29: Processar 'Radiador ou ventoinha com defeito? Sim'");
         $resposta.setDiagnostico("Problema no radiador ou ventoinha");
@@ -472,7 +471,7 @@ rule "D30: Processar 'Radiador ou ventoinha com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarRadiadorVentoinhaDefeito", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O radiador ou ventoinha está com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D30: Processar 'Radiador ou ventoinha com defeito? Não'");
         $resposta.setEstado("verificarFugasArrefecimento");
@@ -498,7 +497,7 @@ rule "D32: Processar 'Fuga detectada? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFugaArrefecimento", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Fuga detectada?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Fuga detectada?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D32: Processar 'Fuga detectada? Sim'");
         $resposta.setDiagnostico("Fugas no sistema de arrefecimento");
@@ -514,7 +513,7 @@ rule "D33: Processar 'Fuga detectada? Não'"
     when
         $resposta : Resposta(estado == "perguntarFugaArrefecimento", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Fuga detectada?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Fuga detectada?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D33: Processar 'Fuga detectada? Não'");
         $resposta.setEstado("verificarTermostato");
@@ -540,7 +539,7 @@ rule "D35: Processar 'Termóstato defeituoso? Sim'"
     when
         $resposta : Resposta(estado == "perguntarTermostatoDefeituoso", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o termóstato. O termóstato está defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Verifique o termóstato. O termóstato está defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D35: Processar 'Termóstato defeituoso? Sim'");
         $resposta.setDiagnostico("Termóstato com defeito");
@@ -556,7 +555,7 @@ rule "D36: Processar 'Termóstato defeituoso? Não'"
     when
         $resposta : Resposta(estado == "perguntarTermostatoDefeituoso", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o termóstato. O termóstato está defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Verifique o termóstato. O termóstato está defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D36: Processar 'Termóstato defeituoso? Não'");
         $resposta.setEstado("verificarBombaAgua");
@@ -582,7 +581,7 @@ rule "D38: Processar 'Bomba de água com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarBombaAguaDefeito", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Bomba de água com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Bomba de água com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D38: Processar 'Bomba de água com defeito? Sim'");
         $resposta.setDiagnostico("Falha na bomba de água");
@@ -598,7 +597,7 @@ rule "D39: Processar 'Bomba de água com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarBombaAguaDefeito", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Bomba de água com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Bomba de água com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D39: Processar 'Bomba de água com defeito? Não'");
         $resposta.setDiagnostico("Verificação adicional necessária");
@@ -627,7 +626,7 @@ rule "D41: Processar 'Falta de combustível ou falha na bomba? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFaltaCombustivelOuFalhaBomba", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Falta de combustível ou falha na bomba?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Falta de combustível ou falha na bomba?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D41: Processar 'Falta de combustível ou falha na bomba? Sim'");
         $resposta.setDiagnostico("Falta de combustível ou bomba de combustível com defeito");
@@ -643,7 +642,7 @@ rule "D42: Processar 'Falta de combustível ou falha na bomba? Não'"
     when
         $resposta : Resposta(estado == "perguntarFaltaCombustivelOuFalhaBomba", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Falta de combustível ou falha na bomba?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Falta de combustível ou falha na bomba?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D42: Processar 'Falta de combustível ou falha na bomba? Não'");
         $resposta.setEstado("verificarFiltroCombustivel");
@@ -668,7 +667,7 @@ rule "D44: Processar 'Filtro de combustível entupido? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFiltroCombustivelEntupido", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Filtro de combustível entupido?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Filtro de combustível entupido?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D44: Processar 'Filtro de combustível entupido? Sim'");
         $resposta.setDiagnostico("Filtro de combustível entupido");
@@ -684,7 +683,7 @@ rule "D45: Processar 'Filtro de combustível entupido? Não'"
     when
         $resposta : Resposta(estado == "perguntarFiltroCombustivelEntupido", texto == "Não")
     then
-         Evidence<String, String> ev = new Evidence<>("Filtro de combustível entupido?",  $resposta.getTexto());
+         Evidence<?, ?> ev = new Evidence<>("","Filtro de combustível entupido?",  $resposta.getTexto());
          $resposta.addEvidencia(ev);
          $resposta.addRegraDisparada("D45: Processar 'Filtro de combustível entupido? Não'");
         $resposta.setEstado("verificarSistemaInjecaoCombustivel");
@@ -710,7 +709,7 @@ rule "D47: Processar 'Injeção de combustível com defeito? Sim'"
     when
         $resposta : Resposta(estado == "perguntarInjecaoCombustivelDefeito", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Injeção de combustível com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Injeção de combustível com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D47: Processar 'Injeção de combustível com defeito? Sim'");
         $resposta.setDiagnostico("Injeção de combustível com defeito");
@@ -726,7 +725,7 @@ rule "D48: Processar 'Injeção de combustível com defeito? Não'"
     when
         $resposta : Resposta(estado == "perguntarInjecaoCombustivelDefeito", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Injeção de combustível com defeito?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Injeção de combustível com defeito?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D48: Processar 'Injeção de combustível com defeito? Não'");
         $resposta.setEstado("verificarSistemaIgnicaoNovamente");
@@ -752,7 +751,7 @@ rule "D50: Processar 'Velas de ignição defeituosas? Sim'"
     when
         $resposta : Resposta(estado == "perguntarVelasIgnicaoDefeituosas", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Velas de ignição defeituosas?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Velas de ignição defeituosas?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D50: Processar 'Velas de ignição defeituosas? Sim'");
         $resposta.setDiagnostico("Falha nas velas de ignição");
@@ -768,7 +767,7 @@ rule "D51: Processar 'Velas de ignição defeituosas? Não'"
     when
         $resposta : Resposta(estado == "perguntarVelasIgnicaoDefeituosas", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Velas de ignição defeituosas?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Velas de ignição defeituosas?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D51: Processar 'Velas de ignição defeituosas? Não'");
         $resposta.setEstado("verificarSensoresMotor");
@@ -794,7 +793,7 @@ rule "D53: Processar 'Sensores defeituosos? Sim'"
     when
         $resposta : Resposta(estado == "perguntarSensoresDefeituosos", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Sensores defeituosos?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Sensores defeituosos?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D53: Processar 'Sensores defeituosos? Sim'");
         $resposta.setDiagnostico("Sensor do motor com falha");
@@ -810,7 +809,7 @@ rule "D54: Processar 'Sensores defeituosos? Não'"
     when
         $resposta : Resposta(estado == "perguntarSensoresDefeituosos", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Sensores defeituosos?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Sensores defeituosos?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D54: Processar 'Sensores defeituosos? Não'");
         $resposta.setDiagnostico("Problema indeterminado");
@@ -839,7 +838,7 @@ rule "D56: Processar 'O carro faz barulho anormal? Sim'"
     when
         $resposta : Resposta(estado == "perguntarCarroFazBarulhoAnormal", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("O carro faz barulho anormal?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O carro faz barulho anormal?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D56: Processar 'O carro faz barulho anormal? Sim'");
         $resposta.setEstado("verificarMotorBarulho");
@@ -852,7 +851,7 @@ rule "D57: Processar 'O carro faz barulho anormal? Não'"
     when
         $resposta : Resposta(estado == "perguntarCarroFazBarulhoAnormal", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("O carro faz barulho anormal?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O carro faz barulho anormal?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D57: Processar 'O carro faz barulho anormal? Não'");
         $resposta.setEstado("processarCarroDificuldadeTravar");
@@ -878,7 +877,7 @@ rule "D59: Processar 'Barulho no motor? Sim'"
     when
         $resposta : Resposta(estado == "perguntarBarulhoNoMotor", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Barulho no motor?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Barulho no motor?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D59: Processar 'Barulho no motor? Sim'");
         $resposta.setEstado("verificarCorreiasCorrenteDentada");
@@ -891,7 +890,7 @@ rule "D60: Processar 'Barulho no motor? Não'"
     when
         $resposta : Resposta(estado == "perguntarBarulhoNoMotor", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Barulho no motor?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Barulho no motor?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D60: Processar 'Barulho no motor? Não'");
         $resposta.setEstado("verificarSuspensaoRodas");
@@ -917,7 +916,7 @@ rule "D62: Processar 'Correia dentada gasta? Sim'"
     when
         $resposta : Resposta(estado == "perguntarCorreiaDentadaGasta", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Correia dentada gasta?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Correia dentada gasta?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D62: Processar 'Correia dentada gasta? Sim'");
         $resposta.setDiagnostico("Correia dentada gasta e rolamentos");
@@ -933,7 +932,7 @@ rule "D63: Processar 'Correia dentada gasta? Não'"
     when
         $resposta : Resposta(estado == "perguntarCorreiaDentadaGasta", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Correia dentada gasta?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Correia dentada gasta?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D63: Processar 'Correia dentada gasta? Não'");
         $resposta.setEstado("verificarComponentesBarulhoMotor");
@@ -960,7 +959,7 @@ rule "D65: Processar 'Componente defeituoso? 1'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "1")
     then
-        Evidence<String, String> ev = new Evidence<>("Componente defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Componente defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D65: Processar 'Componente defeituoso? 1'");
         $resposta.setDiagnostico("Falha na bomba de água");
@@ -976,7 +975,7 @@ rule "D66: Processar 'Componente defeituoso? 2'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "2")
     then
-        Evidence<String, String> ev = new Evidence<>("Componente defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Componente defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D66: Processar 'Componente defeituoso? 2'");
         $resposta.setDiagnostico("Alternador com defeito");
@@ -992,7 +991,7 @@ rule "D67: Processar 'Componente defeituoso? 3'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "3")
     then
-        Evidence<String, String> ev = new Evidence<>("Componente defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Componente defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D67: Processar 'Componente defeituoso? 3'");
         $resposta.setDiagnostico("Compressor de ar condicionado com defeito");
@@ -1008,7 +1007,7 @@ rule "D68: Processar 'Componente defeituoso? 4'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "4")
     then
-        Evidence<String, String> ev = new Evidence<>("Componente defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Componente defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D68: Processar 'Componente defeituoso? 4'");
         $resposta.setDiagnostico("Falha nos tensores da correia");
@@ -1024,7 +1023,7 @@ rule "D69: Processar 'Componente defeituoso? 0'"
     when
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso", texto == "0")
     then
-        Evidence<String, String> ev = new Evidence<>("Componente defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Componente defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D69: Processar 'Componente defeituoso? 0'");
         $resposta.setEstado("verificarLubrificacaoMotor");
@@ -1038,7 +1037,7 @@ rule "D70: Processar 'Componente defeituoso? Inválido'"
         $resposta : Resposta(estado == "perguntarComponenteDefeituoso",
                              texto != "0" && texto != "1" && texto != "2" && texto != "3" && texto != "4" && texto != "")
     then
-        Evidence<String, String> ev = new Evidence<>("Componente defeituoso?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Componente defeituoso?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D70: Processar 'Componente defeituoso? Inválido'");
         System.out.println("Opção inválida. Por favor, digite um número de 0 a 4.");
@@ -1087,7 +1086,7 @@ rule "D73: Avaliar Nível de Óleo"
         // Substituir vírgula por ponto e validar
         String valorOleo = substituirVirgulaPorPonto($resposta.getTexto());
         System.out.println("Valor de óleo recebido: " + valorOleo);
-        Evidence<String, String> ev = new Evidence<>("Qual é o nível atual de óleo em Litros?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Qual é o nível atual de óleo em Litros?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D73: Avaliar Nível de Óleo");
 
@@ -1120,7 +1119,7 @@ rule "D74: Nível de óleo baixo"
     when
         $resposta : Resposta(estado == "nivelOleoBaixo")
     then
-        Evidence<String, String> ev = new Evidence<>("Qual é o nível atual de óleo?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Qual é o nível atual de óleo?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D74: Nível de óleo baixo");
         $resposta.setDiagnostico("Nível de óleo insuficiente");
@@ -1137,7 +1136,7 @@ rule "D75: Nível de óleo alto"
     when
         $resposta : Resposta(estado == "nivelOleoAlto")
     then
-        Evidence<String, String> ev = new Evidence<>("Qual é o nível atual de óleo?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Qual é o nível atual de óleo?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D75: Nível de óleo alto");
         $resposta.setDiagnostico("Excesso de óleo");
@@ -1153,7 +1152,7 @@ rule "D76: Nível de óleo normal"
     when
         $resposta : Resposta(estado == "nivelOleoNormal")
     then
-        Evidence<String, String> ev = new Evidence<>("Qual é o nível atual de óleo?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Qual é o nível atual de óleo?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D76: Nível de óleo normal");
         $resposta.setEstado("verificarSistemaEscape");
@@ -1180,7 +1179,7 @@ rule "D78: Problema no sistema de escape - Sim"
     when
         $resposta : Resposta(estado == "perguntarProblemaEscape", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o sistema de escape. Há problema no sistema de escape?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Há problema no sistema de escape?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D78: Problema no sistema de escape - Sim");
         $resposta.setDiagnostico("Vazamento ou bloqueio no sistema de escape");
@@ -1196,7 +1195,7 @@ rule "D79: Problema no sistema de escape - Não"
     when
         $resposta : Resposta(estado == "perguntarProblemaEscape", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique o sistema de escape. Há problema no sistema de escape?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Há problema no sistema de escape?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D79: Problema no sistema de escape - Não");
         $resposta.setDiagnostico("Verificação adicional necessária");
@@ -1226,7 +1225,7 @@ rule "D81: Processar 'Barulho na suspensão ou rodas? Não'"
     when
         $resposta : Resposta(estado == "perguntarsuspensaoerodas", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Barulho na suspensão ou rodas?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Barulho na suspensão ou rodas?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D81: Processar 'Barulho na suspensão ou rodas? Não'");
         $resposta.setDiagnostico("Sem barulho na suspensão ou rodas");
@@ -1242,7 +1241,7 @@ rule "D82: Processar 'Barulho na suspensão ou rodas? Sim'"
     when
         $resposta : Resposta(estado == "perguntarsuspensaoerodas", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Barulho na suspensão ou rodas?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Barulho na suspensão ou rodas?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D82: Processar 'Barulho na suspensão ou rodas? Sim'");
         $resposta.setEstado("verificarproblema_pneu_jantes_calcos");
@@ -1272,7 +1271,7 @@ rule "D84: Processar 'Problema nos pneus, jantes ou calços? Sim'"
     when
         $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique os pneus, jantes e calços. Há problema identificado?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Há problema identificado?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D84: Processar 'Problema nos pneus, jantes ou calços? Sim'");
         $resposta.setDiagnostico("Problema nos pneus, jantes ou calços");
@@ -1289,7 +1288,7 @@ rule "D85: Processar 'Problema nos pneus, jantes ou calços? Não'"
     when
         $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique os pneus, jantes e calços. Há problema identificado?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Há problema identificado?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D85: Processar 'Problema nos pneus, jantes ou calços? Não'");
         $resposta.setEstado("verificarAmortecedores");
@@ -1317,7 +1316,7 @@ rule "D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim
     when
         $resposta : Resposta(estado == "perguntarproblema_amortecedores", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique os amortecedores e as bases dos amortecedores. Há problema identificado?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Verifique os amortecedores e as bases dos amortecedores. Há problema identificado?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D87: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Sim'");
         $resposta.setDiagnostico("Amortecedores gastos ou bases de amortecedores gastos");
@@ -1333,7 +1332,7 @@ rule "D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Nã
     when
         $resposta : Resposta(estado == "perguntarproblema_pneu_jantes_calcos", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verifique os amortecedores e as bases dos amortecedores. Há problema identificado?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Há problema identificado?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D88: Processar 'Amortecedores gastos ou bases de amortecedores gastos? Não'");
         $resposta.setDiagnostico("Amortecedores gastos ou bases de amortecedores gastos");
@@ -1363,7 +1362,7 @@ rule "D102: Processar 'Verificar Carro Dificuldade Travar? Não'"
     when
         $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("O carro tem dificuldade em travar?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O carro tem dificuldade em travar?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D102: Processar 'Verificar Carro Dificuldade Travar? Não'");
         $resposta.setEstado("verificarcaixadevelocidades");
@@ -1376,7 +1375,7 @@ rule "D103: Processar 'Verificar Carro Dificuldade Travar? Sim'"
     when
         $resposta : Resposta(estado == "perguntarCarroDificuldadeTravar", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("O carro tem dificuldade em travar?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","O carro tem dificuldade em travar?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D103: Processar 'Verificar Carro Dificuldade Travar? Sim'");
         $resposta.setEstado("verificarSistemaTravoes");
@@ -1403,7 +1402,7 @@ rule "D91: Processar 'Pastilhas de travão gastas? Sim'"
     when
         $resposta : Resposta(estado == "perguntarPastilhasTravaoGastas", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Pastilhas de travão gastas?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Pastilhas de travão gastas?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D91: Processar 'Pastilhas de travão gastas? Sim'");
         System.out.println("Diagnóstico: Pastilhas de travão gastas.");
@@ -1420,7 +1419,7 @@ rule "D92: Processar 'Pastilhas de travão gastas? Não'"
     when
         $resposta : Resposta(estado == "perguntarPastilhasTravaoGastas", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Pastilhas de travão gastas?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Pastilhas de travão gastas?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D92: Processar 'Pastilhas de travão gastas? Não'");
         System.out.println("Verificar discos de travão.");
@@ -1435,7 +1434,7 @@ rule "D93: Processar 'Discos de travão gastos? Sim'"
     when
         $resposta : Resposta(estado == "perguntarDiscosTravaoGastos", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Discos de travão gastos?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Discos de travão gastos?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D93: Processar 'Discos de travão gastos? Sim'");
         System.out.println("Diagnóstico: Discos de travão gastos.");
@@ -1452,7 +1451,7 @@ rule "D94: Processar 'Discos de travão gastos? Não'"
     when
         $resposta : Resposta(estado == "perguntarDiscosTravaoGastos", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Discos de travão gastos?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Discos de travão gastos?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D94: Processar 'Discos de travão gastos? Não'");
         System.out.println("Verificar fluido de travão.");
@@ -1467,7 +1466,7 @@ rule "D95: Processar 'Nível de fluido de travão baixo'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Baixo")
     then
-        Evidence<String, String> ev = new Evidence<>("Nível de fluido de travão?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Nível de fluido de travão?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D95: Processar 'Nível de fluido de travão baixo'");
         System.out.println("Diagnóstico: Nível de fluido insuficiente.");
@@ -1484,7 +1483,7 @@ rule "D96: Processar 'Nível de fluido de travão alto'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Alto")
     then
-        Evidence<String, String> ev = new Evidence<>("Nível de fluido de travão?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Nível de fluido de travão?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D96: Processar 'Nível de fluido de travão alto'");
         System.out.println("Diagnóstico: Excesso de fluido de travão.");
@@ -1501,7 +1500,7 @@ rule "D97: Processar 'Nível de fluido de travão normal'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoTravao", texto == "Normal")
     then
-        Evidence<String, String> ev = new Evidence<>("Nível de fluido de travão?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Nível de fluido de travão?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D97: Processar 'Nível de fluido de travão normal'");
         System.out.println("Verificar servofreio.");
@@ -1516,7 +1515,7 @@ rule "D98: Processar 'Problema no servofreio? Sim'"
     when
         $resposta : Resposta(estado == "perguntarProblemaServoFreio", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Problema no servofreio?",  $resposta.getTexto());
+        Evidence<?, ?> ev = new Evidence<>("","Problema no servofreio?",  $resposta.getTexto());
         $resposta.addEvidencia(ev);
         $resposta.addRegraDisparada("D98: Processar 'Problema no servofreio? Sim'");
         System.out.println("Diagnóstico: Servofreio defeituoso.");
@@ -1533,11 +1532,11 @@ rule "D99: Processar 'Problema no servofreio? Não'"
     when
         $resposta : Resposta(estado == "perguntarProblemaServoFreio", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Problema no servofreio?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D99: Processar 'Problema no servofreio? Não'");
         System.out.println("Verificar sistema ABS.");
         $resposta.setPergunta("ABS com falha? (Sim/Não)");
+        Evidence<?, ?> ev = new Evidence<>("","Problema no servofreio?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D99: Processar 'Problema no servofreio? Não'");
         $resposta.setEstado("perguntarFalhaABS");
         $resposta.setTexto("");
         update($resposta);
@@ -1548,12 +1547,12 @@ rule "D100: Processar 'ABS com falha? Sim'"
     when
         $resposta : Resposta(estado == "perguntarFalhaABS", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("ABS com falha?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D100: Processar 'ABS com falha? Sim'");
         System.out.println("Diagnóstico: Sistema ABS com defeito.");
         $resposta.setDiagnostico("Sistema ABS com defeito");
         $resposta.setSolucao("Verificar e reparar sistema ABS com consulta de especialista");
+        Evidence<?, ?> ev = new Evidence<>("","ABS com falha?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D100: Processar 'ABS com falha? Sim'");
         $resposta.setExplicacaoGeral("Sistema ABS com defeito");
         $resposta.setExplicacaoGeralNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
@@ -1565,12 +1564,12 @@ rule "D101: Processar 'ABS com falha? Não'"
     when
         $resposta : Resposta(estado == "perguntarFalhaABS", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("ABS com falha?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D101: Processar 'ABS com falha? Não'");
         System.out.println("Diagnóstico: Problema indeterminado.");
         $resposta.setDiagnostico("Problema indeterminado");
         $resposta.setSolucao("Consultar especialista");
+        Evidence<?, ?> ev = new Evidence<>("","ABS com falha?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D101: Processar 'ABS com falha? Não'");
         $resposta.setExplicacaoGeral("Problema indeterminado");
         $resposta.setExplicacaoGeralNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
@@ -1582,9 +1581,9 @@ rule "D104: Verificar problemas na caixa de velocidades"
     when
         $resposta : Resposta(estado == "verificarcaixadevelocidades", texto == "")
     then
-        $resposta.addRegraDisparada("D104: Verificar problemas na caixa de velocidades");
         System.out.println("Verificar problemas na caixa de velocidades?");
         $resposta.setPergunta("Verificar problemas na caixa de velocidades?");
+        $resposta.addRegraDisparada("D104: Verificar problemas na caixa de velocidades");
         $resposta.setEstado("perguntarcaixadevelocidades");
         $resposta.setTexto("");
         update($resposta);
@@ -1595,12 +1594,12 @@ rule "D105: Processar 'Verificar problemas na caixa de velocidades? Não'"
     when
         $resposta : Resposta(estado == "perguntarcaixadevelocidades", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Verificar problemas na caixa de velocidades?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D105: Processar 'Verificar problemas na caixa de velocidades? Não'");
         System.out.println("Diagnóstico: Nenhum problema identificado.");
         $resposta.setDiagnostico("Nenhum problema identificado");
         $resposta.setSolucao("Nenhuma ação necessária");
+        Evidence<?, ?> ev = new Evidence<>("","Verificar problemas na caixa de velocidades?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D105: Processar 'Verificar problemas na caixa de velocidades? Não'");
         $resposta.setExplicacaoGeral("Nenhum problema foi identificado na caixa de velocidades");
         $resposta.setExplicacaoGeralNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
@@ -1612,11 +1611,11 @@ rule "D106: Processar 'Verificar problemas na caixa de velocidades? Sim'"
     when
         $resposta : Resposta(estado == "perguntarcaixadevelocidades", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Verificar problemas na caixa de velocidades?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D106: Processar 'Verificar problemas na caixa de velocidades? Sim'");
         System.out.println("Verificar nível de fluido de caixa de velocidades.");
         $resposta.setPergunta("Nível de fluido < Mínimo, > Máximo ou Normal? (Minimo/Maximo/Normal)");
+        Evidence<?, ?> ev = new Evidence<>("","Verificar problemas na caixa de velocidades?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D106: Processar 'Verificar problemas na caixa de velocidades? Sim'");
         $resposta.setEstado("perguntarNivelFluidoCaixa");
         $resposta.setTexto("");
         update($resposta);
@@ -1628,12 +1627,12 @@ rule "D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Minimo")
     then
-        Evidence<String, String> ev = new Evidence<>("Nível de fluido de caixa de velocidades?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'");
         System.out.println("Diagnóstico: Nível de fluido de transmissão baixo.");
         $resposta.setDiagnostico("Nível de fluido de transmissão baixo");
         $resposta.setSolucao("Completar fluido de transmissão e verificar possíveis fugas");
+        Evidence<?, ?> ev = new Evidence<>("","Nível de fluido de caixa de velocidades?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D107: Processar 'Nível de fluido de caixa de velocidades < Mínimo'");
         $resposta.setExplicacaoGeral("Nível de fluido de transmissão está abaixo do mínimo");
         $resposta.setExplicacaoGeralNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
@@ -1645,12 +1644,12 @@ rule "D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Maximo")
     then
-        Evidence<String, String> ev = new Evidence<>("Nível de fluido de caixa de velocidades?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'");
         System.out.println("Diagnóstico: Excesso de fluido de transmissão.");
         $resposta.setDiagnostico("Excesso de fluido de transmissão");
         $resposta.setSolucao("Ajustar fluido de transmissão");
+        Evidence<?, ?> ev = new Evidence<>("","Nível de fluido de caixa de velocidades?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D108: Processar 'Nível de fluido de caixa de velocidades > Máximo'");
         $resposta.setExplicacaoGeral("Nível de fluido de transmissão está acima do máximo");
         $resposta.setExplicacaoGeralNao("Outros componentes relacionados estão funcionais");
         $resposta.setEstado("diagnosticoConcluido");
@@ -1662,11 +1661,11 @@ rule "D109: Processar 'Nível de fluido de caixa de velocidades Normal'"
     when
         $resposta : Resposta(estado == "perguntarNivelFluidoCaixa", texto == "Normal")
     then
-        Evidence<String, String> ev = new Evidence<>("Nível de fluido de caixa de velocidades?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D109: Processar 'Nível de fluido de caixa de velocidades Normal'");
         System.out.println("Verificar embraiagem.");
         $resposta.setPergunta("Embraiagem gasta ou a patinar? (Sim/Não)");
+        Evidence<?, ?> ev = new Evidence<>("","Nível de fluido de caixa de velocidades?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D109: Processar 'Nível de fluido de caixa de velocidades Normal'");
         $resposta.setEstado("perguntarEmbraiagem");
         $resposta.setTexto("");
         update($resposta);
@@ -1678,14 +1677,14 @@ rule "D110: Processar 'Embraiagem gasta ou a patinar? Sim'"
     when
         $resposta : Resposta(estado == "perguntarEmbraiagem", texto == "Sim")
     then
-        Evidence<String, String> ev = new Evidence<>("Embraiagem gasta ou a patinar?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D110: Processar 'Embraiagem gasta ou a patinar? Sim'");
         System.out.println("Diagnóstico: Embraiagem com desgaste excessivo ou volante bimassa defeituoso.");
         $resposta.setDiagnostico("Embraiagem com desgaste excessivo ou volante bimassa defeituoso");
         $resposta.setSolucao("Substituir kit de embraiagem");
         $resposta.setExplicacaoGeral("Embraiagem gasta ou a patinar");
         $resposta.setExplicacaoGeralNao("Outros componentes relacionados estão funcionais");
+        Evidence<?, ?> ev = new Evidence<>("","Embraiagem gasta ou a patinar?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D110: Processar 'Embraiagem gasta ou a patinar? Sim'");
         $resposta.setEstado("diagnosticoConcluido");
         update($resposta);
 end
@@ -1695,14 +1694,14 @@ rule "D111: Processar 'Embraiagem gasta ou a patinar? Não'"
     when
         $resposta : Resposta(estado == "perguntarEmbraiagem", texto == "Não")
     then
-        Evidence<String, String> ev = new Evidence<>("Embraiagem gasta ou a patinar?",  $resposta.getTexto());
-        $resposta.addEvidencia(ev);
-        $resposta.addRegraDisparada("D111: Processar 'Embraiagem gasta ou a patinar? Não'");
         System.out.println("Diagnóstico: Verificação adicional necessária.");
         $resposta.setDiagnostico("Verificação adicional necessária");
         $resposta.setSolucao("Consultar especialista");
         $resposta.setExplicacaoGeral("Embraiagem não está gasta ou a patinar");
         $resposta.setExplicacaoGeralNao("Outros componentes relacionados estão funcionais");
+        Evidence<?, ?> ev = new Evidence<>("","Embraiagem gasta ou a patinar?",  $resposta.getTexto());
+        $resposta.addEvidencia(ev);
+        $resposta.addRegraDisparada("D111: Processar 'Embraiagem gasta ou a patinar? Não'");
         $resposta.setEstado("diagnosticoConcluido");
         update($resposta);
 end
@@ -1719,9 +1718,6 @@ rule "DX: Diagnóstico Concluído"
         System.out.println("Solução: " + $resposta.getSolucao());
         System.out.println("Porquê: " + $resposta.getExplicacaoGeral());
         System.out.println("Por que não: " + $resposta.getExplicacaoGeralNao());
-        // String expectedConclusion = $resposta.getDiagnostico();
-        //String explanation = whyNot.getWhyNotExplanation(expectedConclusion);
-        // System.out.println(explanation);
         $resposta.setEstado("finalizado");
         update($resposta);
 end

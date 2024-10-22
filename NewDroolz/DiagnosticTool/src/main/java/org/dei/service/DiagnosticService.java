@@ -22,8 +22,9 @@ public class DiagnosticService {
             // Inicializa a sessão Drools com WhyNot
             DroolsWithWhyNot drools = DroolsWithWhyNot.init("org.dei.facts");
             this.diagSession = drools.getKieSession();
+            //WhyNot whyNot = new WhyNot(drools);
 
-            // Define o carro selecionado como variável global
+            //diagSession.setGlobal("whyNot", whyNot);
             diagSession.setGlobal("selectedCar", selectedCar);
 
             // Cria um novo objeto Resposta para a sessão de diagnóstico
@@ -31,6 +32,7 @@ public class DiagnosticService {
             diagResposta.setEstado("iniciarDiagnostico");
             diagResposta.setTexto("");
             diagResposta.setCarroSelecionado(selectedCar);
+            System.out.println("Selected car: " + selectedCar.getMarca() + " " + selectedCar.getModelo());
 
             this.respostaHandle = diagSession.insert(diagResposta);
 

@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Why {
-    private List<Evidence<String,String>> evidencias;
+    private List<Evidence<?,?>> evidencias;
 
     // Obter a pergunta anterior que guiou para a pergunta sugerida
     public String obterPerguntaAnterior(String perguntaAtual) {

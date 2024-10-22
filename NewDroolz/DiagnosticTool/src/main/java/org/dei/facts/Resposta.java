@@ -28,10 +28,10 @@ public class Resposta {
     private String explicacaoGeral;
     private String explicacaoGeralNao;
     private String como;
-    private List<Evidence<String,String>> evidencias;
+    private List<Evidence<?,?>> evidencias;
     private List<String> triggeredRules;
 
-    public void addEvidencia(Evidence<String, String> evidencia) {
+    public void addEvidencia(Evidence<?, ?> evidencia) {
         if (this.evidencias == null) {
             this.evidencias = new ArrayList<>();
         }
@@ -39,6 +39,9 @@ public class Resposta {
     }
 
     public void addRegraDisparada(String regra) {
+        if (this.triggeredRules == null) {
+            this.triggeredRules = new ArrayList<>();
+        }
         this.triggeredRules.add(regra);
     }
 
