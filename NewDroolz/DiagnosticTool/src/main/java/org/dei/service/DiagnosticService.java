@@ -51,9 +51,12 @@ public class DiagnosticService {
             if (!diagResposta.isDiagnosticoConcluido()){
             diagSession.update(respostaHandle, diagResposta);
             diagSession.fireAllRules();
-            }else {
-            diagSession.dispose();
-            diagResposta.setComo(How.gerarExplicacao(diagResposta.getEvidencias()));
+             if (diagResposta.isDiagnosticoConcluido()) {
+                 How how = new How(diagResposta.getEvidencias());
+                 String value = how.gerarExplicacao();
+                 diagResposta.setComo(value);
+                 diagSession.dispose();
+            }
             }
             return diagResposta;
         } catch (Exception e) {
