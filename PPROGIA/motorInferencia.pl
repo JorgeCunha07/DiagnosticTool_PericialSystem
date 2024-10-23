@@ -13,10 +13,11 @@
 :- dynamic factos_processados/1.
 :- dynamic carro_selecionado/1.
 
-% :- consult('bc.txt').
-% :- consult('escolha_carro.pl').
+:- consult('bc.pl').
+:- consult('escolha_carro.pl').
 :- consult('diagnostico.pl').
 :- consult('como.pl').
+:- consult('porque.pl').
 :- consult('porque_nao.pl').
 
 % Carregar a base de conhecimento
@@ -147,34 +148,31 @@ concluir([remove_facto(F) | Y], ID, LFactos) :-
 concluir([], _, _) :-
     !.
 
-% Criar um novo facto
-cria_facto(F, _, _) :-
-    facto(_, F),
-    !.
-
-%cria_facto(F, ID, LFactos) :-
-%    (
-%        F = proximo_teste(_, _) ->
-%        ultimo_facto(N),
-%        assertz(facto(N, F)),
-%        write('Foi concluido o facto proximo_teste numero '), write(N), write(' -> '), write(F), nl
-%    ;
-%        retract(ultimo_facto(N1)),
-%        N is N1 + 1,
-%        asserta(ultimo_facto(N)),
-%        assertz(justifica(N, ID, LFactos)),
-%        assertz(facto(N, F)),
-%        write('Foi concluido o facto numero '), write(N), write(' -> '), write(F), nl
-%    ),
-%    !.
-
 cria_facto(F, ID, LFactos) :-
-    retract(ultimo_facto(N1)),
-    N is N1 + 1,
-    asserta(ultimo_facto(N)),
-    assertz(justifica(N, ID, LFactos)),
-    assertz(facto(N, F)),
-    write('Foi concluido o facto numero '), write(N), write(' -> '), write(F), nl, !.
+    (
+    %caso crie um facto proximo_teste
+    F = proximo_teste(_, _) ->
+        ultimo_facto(N),
+        assertz(facto(N, F)),
+        assertz(justifica(N, ID, LFactos)),
+        write('Foi concluido o facto proximo_teste numero '), write(N), write(' -> '), write(F), nl
+    ;
+    F = solucao(_, _) ->
+        retract(ultimo_facto(N1)),
+        N is N1 + 1,
+        asserta(ultimo_facto(N)),
+        assertz(facto(N, F)),
+        write('Foi concluido o facto numero '), write(N), write(' -> '), write(F), nl
+    ;
+    % caso crie um facto diagnostico
+        retract(ultimo_facto(N1)),
+        N is N1 + 1,
+        asserta(ultimo_facto(N)),
+        assertz(justifica(N1, ID, LFactos)),
+        assertz(facto(N, F)),
+        write('Foi concluido o facto numero '), write(N), write(' -> '), write(F), nl
+    ),
+    !.
 
 % Avaliar condicoes
 avalia(N, P) :-
@@ -199,3 +197,19 @@ compara(V1, =<, V) :- V1 =< V.
 mostra_factos :-
     findall(N, facto(N, _), LFactos),
     escreve_factos(LFactos).
+
+% Visualizacao das justificacoes
+mostra_justificacoes :-
+    findall([N,ID], justifica(N, ID, _), LJustifica),
+    write(LJustifica).
+
+% Escrever factos
+escreve_factos([I | R]) :-
+    facto(I, F),
+    !,
+    write('O facto numero '), write(I), write(' -> '), write(F), write(' e verdadeiro'), nl,
+    escreve_factos(R).
+escreve_factos([I | R]) :-
+    write('A condicao '), write(I), write(' e verdadeira'), nl,
+    escreve_factos(R).
+escreve_factos([]).
