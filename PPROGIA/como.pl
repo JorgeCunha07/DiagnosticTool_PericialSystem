@@ -1,44 +1,26 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Geracao de explicacoes do tipo "Como"
-como(N) :-
-    ultimo_facto(Last),
-    Last < N,
-    !,
-    write('Essa conclusao nao foi tirada'), nl, nl.
-como(N) :-
-    justifica(N, ID, LFactos),
-    !,
-    facto(N, F),
-    write('Conclui o facto numero '), write(N), write(' -> '), write(F), nl,
-    write('pela regra '), write(ID), nl,
-    write('por se ter verificado que:'), nl,
-    escreve_factos(LFactos),
-    write('********************************************************'), nl,
-    explica(LFactos).
-como(N) :-
-    facto(N, F),
-    write('O facto numero '), write(N), write(' -> '), write(F), nl,
-    write('foi conhecido inicialmente'), nl,
-    write('********************************************************'), nl.
+% Geracao de explicacoes do tipo "Como" para o diagnostico
+como():-
+    como(1).
 
-% Escrever factos
-escreve_factos([I | R]) :-
-    facto(I, F),
-    !,
-    write('O facto numero '), write(I), write(' -> '), write(F), write(' e verdadeiro'), nl,
-    escreve_factos(R).
-escreve_factos([I | R]) :-
-    write('A condicao '), write(I), write(' e verdadeira'), nl,
-    escreve_factos(R).
-escreve_factos([]).
-
-% Explicar factos
-explica([I | R]) :-
-    \+ integer(I),
-    !,
-    explica(R).
-explica([I | R]) :-
-    como(I),
-    explica(R).
-explica([]) :-
-    write('********************************************************'), nl.
+como(N) :-
+    NSeguinte is N+1,
+    (   justifica(N, ID, _)
+        ->  facto(N, F),
+            % unifica o F
+            F =.. [_, _, Regra],
+            pergunta(F, PerguntaFormatada),
+            write('pergunta ao utilizador: '), write(PerguntaFormatada), nl,
+            write('ao qual o mesmo respondeu: '), write(Regra), nl,
+            write('concluindo-se o facto numero '), write(N), write(' -> '), write(F), nl,
+            write('disparando assim a regra '), write(ID),
+            % proximo facto
+            facto(NSeguinte, FSeguinte),
+            FSeguinte =.. [PerguntaSeguinte, _, RegraSeguinte],
+            % caso o proximo facto seja diagnostico o "como" acaba
+            ( PerguntaSeguinte == diagnostico
+                -> write(' que gerou o seguinte diagnostico: '), write(RegraSeguinte)
+                ;  write(' criando a seguinte '), como(NSeguinte)
+            )
+        ;   !
+    ).
