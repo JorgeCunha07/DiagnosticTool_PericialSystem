@@ -19,7 +19,7 @@ servidor(Port) :-
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [method(post)]).
-:- http_handler(root(diagnostico), diagnostico2_handler, [method(get)]).
+:- http_handler(root(diagnostico), diagnostico2_handler, [method(post)]).
 :- http_handler(root(factos), factos_handler, [method(get)]).
 
 log_message(Message) :-
@@ -89,14 +89,20 @@ factos_handler(_Request) :-
 facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
         
-diagnostico2_handler(_Request) :-
+diagnostico2_handler(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    (   string(JsonIn.resposta)
+    ->  % Se for uma string, converter diretamente para atom
+        atom_string(Resposta, JsonIn.resposta)
+    ;   number(JsonIn.resposta)
+    ->  % Se for um número, converter para atom
+        Resposta = JsonIn.resposta
+    ;   % Se não for nem string nem número, falhar com uma mensagem de erro
+        reply_json(_{status: "erro", message: "O campo 'resposta' deve ser string ou número"}),
+        fail  % Usar fail para parar a execução neste caso
+    ),
     % Chamar a função diagnostico2
-    (   diagnostico2
-    ->  % Se a função for bem-sucedida, retornar uma resposta JSON de sucesso
-        reply_json_dict(_{status: "success", message: "Diagnóstico realizado com sucesso"})
-    ;   % Caso contrário, retornar uma resposta JSON de erro
-        reply_json_dict(_{status: "error", message: "Falha ao realizar diagnóstico"})
-    ).
+    diagnostico2(Resposta).
 
 % Utilidade para começar o servidor na porta 8080 (pode ser ajustada)
 :- servidor(8080).

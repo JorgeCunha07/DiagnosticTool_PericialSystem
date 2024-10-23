@@ -13,8 +13,6 @@ const useSelecao = () => {
   const [componentes, setComponentes] = useState([]);
   const [error, setError] = useState(null);
 
-
-  // Fetch data
   useEffect(() => {
     const fetchCarData = async () => {
       try {
@@ -27,8 +25,6 @@ const useSelecao = () => {
     fetchCarData();
   }, []);
 
-
-  // Get unique marcas
   const marcas = [...new Set(carData.map(car => car.marca.nome))];
 
   const handleMarcaChange = (e) => {

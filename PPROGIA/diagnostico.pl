@@ -4,8 +4,8 @@ diagnostico :-
     diagnostico_loop.
 	
 % Predicado que inicia APENAS uma pergunta do diagnostico
-diagnostico2 :-
-    diag_problemas,
+diagnostico2(Resposta) :-
+    diag_problemas2(Resposta),
 	arranca_motor.
 
 % Loop que processa testes pendentes ou exibe o diagnostico final
@@ -38,11 +38,22 @@ diag_problemas :-
     findall((Id, Veiculo, Teste), facto(Id, proximo_teste(Veiculo, Teste)), Tests),
     processar_testes(Tests).
 
+% Processar todos os factos 'proximo_teste' pendentes
+diag_problemas2(Resposta) :-
+    findall((Id, Veiculo, Teste), facto(Id, proximo_teste(Veiculo, Teste)), Tests),
+    processar_testes2(Tests, Resposta).
+
 % Processar cada teste
 processar_testes([]).
 processar_testes([(Id, Veiculo, Teste) | Resto]) :-
     tratar_problema(Id, Veiculo, Teste),
     processar_testes(Resto).
+
+% Processar cada teste
+processar_testes2([], _).
+processar_testes2([(Id, Veiculo, Teste) | Resto], Resposta) :-
+    tratar_problema2(Id, Veiculo, Teste, Resposta),
+    processar_testes2(Resto, Resposta).
 
 % Tratar cada problema individualmente
 tratar_problema(Id, Veiculo, Teste) :-
@@ -68,6 +79,24 @@ tratar_problema(Id, Veiculo, Teste) :-
     ;
         write('Teste nao e perguntavel: '), write(Teste), nl
     ).
+
+% Tratar cada problema individualmente
+tratar_problema2(Id, Veiculo, Teste, Resposta) :-
+    log_message('tratar_problema2.'),
+    TesteTermo =.. [Teste, Veiculo, _],
+    log_message(TesteTermo),
+    perguntavel(TesteTermo),
+    opcoes_validas(TesteTermo, OpcoesValidas),
+    log_message(OpcoesValidas),
+    member(Resposta, OpcoesValidas),
+    log_message('É membro'),
+    NovoFacto =.. [Teste, Veiculo, Resposta],
+    log_message(NovoFacto),
+    retract(ultimo_facto(N1)),
+    N is N1 + 1,
+    asserta(ultimo_facto(N)),
+    assertz(facto(N, NovoFacto)),
+    retract(facto(Id, proximo_teste(Veiculo, Teste))).
 
 % Exibir o diagnostico final
 mostrar_diagnostico :-

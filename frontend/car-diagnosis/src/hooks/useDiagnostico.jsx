@@ -23,15 +23,20 @@ const useDiagnostico = (initialData) => {
     try {
       const response = await axios.post(`${API_URL}/diagnostico/responder`, requestBody);
 
-      if (!response.data || !response.data.carroSelecionado.marca || !response.data.carroSelecionado.hasOwnProperty("marca")) {
+      if (response.data.estado === 'finalizado') {
+        navigate('/conclusao', { state: { responseData: response.data } });
+
+      } else if (!response.data || !response.data.carroSelecionado.marca || !response.data.carroSelecionado.hasOwnProperty("marca")) {
         navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
+
       } else {
         setDiagnostico(response.data);
       }
+
     } catch (err) {
       setError('Falha ao enviar resposta.');
     } finally {
-      setLoading(false); // Hide loading when the request is complete
+      setLoading(false);
     }
   };
 
