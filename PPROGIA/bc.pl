@@ -366,7 +366,7 @@ regra 36
 % Se a ignicao esta a falhar
 regra 41
     se [ignicao_falha(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Sistema de ignição com defeito.')), cria_facto(solucao(Veiculo,'Verificar chave de ignição, fusiveis, conectores e verificacao de alimentacao de combustivel (pressao de combustivel).'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Sistema de ignicao com defeito.')), cria_facto(solucao(Veiculo,'Verificar chave de ignicao, fusiveis, conectores e verificacao de alimentacao de combustivel (pressao de combustivel).'))].
 
 % Se a ignicao NAO esta a falhar
 regra 42
@@ -386,7 +386,7 @@ regra 44
 % Se o carro esta sem combustivel ou a bomba de combustivel esta com defeito
 regra 45
     se [falta_combustivel_ou_bomba_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Falta de combustível ou bomba de combustível com defeito')), cria_facto(solucao(Veiculo, 'Reabastecer ou substituir a bomba de combustivel.'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Falta de combustivel ou bomba de combustivel com defeito')), cria_facto(solucao(Veiculo, 'Reabastecer ou substituir a bomba de combustivel.'))].
 
 % Se o carro NAO esta sem combustivel ou a bomba de combustivel NAO esta com defeito
 regra 46
@@ -506,7 +506,7 @@ regra 64
 % Se o sistema de injecao de combustivel esta com defeito
 regra 65
     se [injecao_combustivel_defeito(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Injeção de combustível com defeito.')), cria_facto(solucao(Veiculo, 'Limpar ou substituir injetores.'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Injeção de combustivel com defeito.')), cria_facto(solucao(Veiculo, 'Limpar ou substituir injetores.'))].
 
 % Se o sistema de injecao de combustivel NAO esta com defeito
 regra 66
@@ -516,7 +516,7 @@ regra 66
 % Se o carro apresenta problemas nos pneus, jantes ou calcos de travão
 regra 67
     se [problema_pneus_jantes_calcos(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Problema nos pneus, jantes ou calços de travao.')), cria_facto(solucao(Veiculo, 'Reparar ou substituir pneus, jantes ou calços de travão conforme necessario.'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Problema nos pneus, jantes ou calcos de travao.')), cria_facto(solucao(Veiculo, 'Reparar ou substituir pneus, jantes ou calcos de travao conforme necessario.'))].
 
 % Se o carro NAO apresenta problemas nos pneus, jantes ou calcos de travão
 regra 68

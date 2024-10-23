@@ -50,10 +50,8 @@ processar_testes([(Id, Veiculo, Teste) | Resto]) :-
     processar_testes(Resto).
 
 % Processar cada teste
-processar_testes2([], _).
 processar_testes2([(Id, Veiculo, Teste) | Resto], Resposta) :-
-    tratar_problema2(Id, Veiculo, Teste, Resposta),
-    processar_testes2(Resto, Resposta).
+    tratar_problema2(Id, Veiculo, Teste, Resposta).
 
 % Tratar cada problema individualmente
 tratar_problema(Id, Veiculo, Teste) :-
@@ -82,16 +80,11 @@ tratar_problema(Id, Veiculo, Teste) :-
 
 % Tratar cada problema individualmente
 tratar_problema2(Id, Veiculo, Teste, Resposta) :-
-    log_message('tratar_problema2.'),
     TesteTermo =.. [Teste, Veiculo, _],
-    log_message(TesteTermo),
     perguntavel(TesteTermo),
     opcoes_validas(TesteTermo, OpcoesValidas),
-    log_message(OpcoesValidas),
     member(Resposta, OpcoesValidas),
-    log_message('É membro'),
     NovoFacto =.. [Teste, Veiculo, Resposta],
-    log_message(NovoFacto),
     retract(ultimo_facto(N1)),
     N is N1 + 1,
     asserta(ultimo_facto(N)),

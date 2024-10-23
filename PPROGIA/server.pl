@@ -19,8 +19,10 @@ servidor(Port) :-
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [method(post)]).
-:- http_handler(root(diagnostico), diagnostico2_handler, [method(post)]).
+:- http_handler(root(responder), responder_handler, [method(post)]).
 :- http_handler(root(factos), factos_handler, [method(get)]).
+:- http_handler(root(pergunta), pergunta_handler, [method(get)]).
+:- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
 
 log_message(Message) :-
     open('server.log', append, Stream),
@@ -80,29 +82,57 @@ procurar_carro(Numero, Carro) :-
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
 
 factos_handler(_Request) :-
-    findall(Facto, facto(_, Facto), Factos),
-    log_message(Factos),
+    % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
+    findall(Descricao, (facto(_, Descricao), \+ (Descricao = proximo_teste(_, _); Descricao = diagnostico(_, _); Descricao = solucao(_, _))), Factos),
     maplist(facto_to_text, Factos, FactosJson),
     reply_json(FactosJson).
 
 % Converter cada facto para texto sem mutação
 facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
+
+pergunta_handler(_Request) :-
+    findall(P, facto(_, proximo_teste(_, P)), Perguntas),
+    reply_json(Perguntas).
         
-diagnostico2_handler(Request) :-
-    http_read_json_dict(Request, JsonIn),
-    (   string(JsonIn.resposta)
-    ->  % Se for uma string, converter diretamente para atom
-        atom_string(Resposta, JsonIn.resposta)
-    ;   number(JsonIn.resposta)
-    ->  % Se for um número, converter para atom
-        Resposta = JsonIn.resposta
-    ;   % Se não for nem string nem número, falhar com uma mensagem de erro
-        reply_json(_{status: "erro", message: "O campo 'resposta' deve ser string ou número"}),
-        fail  % Usar fail para parar a execução neste caso
-    ),
-    % Chamar a função diagnostico2
-    diagnostico2(Resposta).
+responder_handler(Request) :-
+    % Verifica se há perguntas por responder
+    findall(P, facto(_, proximo_teste(_, P)), Perguntas),
+    length(Perguntas, N),
+    
+    (   N = 0
+    ->  % Se a lista está vazia, retornar erro
+        reply_json(_{status: "erro", message: "Não há perguntas para responder"})
+    ;   % Caso contrário, continuar
+        http_read_json_dict(Request, JsonIn),
+        
+        (   string(JsonIn.resposta)
+        ->  % Se for uma string, converter diretamente para atom
+            atom_string(Resposta, JsonIn.resposta),
+            log_message("Diagnostico2.1"),
+            diagnostico2(Resposta),
+            !  % Parar a execução aqui
+        ;   number(JsonIn.resposta)
+        ->  % Se for um número, atribuir diretamente
+            Resposta = JsonIn.resposta,
+            log_message("Diagnostico2.2"),
+            diagnostico2(Resposta),
+            !  % Parar a execução aqui
+        ;   % Se não for nem string nem número, falhar com uma mensagem de erro
+            reply_json(_{status: "erro", message: "O campo 'resposta' deve ser string ou número"}),
+            fail  % Usar fail para parar a execução neste caso
+        )
+    ).
+
+diagnostico_handler(_Request) :-
+    % Filtrar factos diagnostico e solucao
+    findall(D, facto(_, diagnostico(_, D)), Diagnostico),
+    findall(S, facto(_, solucao(_, S)), Solucao),
+    Resposta = _{
+        diagnostico: Diagnostico,
+        solucao: Solucao
+    },
+    reply_json(Resposta).
 
 % Utilidade para começar o servidor na porta 8080 (pode ser ajustada)
 :- servidor(8080).
