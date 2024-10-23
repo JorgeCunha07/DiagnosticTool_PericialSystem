@@ -31,12 +31,16 @@ public class DroolsWithWhyNot {
     }
 
     public synchronized static DroolsWithWhyNot init(String factsPackage) {
-        if (singleton != null) {
-            throw new AssertionError("Class " + DroolsWithWhyNot.class.getSimpleName() + " was already initialized.");
+        if (singleton == null) {
+            singleton = new DroolsWithWhyNot(factsPackage);
         }
+        return singleton;
+    }
 
-        singleton = new DroolsWithWhyNot(factsPackage);
-        wn = WhyNot.init(singleton);
+    public static DroolsWithWhyNot getInstance() {
+        if (singleton == null) {
+            throw new AssertionError("Class " + DroolsWithWhyNot.class.getSimpleName() + " is not initialized.");
+        }
         return singleton;
     }
 
@@ -44,11 +48,15 @@ public class DroolsWithWhyNot {
         return wn.getWhyNotExplanation(expectedConclusion);
     }
 
+    public static boolean isInitialized() {
+        return singleton != null;
+    }
+
     public KieSession getKieSession() {
         return session;
     }
 
-    protected KnowledgeBase getKnowledgeBase() {
+    public KnowledgeBase getKnowledgeBase() {
         return kb;
     }
 
@@ -81,6 +89,14 @@ public class DroolsWithWhyNot {
         } catch (Exception e) {
             LOG.error("Failed to create KieSession: {}", e.getMessage(), e);
             throw new RuntimeException("Error creating KieSession", e);
+        }
+    }
+
+    public void dispose() {
+        if (session != null) {
+            LOG.info("Disposing kieSession");
+            session.dispose();
+            session = null;
         }
     }
 }
