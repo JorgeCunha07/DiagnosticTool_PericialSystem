@@ -31,7 +31,7 @@ import java.util.stream.IntStream;
  * KnowledgeBase class is used to represent in memory the contents of the DRL files included in the project,
  * plus a set of dynamically generated queries to evaluate rule conditions.
  */
-class KnowledgeBase {
+public class KnowledgeBase {
     private final String factsPackage;
     private final Logger LOG = LoggerFactory.getLogger(KnowledgeBase.class);
     private KieBase kieBase;
@@ -53,7 +53,7 @@ class KnowledgeBase {
         return factsPackage;
     }
 
-    protected KieBase getKieBase() {
+    public KieBase getKieBase() {
         return this.kieBase;
     }
 
