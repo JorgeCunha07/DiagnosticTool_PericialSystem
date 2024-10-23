@@ -1068,8 +1068,8 @@ rule "D72: Verificar nível de óleo"
     then
         $resposta.addRegraDisparada("D72: Verificar nível de óleo");
         Componente oleoMotor = getComponenteByName($carro, "Óleo do Motor");
-        System.out.println("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
-        $resposta.setPergunta("Qual é o nível atual de óleo? (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")");
+        System.out.println("Qual é o nível atual de óleo? (" + oleoMotor.getValorMinimo() + " / " + oleoMotor.getValorMaximo() + ")" + oleoMotor.getUnidade() );
+        $resposta.setPergunta("Qual é o nível atual de óleo? (" + oleoMotor.getValorMinimo() + " / " + oleoMotor.getValorMaximo() + ")" + oleoMotor.getUnidade() );
         $resposta.setEstado("perguntarNivelOleoAtual");
         $resposta.setTexto("");
         update($resposta);
