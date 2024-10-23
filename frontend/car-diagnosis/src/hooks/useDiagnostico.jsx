@@ -18,6 +18,16 @@ const useDiagnostico = (initialData) => {
       estado: diagnostico.estado,
       pergunta: diagnostico.pergunta,
       carroSelecionado: diagnostico.carroSelecionado,
+      marcaSelecionada: diagnostico.carroSelecionado.marca.nome,
+      modeloSelecionado: diagnostico.carroSelecionado.modelo.nome,
+      motorSelecionado: diagnostico.carroSelecionado.motor.nome,
+      diagnostico: diagnostico.diagnostico,
+      solucao: diagnostico.solucao,
+      explicacaoGeral: diagnostico.explicacaoGeral,
+      explicacaoGeralNao: diagnostico.explicacaoGeralNao,
+      como: diagnostico.como,
+      evidencias: diagnostico.evidencias,
+      triggeredRules: diagnostico.triggeredRules
     };
 
     try {
