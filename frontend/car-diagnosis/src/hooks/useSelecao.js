@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-
-const API_URL = 'http://localhost:8080/api';
+import API_URL from '../config/apiConfig';
 
 const useSelecao = () => {
   const [carData, setCarData] = useState([]);
@@ -16,7 +15,7 @@ const useSelecao = () => {
   useEffect(() => {
     const fetchCarData = async () => {
       try {
-        const response = await axios.get(API_URL + '/carros');
+        const response = await axios.get(`${API_URL}/carros`);
         setCarData(response.data);
       } catch (error) {
         console.error("Error fetching data from API", error);
@@ -68,7 +67,7 @@ const useSelecao = () => {
     };
 
     try {
-      const response = await axios.post(API_URL + '/diagnostico/iniciar', body);
+      const response = await axios.post(`${API_URL}/diagnostico/iniciar`, body);
       // Navigate to the diagnostic page and pass the response data
       navigate('/diagnostico', { state: { diagnosticoData: response.data } });
     } catch (err) {

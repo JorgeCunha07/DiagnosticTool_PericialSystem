@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import API_URL from '../config/apiConfig';
 
 const useConclusao = (responseData, carro, diagnostico, solucao, explicacaoGeral, explicacaoGeralNao, como, evidencias, triggeredRules) => {
   const [responseText, setResponseText] = useState('');
@@ -26,7 +27,7 @@ const useConclusao = (responseData, carro, diagnostico, solucao, explicacaoGeral
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/api/diagnostico/perguntaAnterior?perguntaAtual=${encodeURIComponent(perguntaAtual)}`, {
+      const response = await fetch(`${API_URL}/diagnostico/perguntaAnterior?perguntaAtual=${encodeURIComponent(perguntaAtual)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

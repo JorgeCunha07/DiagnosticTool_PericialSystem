@@ -1,12 +1,16 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Help from '@mui/icons-material/Help';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardContent, Container, Grid, List, ListItem, Typography } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardContent, Container, Grid, IconButton, List, ListItem, Typography } from '@mui/material';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useConclusao from '../hooks/useConclusao';
+import { generatePDF } from '../utils/pdfGenerator';
 
 const ConclusionPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { responseData } = location.state || {};
 
   const diagnostico = responseData?.diagnostico || 'N/A';
@@ -33,7 +37,34 @@ const ConclusionPage = () => {
   return (
     <Container>
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <Card>
+      <Card sx={{ position: 'relative', padding: 2 }}>
+        <Box sx={{ position: 'absolute', top: 16, right: 16}}>
+            <IconButton
+              variant="contained"
+              onClick={()=>navigate('/')}
+              color='primary'
+              sx={{ color: 'primary', backgroundColor: 'white'}}
+            ><HomeIcon /></IconButton> 
+            <IconButton
+              variant="contained"
+              onClick={() =>
+                generatePDF(carro, diagnostico, solucao, explicacaoGeral, explicacaoGeralNao, como, evidencias, triggeredRules)
+              }
+              sx={{ color: 'red', backgroundColor: 'white', marginLeft:'10px', '&:hover': {
+                  backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                },
+              }}
+            >
+            {/* <IconButton
+              variant="contained"
+              color='primary'
+              onClick={() =>
+                generatePDF(carro, diagnostico, solucao, explicacaoGeral, explicacaoGeralNao, como, evidencias, triggeredRules)
+              }
+            > */}
+              <PictureAsPdfIcon />
+            </IconButton>
+          </Box>
           <CardContent>
             <Typography variant="h4" gutterBottom>
               Diagnóstico Concluído
@@ -192,8 +223,8 @@ const ConclusionPage = () => {
                 </List>
               </AccordionDetails>
             </Accordion>
-
           </CardContent>
+
           {/* <CardContent>
             <Typography variant="body1" gutterBottom>
               JSON response:

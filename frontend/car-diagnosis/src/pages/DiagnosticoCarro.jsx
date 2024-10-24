@@ -1,10 +1,13 @@
-import { Alert, Box, Button, Card, CardContent, CircularProgress, Container, TextField, Typography } from "@mui/material";
+import HomeIcon from '@mui/icons-material/Home';
+import { Alert, Box, Button, Card, CardContent, CircularProgress, Container, IconButton, TextField, Typography } from "@mui/material";
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useDiagnostico from '../hooks/useDiagnostico';
 
 const DiagnosticoCarro = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const { diagnosticoData } = location.state;
   const { diagnostico, loading, error, handleAnswer } = useDiagnostico(diagnosticoData);
 
@@ -33,7 +36,15 @@ const DiagnosticoCarro = () => {
         alignItems="center"
         minHeight="100vh"
       >
-        <Card lg={{ minWidth: 600 }}>
+        <Card sx={{ position: 'relative', padding: 2 }}>
+          <Box sx={{ position: 'absolute', top: 16, right: 16}}>
+            <IconButton
+              variant="contained"
+              onClick={()=>navigate('/')}
+              color='primary'
+              sx={{ color: 'primary', backgroundColor: 'white'}}
+            ><HomeIcon /></IconButton>
+          </Box>
           <CardContent>
             <Typography variant="h4" component="h1" gutterBottom>
               Questionário Diagnóstico
@@ -194,7 +205,7 @@ const DiagnosticoCarro = () => {
           </CardContent>
 
           {/* DEBUG */}
-          <CardContent>
+          {/* <CardContent>
             <Typography variant="body1" gutterBottom>
               JSON response:
             </Typography>
@@ -212,7 +223,7 @@ const DiagnosticoCarro = () => {
             >
               {JSON.stringify(diagnostico, null, 2)}
             </Box>
-          </CardContent>
+          </CardContent> */}
 
         </Card>
       </Box>
