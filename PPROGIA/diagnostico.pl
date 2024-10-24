@@ -50,7 +50,7 @@ processar_testes([(Id, Veiculo, Teste) | Resto]) :-
     processar_testes(Resto).
 
 % Processar cada teste
-processar_testes2([(Id, Veiculo, Teste) | Resto], Resposta) :-
+processar_testes2([(Id, Veiculo, Teste) | _], Resposta) :-
     tratar_problema2(Id, Veiculo, Teste, Resposta).
 
 % Tratar cada problema individualmente
