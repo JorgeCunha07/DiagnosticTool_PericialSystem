@@ -1581,8 +1581,8 @@ rule "D104: Verificar problemas na caixa de velocidades"
     when
         $resposta : Resposta(estado == "verificarcaixadevelocidades", texto == "")
     then
-        System.out.println("Verificar problemas na caixa de velocidades?");
-        $resposta.setPergunta("Verificar problemas na caixa de velocidades?");
+        System.out.println("Verificar problemas na caixa de velocidades? (Sim/Não)");
+        $resposta.setPergunta("Verificar problemas na caixa de velocidades? (Sim/Não)");
         $resposta.addRegraDisparada("D104: Verificar problemas na caixa de velocidades");
         $resposta.setEstado("perguntarcaixadevelocidades");
         $resposta.setTexto("");
