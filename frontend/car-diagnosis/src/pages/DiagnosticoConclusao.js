@@ -3,13 +3,12 @@ import Help from '@mui/icons-material/Help';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardContent, Container, Grid, List, ListItem, Typography } from '@mui/material';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import useConclusao from '../hooks/useConclusao';
 
 const ConclusionPage = () => {
-  // Extracting responseData using useLocation
   const location = useLocation();
   const { responseData } = location.state || {};
 
-  // Extracting necessary data from responseData
   const diagnostico = responseData?.diagnostico || 'N/A';
   const solucao = responseData?.solucao || 'N/A';
   const explicacaoGeral = responseData?.explicacaoGeral || 'N/A';
@@ -19,60 +18,57 @@ const ConclusionPage = () => {
   const triggeredRules = responseData?.triggeredRules || [];
   const carro = responseData?.carroSelecionado || {};
 
-  const [expanded, setExpanded] = React.useState(false);
-
-  const handleExpansion = () => {
-    setExpanded((prevExpanded) => !prevExpanded);
-  };
+  const { responseText, activeButtonIndex, handlePorqueClick } = useConclusao(
+    responseData,
+    carro,
+    diagnostico,
+    solucao,
+    explicacaoGeral,
+    explicacaoGeralNao,
+    como,
+    evidencias,
+    triggeredRules
+  );
 
   return (
     <Container>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <Card>
           <CardContent>
             <Typography variant="h4" gutterBottom>
               Diagnóstico Concluído
             </Typography>
-            <Accordion >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-              >
-                <Typography variant="h6" sx={{ width:'400px', flexShrink: 0, textAlign: 'left' }}>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
                   {carro.marca?.nome || 'N/A'}, {carro.modelo?.nome || 'N/A'}, {carro.motor?.nome || 'N/A'}
                 </Typography>
-                <Typography variant="h6" sx={{ color: 'text.secondary' }}>Veja os componentes</Typography>
+                <Typography variant="h6" sx={{ color: 'text.secondary' }}><i>Veja os componentes</i></Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Typography variant="h6" gutterBottom textAlign={'left'}>
-                  Níveis ideais do componentes
+                  Níveis ideais dos componentes
                 </Typography>
                 <List>
-                    {carro.componentes?.length > 0 ? (
-                      carro.componentes.map((componente, index) => (
-                        <ListItem key={index}>
-                          {componente.nome}: {componente.valorMinimoIdeal} - {componente.valorMaximoIdeal} {componente.unidade}
-                        </ListItem>
-                      ))
-                    ) : (
-                      <ListItem>Nenhum componente encontrado.</ListItem>
-                    )}
+                  {carro.componentes?.length > 0 ? (
+                    carro.componentes.map((componente, index) => (
+                      <ListItem key={index}>
+                        {componente.nome}: {componente.valorMinimoIdeal} - {componente.valorMaximoIdeal} {componente.unidade}
+                      </ListItem>
+                    ))
+                  ) : (
+                    <ListItem>Nenhum componente encontrado.</ListItem>
+                  )}
                 </List>
               </AccordionDetails>
             </Accordion>
 
             <Accordion defaultExpanded variant="outlined">
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-              >
-                <Typography variant="h6" sx={{ width:'400px', flexShrink: 0, textAlign: 'left' }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{  color: 'lime' }}>
+                <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left', color: 'inherit' }}>
                   Diagnóstico Geral
                 </Typography>
-                <Typography variant="h6" sx={{ color: 'text.secondary' }}>{diagnostico}</Typography>
+                <Typography variant="h6" sx={{ color: 'inherit' }}>{diagnostico}</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Typography>
@@ -93,36 +89,29 @@ const ConclusionPage = () => {
             </Accordion>
 
             <Accordion defaultExpanded variant='outlined'>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-              >
-                <Typography variant="h6" sx={{ width:'400px', flexShrink: 0, textAlign: 'left' }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
                   Explicações
                 </Typography>
-                <Typography variant="h6" sx={{ color: 'text.secondary' }}>Entenda o diagnóstico</Typography>
+                <Typography variant="h6" sx={{ color: 'text.secondary' }}><i>Entenda o diagnóstico</i></Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>
-                  <List>
+                <List>
+                  <ListItem>
+                    <Typography variant="h6" gutterBottom>
+                      Explicação Geral: {explicacaoGeral}
+                    </Typography>
+                  </ListItem>
+                  <ListItem>
+                    <Typography variant="h6" gutterBottom>
+                      Explicação Geral (Não): {explicacaoGeralNao}
+                    </Typography>
+                  </ListItem>
 
-                    <ListItem>
-                      <Typography variant="h6" gutterBottom>
-                        Explicação Geral (Porque geral): {explicacaoGeral}
-                      </Typography>
-                    </ListItem>
-
-                    <ListItem>
-                      <Typography variant="h6" gutterBottom>
-                        Explicação Geral (Porque não geral): {explicacaoGeralNao}
-                      </Typography>
-                    </ListItem>
-
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item>
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12}>
                       <Accordion variant="elevation">
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                        >
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                           <Typography variant='h6'>Como chegou-se ao diagnóstico?</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
@@ -135,28 +124,37 @@ const ConclusionPage = () => {
                           </List>
                         </AccordionDetails>
                       </Accordion>
-                      </Grid>
-                      <Grid item>
+                    </Grid>
+
+                    <Grid item xs={12}>
                       <Accordion variant="elevation">
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                        >
-                          <Typography variant='h6'>Porquê esta evidência?</Typography>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                          <Typography variant='h6'>Porquê estas evidências?</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                          {/* Processo de inferência baseado nas seguintes evidências: */}
                           <List>
                             {evidencias.length > 0 ? (
                               evidencias
-                                .slice(1) // Não mostra a primeira evidência, == "O carro apresenta algum problema?"
+                                .slice(1) // Pula a primeira evidência, que é = "O carro apresenta algum problema?"
                                 .map((evidencia, index) => (
                                   <ListItem key={index} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                     <Grid container spacing={2} alignItems="center">
                                       <Grid item xs>
-                                        {evidencia.fact} {/* {evidencia.value} */}
+                                        {evidencia.fact} 
+                                        {activeButtonIndex === index && responseText && (
+                                          <Typography variant="body2" sx={{ mt: 1 }} sx={{ color: 'lime' }}>
+                                            {responseText}
+                                          </Typography>
+                                        )}
                                       </Grid>
                                       <Grid item>
-                                        <Button variant="contained" endIcon={<Help />}>Porque</Button>
+                                        <Button
+                                          variant="contained"
+                                          endIcon={<Help />}
+                                          onClick={() => handlePorqueClick(evidencia.fact, index)}
+                                        >
+                                          Porque
+                                        </Button>
                                       </Grid>
                                     </Grid>
                                   </ListItem>
@@ -167,39 +165,35 @@ const ConclusionPage = () => {
                           </List>
                         </AccordionDetails>
                       </Accordion>
-                      </Grid>
                     </Grid>
-                    
-                  </List>
-                </Typography>
+                  </Grid>
+                </List>
               </AccordionDetails>
             </Accordion>
-            
-            <Accordion headerstyle={{width: "100%"}} >
-                        <AccordionSummary
-                          expandIcon={<ExpandMoreIcon />}
-                        >
-                          <Typography variant="h6" sx={{ width:'400px', flexShrink: 0, textAlign: 'left' }}>
-                            Mais detalhes
-                          </Typography>
-                          <Typography variant="h6" sx={{ color: 'text.secondary' }}>Regras acionadas</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <List>
-                            {triggeredRules.length > 0 ? (
-                              triggeredRules.map((rule, index) => (
-                                <ListItem key={index}>
-                                  {rule}
-                                </ListItem>
-                              ))
-                            ) : (
-                              <ListItem>Nenhuma regra acionada.</ListItem>
-                            )}
-                          </List>
-                        </AccordionDetails>
-                      </Accordion>
-          </CardContent>
 
+            <Accordion headerstyle={{ width: "100%" }} >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
+                  Regras acionadas
+                </Typography>
+                <Typography variant="h6" sx={{ color: 'text.secondary' }}><i>Mais detalhes de diagnóstico</i></Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List>
+                  {triggeredRules.length > 0 ? (
+                    triggeredRules.map((regra, index) => (
+                      <ListItem key={index}>
+                        <Typography variant="body1">{regra}</Typography>
+                      </ListItem>
+                    ))
+                  ) : (
+                    <ListItem>Nenhuma regra acionada.</ListItem>
+                  )}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+
+          </CardContent>
           {/* <CardContent>
             <Typography variant="body1" gutterBottom>
               JSON response:

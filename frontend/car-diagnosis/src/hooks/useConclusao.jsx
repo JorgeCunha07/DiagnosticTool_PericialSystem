@@ -1,27 +1,63 @@
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
 
-const useConclusao = () => {
-  const location = useLocation();
-  const { responseData } = location.state || {};
+const useConclusao = (responseData, carro, diagnostico, solucao, explicacaoGeral, explicacaoGeralNao, como, evidencias, triggeredRules) => {
+  const [responseText, setResponseText] = useState('');
+  const [activeButtonIndex, setActiveButtonIndex] = useState(null);
 
-  const diagnostico = responseData.diagnostico || 'N/A';
-  const solucao = responseData.solucao || 'N/A';
-  const explicacaoGeral = responseData.explicacaoGeral || 'N/A';
-  const explicacaoGeralNao = responseData.explicacaoGeralNao || 'N/A';
-  const como = responseData.como || 'N/A';
-  const evidencias = responseData.evidencias || [];
-  const triggeredRules = responseData.triggeredRules || [];
+  const handlePorqueClick = async (fact, index) => {
+    const perguntaAtual = fact;
 
-  return {
-    diagnostico,
-    solucao,
-    explicacaoGeral,
-    explicacaoGeralNao,
-    como,
-    evidencias,
-    triggeredRules,
-    responseData
+    const body = {
+      texto: responseData?.texto,
+      estado: responseData?.estado,
+      pergunta: responseData?.pergunta || 'N/A',
+      carroSelecionado: carro,
+      marcaSelecionada: carro.marca?.nome || null,
+      modeloSelecionado: carro.modelo?.nome || null,
+      motorSelecionado: carro.motor?.nome || null,
+      diagnostico: diagnostico,
+      solucao: solucao,
+      explicacaoGeral: explicacaoGeral,
+      explicacaoGeralNao: explicacaoGeralNao,
+      como: como,
+      evidencias: evidencias,
+      triggeredRules: triggeredRules,
+      diagnosticoConcluido: responseData?.diagnosticoConcluido || false,
+    };
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/diagnostico/perguntaAnterior?perguntaAtual=${encodeURIComponent(perguntaAtual)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const jsonResponse = await response.text();
+        const questionMatch = jsonResponse.match(/Question -> (.*?),/);
+        const answerMatch = jsonResponse.match(/Answer -> (.*)/);
+
+        const question = questionMatch ? questionMatch[1] : 'N/A';
+        const answer = answerMatch ? answerMatch[1] : 'N/A';
+
+        const formattedResponse = `Porque a pergunta anterior foi "${question}" e a resposta foi "${answer}"`;
+        setResponseText(formattedResponse);
+        setActiveButtonIndex(index);
+      } else {
+        console.error('Error:', response.statusText);
+        setResponseText('Error: ' + response.statusText);
+        setActiveButtonIndex(index);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+      setResponseText('Fetch error: ' + error.message);
+      setActiveButtonIndex(index);
+    }
   };
+
+  return { responseText, activeButtonIndex, handlePorqueClick };
 };
 
 export default useConclusao;
