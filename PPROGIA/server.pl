@@ -15,6 +15,7 @@ servidor(Port) :-
 
 % Handlers para diferentes endpoints com método GET
 :- http_handler(root(escolherCarro), http_handler_escolher_carro, [method(post)]).
+:- http_handler(root(porqueNao), http_handler_whynot, [method(post)]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
@@ -115,6 +116,62 @@ porque_response(Facto, Explicacao) :-
     ;   term_to_atom(Facto, FactoAtom),
         Explicacao = _{fato: FactoAtom, explicacao: "O facto não é verdadeiro"}
     ).
+
+:- use_module(library(http/json)).
+:- use_module(library(http/http_dispatch)).
+:- use_module(library(http/http_json)).
+
+http_handler_whynot(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    atom_string(FactoAtom, JsonIn.facto),          % Convertendo o fato de JSON para átomo
+    term_to_atom(FactoTerm, FactoAtom),            % Convertendo o átomo para um termo Prolog
+    whynot_response(FactoTerm, 1, Explicacao),
+    reply_json(Explicacao).
+
+whynot_response(Facto, Nivel, Explicacao) :-
+    (   call(facto(_, Facto))
+    ->  term_to_atom(Facto, FactoAtom),
+        Explicacao = _{explicacao: "O facto não é falso!", fato: FactoAtom}
+    ;   encontra_regras_whynot(Facto, LLPF),
+        (   LLPF \= []
+        ->  whynot1_response(LLPF, Nivel, Explicacao)
+        ;   Nivel =:= 1
+        ->  term_to_atom(Facto, FactoAtom),
+            Explicacao = _{explicacao: "O facto não está definido na base de conhecimento", fato: FactoAtom}
+        ;   Explicacao = _{}
+        )
+    ).
+
+whynot1_response([], _, []).
+whynot1_response([(ID, LPF) | LLPF], Nivel, [Current | Rest]) :-
+    Nivel1 is Nivel + 1,
+    explica_porque_nao_response(LPF, Nivel1, ExplicacaoLista),
+    Current = _{
+        explicacao: "Porque pela regra",
+        regra_id: ID,
+        detalhes: ExplicacaoLista
+    },
+    whynot1_response(LLPF, Nivel, Rest).
+
+explica_porque_nao_response([], _, []).
+explica_porque_nao_response([nao avalia(X) | LPF], Nivel, [Current | Rest]) :-
+    term_to_atom(nao(X), CondicaoAtom),
+    Current = _{condicao: CondicaoAtom, explicacao: "A condição é falsa"},
+    explica_porque_nao_response(LPF, Nivel, Rest).
+explica_porque_nao_response([avalia(X) | LPF], Nivel, [Current | Rest]) :-
+    term_to_atom(X, CondicaoAtom),
+    Current = _{condicao: CondicaoAtom, explicacao: "A condição é falsa"},
+    explica_porque_nao_response(LPF, Nivel, Rest).
+explica_porque_nao_response([P | LPF], Nivel, [Current | Rest]) :-
+    term_to_atom(P, PremissaAtom),
+    Current = _{premissa: PremissaAtom, explicacao: "A premissa é falsa"},
+    Nivel1 is Nivel + 1,
+    whynot_response(P, Nivel1, SubExplicacao),
+    append([Current], SubExplicacao, _),
+    explica_porque_nao_response(LPF, Nivel, Rest).
+
+
+
 
 procurar_carro(Numero, Carro) :-
     carro(Numero, Marca, Modelo, Motor),
