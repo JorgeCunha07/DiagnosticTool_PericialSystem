@@ -92,8 +92,10 @@ facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
 
 pergunta_handler(_Request) :-
-    findall(P, facto(_, proximo_teste(_, P)), Perguntas),
-    reply_json(Perguntas).
+    findall(P, facto(_, proximo_teste(_, P)), [Teste|_]),
+    functor(TesteTermo, Teste, 2),
+    pergunta(TesteTermo, Pergunta),
+    reply_json(Pergunta).
         
 responder_handler(Request) :-
     % Verifica se há perguntas por responder
@@ -109,20 +111,21 @@ responder_handler(Request) :-
         (   string(JsonIn.resposta)
         ->  % Se for uma string, converter diretamente para atom
             atom_string(Resposta, JsonIn.resposta),
-            log_message("Diagnostico2.1"),
-            diagnostico2(Resposta),
-            !  % Parar a execução aqui
+            % Chamar diagnostico2/1 após responder
+            catch(diagnostico2(Resposta), Erro,
+                    log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   number(JsonIn.resposta)
         ->  % Se for um número, atribuir diretamente
             Resposta = JsonIn.resposta,
-            log_message("Diagnostico2.2"),
-            diagnostico2(Resposta),
-            !  % Parar a execução aqui
+            % Chamar diagnostico2/1 após responder
+            catch(diagnostico2(Resposta), Erro,
+                    log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   % Se não for nem string nem número, falhar com uma mensagem de erro
             reply_json(_{status: "erro", message: "O campo 'resposta' deve ser string ou número"}),
             fail  % Usar fail para parar a execução neste caso
         )
     ).
+
 
 diagnostico_handler(_Request) :-
     % Filtrar factos diagnostico e solucao
