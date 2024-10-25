@@ -6,7 +6,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardC
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useConclusao from '../hooks/useConclusao';
-import { generatePDF } from '../utils/pdfGenerator';
+import { generatePDF } from '../utils/pdfConclusao';
 
 const ConclusionPage = () => {
   const location = useLocation();
@@ -225,7 +225,7 @@ const ConclusionPage = () => {
             </Accordion>
           </CardContent>
 
-          {/* <CardContent>
+          <CardContent>
             <Typography variant="body1" gutterBottom>
               JSON response:
             </Typography>
@@ -243,7 +243,7 @@ const ConclusionPage = () => {
             >
               {JSON.stringify(responseData, null, 2)}
             </Box>
-          </CardContent> */}
+          </CardContent>
         </Card>
       </Box>
     </Container>

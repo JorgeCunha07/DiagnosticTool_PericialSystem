@@ -1,6 +1,6 @@
 import HomeIcon from '@mui/icons-material/Home';
 import { Alert, Box, Button, Card, CardContent, CircularProgress, Container, IconButton, TextField, Typography } from "@mui/material";
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useDiagnostico from '../hooks/useDiagnostico';
 
@@ -8,6 +8,8 @@ const DiagnosticoCarro = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [nivelOleo, setNivelOleo] = useState(0.0);
+  
   const { diagnosticoData } = location.state;
   const { diagnostico, loading, error, handleAnswer } = useDiagnostico(diagnosticoData);
 
@@ -91,121 +93,153 @@ const DiagnosticoCarro = () => {
               </Box>
             )} */}
 
-{diagnostico.pergunta && !loading && (
-  <Box sx={{ mt: 3 }}>
-    {/* (Sim/Não) */}
-    {diagnostico.pergunta.includes("(Sim/Não)") && (
-      <>
-        <Button
-          onClick={() => handleAnswer("Sim")}
-          variant="contained"
-          color="primary"
-          sx={{ mr: 2 }}>
-          Sim
-        </Button>
-        <Button
-          onClick={() => handleAnswer("Não")}
-          variant="contained"
-          color="secondary">
-          Não
-        </Button>
-      </>
-    )}
+            {diagnostico.pergunta && !loading && (
+              <Box sx={{ mt: 3 }}>
 
-    {/* (Baixo/Alto/Normal) */}
-    {diagnostico.pergunta.includes("(Baixo/Alto/Normal)") && (
-      <>
-        <Button
-          onClick={() => handleAnswer("Baixo")}
-          variant="contained"
-          color="primary"
-          sx={{ mr: 2 }}>
-          Baixo
-        </Button>
-        <Button
-          onClick={() => handleAnswer("Normal")}
-          variant="contained"
-          color="primary"
-          sx={{ mr: 2 }}>
-          Normal
-        </Button>
-        <Button
-          onClick={() => handleAnswer("Alto")}
-          variant="contained"
-          color="primary">
-          Alto
-        </Button>
-      </>
-    )}
+                {/* (Sim/Não) */}
+                {diagnostico.pergunta.includes("(Sim/Não)") && (
+                  <>
+                    <Button
+                      onClick={() => handleAnswer("Sim")}
+                      variant="contained"
+                      color="primary"
+                      sx={{ mr: 2 }}>
+                      Sim
+                    </Button>
+                    <Button
+                      onClick={() => handleAnswer("Não")}
+                      variant="contained"
+                      color="secondary">
+                      Não
+                    </Button>
+                  </>
+                )}
 
-    {/* (Minimo/Maximo/Normal) */}
-    {diagnostico.pergunta.includes("(Minimo/Maximo/Normal)") && (
-      <>
-        <Button
-          onClick={() => handleAnswer("Minimo")}
-          variant="contained"
-          color="primary"
-          sx={{ mr: 2 }}>
-          Minimo
-        </Button>
-        <Button
-          onClick={() => handleAnswer("Normal")}
-          variant="contained"
-          color="primary"
-          sx={{ mr: 2 }}>
-          Normal
-        </Button>
-        <Button
-          onClick={() => handleAnswer("Maximo")}
-          variant="contained"
-          color="primary">
-          Maximo
-        </Button>
-      </>
-    )}
+                {/* (Baixo/Alto/Normal) */}
+                {diagnostico.pergunta.includes("(Baixo/Alto/Normal)") && (
+                  <>
+                    <Button
+                      onClick={() => handleAnswer("Baixo")}
+                      variant="contained"
+                      color="primary"
+                      sx={{ mr: 2 }}>
+                      Baixo
+                    </Button>
+                    <Button
+                      onClick={() => handleAnswer("Normal")}
+                      variant="contained"
+                      color="primary"
+                      sx={{ mr: 2 }}>
+                      Normal
+                    </Button>
+                    <Button
+                      onClick={() => handleAnswer("Alto")}
+                      variant="contained"
+                      color="primary">
+                      Alto
+                    </Button>
+                  </>
+                )}
 
-    {/* (Entre "numero" e "outro numero" "unidade") */}
-    {diagnostico.pergunta.match(/\(Entre\s(\d+)\se\s(\d+)\s (\s+)\)/) && (
-      <>
-        <TextField label="Digite um valor"/>
-        {/* <Button
-          onClick={() => handleAnswer("Maximo")
-          variant="contained"
-          color="primary">
-        Enviar resposta
-        </Button> */}
-      </>
-    )}
+                {/* (Minimo/Maximo/Normal) */}
+                {diagnostico.pergunta.includes("(Minimo/Maximo/Normal)") && (
+                  <>
+                    <Button
+                      onClick={() => handleAnswer("Minimo")}
+                      variant="contained"
+                      color="primary"
+                      sx={{ mr: 2 }}>
+                      Minimo
+                    </Button>
+                    <Button
+                      onClick={() => handleAnswer("Normal")}
+                      variant="contained"
+                      color="primary"
+                      sx={{ mr: 2 }}>
+                      Normal
+                    </Button>
+                    <Button
+                      onClick={() => handleAnswer("Maximo")}
+                      variant="contained"
+                      color="primary">
+                      Maximo
+                    </Button>
+                  </>
+                )}
+                
+                {/* "(Number.Number / Number.Number) Litros" */}
+                {diagnostico.pergunta.match(/\s+\((\d+\.\d+) \/ (\d+\.\d+)\)Litros/) && (
+                  <>
+                    {(() => {
+                      const match = diagnostico.pergunta.match(/\s+\((\d+\.\d+) \/ (\d+\.\d+)\)Litros/);
+                      const minValue = match ? parseFloat(match[1]) : 0;
+                      const maxValue = match ? parseFloat(match[2]) : 0;
 
-    {/* Seleção de uma lista de componentes */}
-    {diagnostico.pergunta.match(/Verifique os seguintes componentes\:/) && (
-      <>
-        {diagnostico.pergunta.match(/\d+/g).map((num, index) => (
-          <Button
-            key={index}
-            onClick={() => handleAnswer(num)}
-            variant="contained"
-            color="primary"
-            sx={{ mr: 2 }}>
-            {num}
-          </Button>
-          // 1. Bomba de água
-        //   <Button
-        //   onClick={() => handleAnswer("0")}
-        //   variant="contained"
-        //   color="primary">
-        //   0-Nenhum
-        // </Button>
-        ))}
-      </>
-    )}
-  </Box>
-)}
+                      return (
+                        <>
+                          {/* <FloatInput min={minValue} max={maxValue} onValueChange={setNivelOleo} /> */}
+                          <TextField 
+                            type="number" 
+                            step="0.1" 
+                            min={minValue} 
+                            max={maxValue} 
+                            value={nivelOleo !== null ? nivelOleo : minValue}
+                            //onValueChange={setNivelOleo(parseFloat(this))} 
+                            onChange={(e) => setNivelOleo(parseFloat(e.target.value))}
+                            style={{
+                              width:"100px",
+                            }}
+                            InputProps={{
+                              inputProps: {
+                                max: maxValue, 
+                                min: minValue
+                              }
+                            }}
+                          />
+                          
+                          <Button
+                            onClick={() => handleAnswer(nivelOleo)}
+                            variant="contained"
+                            color="primary"
+                            sx={{ ml: 2, mt: 2 }}
+                          >
+                            Enviar resposta
+                          </Button>
+                        </>
+                      );
+                    })()}
+                  </>
+                )}
+
+                {/* Seleção de uma lista de componentes */}
+                {diagnostico.pergunta.match(/Verifique os seguintes componentes\:/) && (
+                  <>
+                    {diagnostico.pergunta.match(/\d+/g).map((num, index) => (
+                      <Button
+                        key={index}
+                        onClick={() => handleAnswer(num)}
+                        variant="contained"
+                        color="primary"
+                        sx={{ mr: 2 }}>
+                        {num}
+                      </Button>
+                      // 1. Bomba de água
+                    //   <Button
+                    //   onClick={() => handleAnswer("0")}
+                    //   variant="contained"
+                    //   color="primary">
+                    //   0-Nenhum
+                    // </Button>
+                    ))}
+                  </>
+                )}
+              </Box>
+            )}
 
           </CardContent>
 
           {/* DEBUG */}
-          {/* <CardContent>
+          <CardContent>
             <Typography variant="body1" gutterBottom>
               JSON response:
             </Typography>
@@ -223,7 +257,7 @@ const DiagnosticoCarro = () => {
             >
               {JSON.stringify(diagnostico, null, 2)}
             </Box>
-          </CardContent> */}
+          </CardContent>
 
         </Card>
       </Box>
@@ -241,93 +275,3 @@ export default DiagnosticoCarro;
 // (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")
 // Qual é o nível atual de óleo? (Entre 0.0 e 8.0 Litros)
 
-// {diagnostico.pergunta && !loading && (
-//   <Box sx={{ mt: 3 }}>
-//     {/* (Sim/Não) */}
-//     {diagnostico.pergunta.includes("(Sim/Não)") && (
-//       <>
-//         <Button
-//           onClick={() => handleAnswer("Sim")}
-//           variant="contained"
-//           color="primary"
-//           sx={{ mr: 2 }}>
-//           Sim
-//         </Button>
-//         <Button
-//           onClick={() => handleAnswer("Não")}
-//           variant="contained"
-//           color="secondary">
-//           Não
-//         </Button>
-//       </>
-//     )}
-
-//     {/* (Baixo/Alto/Normal) */}
-//     {diagnostico.pergunta.includes("(Baixo/Alto/Normal)") && (
-//       <>
-//         <Button
-//           onClick={() => handleAnswer("Baixo")}
-//           variant="contained"
-//           color="primary"
-//           sx={{ mr: 2 }}>
-//           Baixo
-//         </Button>
-//         <Button
-//           onClick={() => handleAnswer("Normal")}
-//           variant="contained"
-//           color="primary"
-//           sx={{ mr: 2 }}>
-//           Normal
-//         </Button>
-//         <Button
-//           onClick={() => handleAnswer("Alto")}
-//           variant="contained"
-//           color="primary">
-//           Alto
-//         </Button>
-//       </>
-//     )}
-
-//     {/* (Minimo/Maximo/Normal) */}
-//     {diagnostico.pergunta.includes("(Minimo/Maximo/Normal)") && (
-//       <>
-//         <Button
-//           onClick={() => handleAnswer("Minimo")}
-//           variant="contained"
-//           color="primary"
-//           sx={{ mr: 2 }}>
-//           Minimo
-//         </Button>
-//         <Button
-//           onClick={() => handleAnswer("Normal")}
-//           variant="contained"
-//           color="primary"
-//           sx={{ mr: 2 }}>
-//           Normal
-//         </Button>
-//         <Button
-//           onClick={() => handleAnswer("Maximo")}
-//           variant="contained"
-//           color="primary">
-//           Maximo
-//         </Button>
-//       </>
-//     )}
-
-//     {/* (Entre "numero" e "outro numero" "unidade") */}
-//     {diagnostico.pergunta.match(/\(Entre\s(\d+)\se\s(\d+)\s (\s+)\)/) && (
-//       <>
-//         {diagnostico.pergunta.match(/\d+/g).map((num, index) => (
-//           <Button
-//             key={index}
-//             onClick={() => handleAnswer(num)}
-//             variant="contained"
-//             color="primary"
-//             sx={{ mr: 2 }}>
-//             {num}
-//           </Button>
-//         ))}
-//       </>
-//     )}
-//   </Box>
-// )}
