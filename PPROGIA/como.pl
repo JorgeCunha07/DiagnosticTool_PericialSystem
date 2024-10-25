@@ -16,10 +16,10 @@ como(N) :-
             write('disparando assim a regra '), write(ID),
             % proximo facto
             facto(NSeguinte, FSeguinte),
-            FSeguinte =.. [PerguntaSeguinte, _, RegraSeguinte],
+            FSeguinte =.. [PerguntaSeguinte, _, RespostaSeguinte],
             % caso o proximo facto seja diagnostico o "como" acaba
             ( PerguntaSeguinte == diagnostico
-                -> write(' que gerou o seguinte diagnostico: '), write(RegraSeguinte)
+                -> write(' que gerou o seguinte diagnostico: '), write(RespostaSeguinte)
                 ;  write(' criando a seguinte '), como(NSeguinte)
             )
         ;   !
