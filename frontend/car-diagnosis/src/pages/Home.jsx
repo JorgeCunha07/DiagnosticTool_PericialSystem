@@ -27,7 +27,7 @@ const Home = () => {
             <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => handleApiSelection('https://localhost:4040', 'PROLOG')}
+                onClick={() => handleApiSelection('http://localhost:4040', 'PROLOG')}
                 sx={{ margin: '10px' }}
             >
                 PROLOG
