@@ -20,7 +20,7 @@ servidor(Port) :-
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
-:- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [method(post)]).
+:- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [methods([post, options])]).
 :- http_handler(root(responder), responder_handler, [method(post)]).
 :- http_handler(root(porque), http_handler_porque, [method(post)]).
 :- http_handler(root(factos), factos_handler, [method(get)]).
@@ -101,9 +101,17 @@ http_handler_listar_motores(Request) :-
     findall(Motor, carro(_, Marca, Modelo, Motor), Motores),
     list_to_set(Motores, MotoresUnicos),
     reply_json(MotoresUnicos).
+	
+http_hanlder_procurar_numero_carro(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
 
 % Handler para obter número do carro
 http_hanlder_procurar_numero_carro(Request) :-
+    cors_headers,  
     http_read_json_dict(Request, JsonIn),
     atom_string(Marca, JsonIn.marca),
     atom_string(Modelo, JsonIn.modelo),
