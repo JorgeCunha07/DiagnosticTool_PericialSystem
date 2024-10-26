@@ -56,21 +56,21 @@ veiculo_json(_{marca: _{nome: Marca}, modelo: _{nome: Modelo}, motor: _{nome: Mo
 
 % Obtém todos os componentes para o veículo específico.
 componentes_json(Id, [
-    _{nome: "motor_arranque", min: MinA, max: MaxA, unidade: "V"},
-    _{nome: "bloco_motor", min: MinB, max: MaxB, unidade: "HP"},
-    _{nome: "bateria", min: MinC, max: MaxC, unidade: "Ah"},
-    _{nome: "liquido_arrefecimento", min: MinD, max: MaxD, unidade: "L"},
-    _{nome: "oleo_motor", min: MinE, max: MaxE, unidade: "L"},
-    _{nome: "fluido_travao", min: MinF, max: MaxF, unidade: "L"},
-    _{nome: "fluido_transmissao", min: MinG, max: MaxG, unidade: "L"}
+    _{nome: "motor_arranque", min: 0, minIdeal: MinA, maxIdeal: MaxA, max: Max1, unidade: "V"},
+    _{nome: "bloco_motor", min: 0, minIdeal: MinB, maxIdeal: MaxB, max: Max2, unidade: "HP"},
+    _{nome: "bateria", min: 0, minIdeal: MinC, maxIdeal: MaxC, max: Max3, unidade: "Ah"},
+    _{nome: "liquido_arrefecimento", min: 0, minIdeal: MinD, maxIdeal: MaxD, max: Max4, unidade: "L"},
+    _{nome: "oleo_motor", min: 0, minIdeal: MinE, maxIdeal: MaxE, max: Max5, unidade: "L"},
+    _{nome: "fluido_travao", min: 0, minIdeal: MinF, maxIdeal: MaxF, max: Max6, unidade: "L"},
+    _{nome: "fluido_transmissao", min: 0, minIdeal: MinG, maxIdeal: MaxG, max: Max7, unidade: "L"}
 ]) :-
-    motor_arranque(Id, MinA, MaxA),
-    bloco_motor(Id, MinB, MaxB),
-    bateria(Id, MinC, MaxC),
-    liquido_arrefecimento(Id, MinD, MaxD),
-    oleo_motor(Id, MinE, MaxE),
-    fluido_travao(Id, MinF, MaxF),
-    fluido_transmissao(Id, MinG, MaxG).
+    motor_arranque(Id, MinA, MaxA, Max1),
+    bloco_motor(Id, MinB, MaxB, Max2),
+    bateria(Id, MinC, MaxC, Max3),
+    liquido_arrefecimento(Id, MinD, MaxD, Max4),
+    oleo_motor(Id, MinE, MaxE, Max5),
+    fluido_travao(Id, MinF, MaxF, Max6),
+    fluido_transmissao(Id, MinG, MaxG, Max7).
 
 log_message(Message) :-
     open('server.log', append, Stream),
