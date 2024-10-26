@@ -21,11 +21,11 @@ servidor(Port) :-
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [methods([post, options])]).
-:- http_handler(root(responder), responder_handler, [method(post)]).
+:- http_handler(root(responder), responder_handler, [methods([post, options])]).
 :- http_handler(root(porque), http_handler_porque, [method(post)]).
 :- http_handler(root(factos), factos_handler, [method(get)]).
 :- http_handler(root(factosTodos), factos_todos_handler, [method(get)]).
-:- http_handler(root(pergunta), pergunta_handler, [method(get)]).
+:- http_handler(root(pergunta), pergunta_handler, [methods([post, options])]).
 :- http_handler(root(como), como_handler, [method(get)]).
 :- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
 :- http_handler(root(carros), veiculos_handler, []).
@@ -248,8 +248,16 @@ factos_todos_handler(_Request) :-
 % Converter cada facto para texto sem mutação
 facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
+	
+pergunta_handler(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
 
 pergunta_handler(_Request) :-
+	cors_headers,
     findall(P, facto(_, proximo_teste(_, P)), Testes),
     ( Testes = [Teste|_] ->  % Verifica se há mais testes
         functor(TesteTermo, Teste, 2),
@@ -291,8 +299,16 @@ como_response(N, Response) :-
         )
     ;   Response = []
     ).
-        
+
 responder_handler(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
+
+responder_handler(Request) :-
+	cors_headers,
     % Verifica se há perguntas por responder
     findall(P, facto(_, proximo_teste(_, P)), Perguntas),
     length(Perguntas, N),
