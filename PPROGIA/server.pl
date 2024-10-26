@@ -2,6 +2,7 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_json)).
 :- use_module(library(http/json)).
+:- use_module(library(http/http_cors)).  % ensure you have this library
 :- encoding(utf8).
 
 % Iniciar o servidor na porta especificada
@@ -14,7 +15,7 @@ servidor(Port) :-
 :- consult("escolha_carro.pl").
 
 % Handlers para diferentes endpoints com método GET
-:- http_handler(root(escolherCarro), http_handler_escolher_carro, [method(post)]).
+:- http_handler(root(diagnostico/iniciar), http_handler_escolher_carro, [methods([post, options])]).
 :- http_handler(root(porqueNao), http_handler_whynot, [method(post)]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
@@ -26,6 +27,56 @@ servidor(Port) :-
 :- http_handler(root(pergunta), pergunta_handler, [method(get)]).
 :- http_handler(root(como), como_handler, [method(get)]).
 :- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
+:- http_handler(root(carros), veiculos_handler, []).
+
+:- use_module(library(http/json)).
+:- use_module(library(http/http_dispatch)).
+:- use_module(library(http/http_json)).
+
+% Configuração manual dos cabeçalhos CORS
+cors_headers :-
+    format('Access-Control-Allow-Origin: http://localhost:3000~n'),
+    format('Access-Control-Allow-Methods: GET, POST, OPTIONS~n'),
+    format('Access-Control-Allow-Headers: Content-Type~n').
+
+veiculos_handler(Request) :-
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
+veiculos_handler(_Request) :-
+    cors_headers,                         % Adiciona cabeçalhos CORS à resposta normal
+    findall(VeiculoJson, veiculo_json(VeiculoJson), Veiculos),
+    reply_json(Veiculos).
+
+% Gera o JSON para cada veículo
+veiculo_json(_{
+    marca: _{nome: Marca},
+    modelo: _{nome: Modelo},
+    motor: _{nome: Motor},
+    componentes: Componentes
+}) :-
+    carro(Id, Marca, Modelo, Motor),
+    componentes_json(Id, Componentes).
+
+% Cria a lista JSON dos componentes de cada veículo
+componentes_json(Id, [
+    _{nome: "Bateria", valorMinimo: 0.0, valorMaximo: 80.0, valorMinimoIdeal: MinBateria, valorMaximoIdeal: MaxBateria, unidade: "Ah"},
+    _{nome: "Líquido de Arrefecimento", valorMinimo: 0.0, valorMaximo: 10.0, valorMinimoIdeal: MinArrefecimento, valorMaximoIdeal: MaxArrefecimento, unidade: "Litros"},
+    _{nome: "Óleo do Motor", valorMinimo: 0.0, valorMaximo: 8.0, valorMinimoIdeal: MinOleo, valorMaximoIdeal: MaxOleo, unidade: "Litros"},
+    _{nome: "Fluido de Travão", valorMinimo: 0.0, valorMaximo: 1.2, valorMinimoIdeal: MinTravao, valorMaximoIdeal: MaxTravao, unidade: "Litros"},
+    _{nome: "Fluido de Transmissão", valorMinimo: 0.0, valorMaximo: 3.0, valorMinimoIdeal: MinTransmissao, valorMaximoIdeal: MaxTransmissao, unidade: "Litros"},
+    _{nome: "Motor de Arranque", valorMinimo: 0.0, valorMaximo: 3.0, valorMinimoIdeal: MinArranque, valorMaximoIdeal: MaxArranque, unidade: "kW"},
+    _{nome: "Bloco de Motor", valorMinimo: 0.0, valorMaximo: 120.0, valorMinimoIdeal: MinBloco, valorMaximoIdeal: MaxBloco, unidade: "C"}
+]) :-
+    bateria(Id, MinBateria, MaxBateria),
+    liquido_arrefecimento(Id, MinArrefecimento, MaxArrefecimento),
+    oleo_motor(Id, MinOleo, MaxOleo),
+    fluido_travao(Id, MinTravao, MaxTravao),
+    fluido_transmissao(Id, MinTransmissao, MaxTransmissao),
+    motor_arranque(Id, MinArranque, MaxArranque),
+    bloco_motor(Id, MinBloco, MaxBloco).
+
 
 log_message(Message) :-
     open('server.log', append, Stream),
@@ -69,16 +120,52 @@ http_hanlder_procurar_numero_carro(Request) :-
     ;   reply_json(_{ error: 'Carro não encontrado' }, [status(404)])
     ).
 
+
 http_handler_escolher_carro(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
+	
+http_handler_escolher_carro(Request) :-
+    cors_headers,   
+	log_message('Teste 1'),
     http_read_json_dict(Request, JsonIn),
-    Numero = JsonIn.numero,
-    procurar_carro(Numero, Carro),
+	log_message('Teste 2'),
+    atom_string(Marca, JsonIn.marca.nome),
+	log_message('Carro selecionado: ' + Marca),
+    atom_string(Modelo, JsonIn.modelo.nome),
+	atom_string(Motor, JsonIn.motor.nome),
+    procurar_carro(Marca, Modelo, Motor, Carro, Numero),
     log_message('Carro selecionado: ' + Carro),
     retractall(carro_selecionado(_)),
     assertz(carro_selecionado(Carro)),
     retractall(facto(_, _)),
     assertz(facto(1, proximo_teste(Numero, problemas))),
-    reply_json(_{ carro_escolhido: Carro }).
+    reply_json(_{
+        texto: "Diagnóstico iniciado.",
+        estado: "esperaRespostaProblemaInicial",
+        pergunta: "O carro apresenta algum problema? (Sim/Não)",
+  		carroSelecionado: {
+        marca: {
+            nome: Marca
+        },
+        modelo: {
+            nome: Modelo
+        },
+        motor: {
+            nome: Motor
+        }},
+        diagnostico: null,
+        solucao: null,
+        explicacaoGeral: null,
+        explicacaoGeralNao: null,
+        como: null,
+        evidencias: [],
+        triggeredRules: ["D01: Start Diagnostic"],
+        diagnosticoConcluido: false
+    }).
 
 http_handler_porque(Request) :-
     http_read_json_dict(Request, JsonIn),
@@ -116,10 +203,6 @@ porque_response(Facto, Explicacao) :-
     ;   term_to_atom(Facto, FactoAtom),
         Explicacao = _{fato: FactoAtom, explicacao: "O facto não é verdadeiro"}
     ).
-
-:- use_module(library(http/json)).
-:- use_module(library(http/http_dispatch)).
-:- use_module(library(http/http_json)).
 
 http_handler_whynot(Request) :-
     http_read_json_dict(Request, JsonIn),
@@ -173,9 +256,10 @@ explica_porque_nao_response([P | LPF], Nivel, [Current | Rest]) :-
 
 
 
-procurar_carro(Numero, Carro) :-
+procurar_carro(Marca, Modelo, Motor, Carro, Numero) :-
     carro(Numero, Marca, Modelo, Motor),
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
+	
 
 factos_handler(_Request) :-
     % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
@@ -267,7 +351,5 @@ diagnostico_handler(_Request) :-
     },
     reply_json(Resposta).
 	
-
-
 % Utilidade para começar o servidor na porta 8080 (pode ser ajustada)
-:- servidor(8080).
+:- servidor(4040).
