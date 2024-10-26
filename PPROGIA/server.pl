@@ -139,7 +139,8 @@ http_handler_escolher_carro(Request) :-
     retractall(carro_selecionado(_)),
     assertz(carro_selecionado(Carro)),
     retractall(facto(_, _)),
-    assertz(facto(1, proximo_teste(Numero, problemas))),
+    assertz(facto(0, proximo_teste(Numero, problemas))),
+	asserta(ultimo_facto(0)),
     reply_json(_{ carro_escolhido: Carro }).
 
 http_handler_porque(Request) :-

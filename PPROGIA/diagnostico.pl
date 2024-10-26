@@ -3,6 +3,10 @@ diagnostico :-
     retractall(factos_processados(_)),
     diagnostico_loop.
 	
+diagnostico3 :-
+    diag_problemas,
+	arranca_motor.
+	
 % Predicado que inicia APENAS uma pergunta do diagnostico
 diagnostico2(Resposta) :-
     diag_problemas2(Resposta),
