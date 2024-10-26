@@ -3,12 +3,14 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import DiagnosticoCarro from './pages/DiagnosticoCarro';
+import DiagnosticoCarroProlog from './pages/DiagnosticoCarroProlog';
 import DiagnosticoConclusao from './pages/DiagnosticoConclusao';
+import DiagnosticoConclusaoProlog from "./pages/DiagnosticoConclusaoProlog";
 import DiagnosticoErro from './pages/DiagnosticoErro';
 import Home from './pages/Home';
 import SelecaoCarro from './pages/SelecaoCarro';
 
-
+ 
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -36,8 +38,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/selecao" element={<SelecaoCarro />} />
             <Route path="/diagnostico" element={<DiagnosticoCarro />} />
-            <Route path="/error" element={<DiagnosticoErro />} />
+            <Route path="/diagnostico/prolog" element={<DiagnosticoCarroProlog />} />
             <Route path="/conclusao" element={<DiagnosticoConclusao />} />
+            <Route path="/conclusao/prolog" element={<DiagnosticoConclusaoProlog />} />
+            <Route path="/error" element={<DiagnosticoErro />} />
           </Routes>
         </Router>
       </div>

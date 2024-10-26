@@ -1,14 +1,216 @@
 import HomeIcon from '@mui/icons-material/Home';
 import { Alert, Box, Button, Card, CardContent, CircularProgress, Container, IconButton, TextField, Typography } from "@mui/material";
-import React, { useState } from 'react';
+import axios from 'axios';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSistemaSelecionado } from '../config/apiConfig';
-import useDiagnostico from '../hooks/useDiagnostico';
+import { getApiUrl, getSistemaSelecionado } from '../config/apiConfig';
+
+const sistemaSelecionado = getSistemaSelecionado();
+
+const useDiagnostico = (initialData) => {
+  const [diagnostico, setDiagnostico] = useState(initialData);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const API_URL = getApiUrl();
+
+  console.log(">>>>>>> DiagnosticoCarro: diagnostico:" + diagnostico);
+
+  const handleAnswer = async (answer) => {
+    setLoading(true);
+
+    let requestBody = {};
+    let endpoint = '';
+    let prolog_response;
+
+    if (sistemaSelecionado === 'Drools') {
+
+      endpoint = '/diagnostico/responder';
+
+      requestBody = {
+        texto: answer,
+        estado: diagnostico.estado,
+        pergunta: diagnostico.pergunta,
+        carroSelecionado: diagnostico.carroSelecionado,
+        marcaSelecionada: diagnostico.carroSelecionado.marca.nome,
+        modeloSelecionado: diagnostico.carroSelecionado.modelo.nome,
+        motorSelecionado: diagnostico.carroSelecionado.motor.nome,
+        diagnostico: diagnostico.diagnostico,
+        solucao: diagnostico.solucao,
+        explicacaoGeral: diagnostico.explicacaoGeral,
+        explicacaoGeralNao: diagnostico.explicacaoGeralNao,
+        como: diagnostico.como,
+        evidencias: diagnostico.evidencias,
+        triggeredRules: diagnostico.triggeredRules,
+      };
+
+      try {
+        const response = await axios.post(`${API_URL}${endpoint}`, requestBody);
+  
+        if (response.data.estado === 'finalizado') {
+          navigate('/conclusao', { state: { responseData: response.data } });
+        } else if (
+          !response.data ||
+          !response.data.carroSelecionado.marca ||
+          !response.data.carroSelecionado.hasOwnProperty("marca")
+        ) {
+          navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
+        } else {
+          setDiagnostico(response.data);
+        }
+      } catch (err) {
+        setError('Falha ao enviar resposta.');
+      } finally {
+        setLoading(false);
+      }
+
+    } else if (sistemaSelecionado === 'PROLOG') {
+
+      // PARA A PERGUNTA
+      endpoint = '/pergunta';  
+      // localhost:4040/pergunta | GET
+      // sem body
+      // Resposta:
+      // {
+      //   "estado": "ongoing",
+      //   "pergunta": "O veiculo Opel Astra J 1.6 CDTi tem algum problema?",
+      //   "respostas": [
+      //       "sim",
+      //       "nao",
+      //       "nao_sei"
+      //   ]
+      // }
+
+      // PARA O RESPONDER
+      //endpoint = '/responder';  
+      // localhost:4040/responder | POST
+      // no body do post: {"resposta": "sim"}
+      // Resposta:
+      // {
+      //   "message": "Respondido",
+      //   "status": "OK"
+      // }Foi concluido o facto proximo_teste numero 2 -> proximo_teste(2,liga)
+
+      requestBody = {
+        texto: answer,
+        estado: diagnostico?.estado || 'N/A',
+        pergunta: diagnostico?.pergunta || 'N/A',
+        carroSelecionado: diagnostico?.carroSelecionado || 'N/A',
+        marcaSelecionada: 'N/A',
+        modeloSelecionado: 'N/A',
+        motorSelecionado: 'N/A',
+        diagnostico: 'N/A',
+        solucao: 'N/A',
+        explicacaoGeral: 'N/A',
+        explicacaoGeralNao: 'N/A',
+        como: 'N/A',
+        evidencias: 'N/A',
+        triggeredRules: 'N/A',
+      };
+
+      prolog_response = await axios.get(`${API_URL}${endpoint}`);
+
+      const estado = prolog_response.data.estado;
+      const pergunta = prolog_response.data.pergunta;
+      const respostas = prolog_response.data.respostas;
+      
+      console.log(">>>> DiagnosticoCarro: estado: " + estado);
+      console.log(">>>> DiagnosticoCarro: pergunta: " + pergunta);
+      console.log(">>>> DiagnosticoCarro: respostas: " + respostas);
+
+      try {
+        const response = await axios.post(`${API_URL}${endpoint}`, requestBody);
+  
+        if (response.data.estado === 'finalizado') {
+          navigate('/conclusao', { state: { responseData: response.data } });
+        } else if (
+          !response.data
+        ) {
+          navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
+        } else {
+          setDiagnostico(response.data);
+        }
+      } catch (err) {
+        setError('Falha ao enviar resposta.');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // try {
+    //   const response = await axios.post(`${API_URL}${endpoint}`, requestBody);
+
+    //   if (response.data.estado === 'finalizado') {
+    //     navigate('/conclusao', { state: { responseData: response.data } });
+    //   } else if (
+    //     !response.data ||
+    //     !response.data.carroSelecionado.marca ||
+    //     !response.data.carroSelecionado.hasOwnProperty("marca")
+    //   ) {
+    //     navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
+    //   } else {
+    //     setDiagnostico(response.data);
+    //   }
+    // } catch (err) {
+    //   setError('Falha ao enviar resposta.');
+    // } finally {
+    //   setLoading(false);
+    // }
+  };
+
+  return { diagnostico, loading, error, handleAnswer };
+};
+
+// const useDiagnostico = (initialData) => {
+//   const [diagnostico, setDiagnostico] = useState(initialData);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(null);
+//   const navigate = useNavigate();
+
+//   const handleAnswer = async (answer) => {
+//     setLoading(true);
+
+//     const requestBody = {
+//       texto: answer,
+//       estado: diagnostico.estado,
+//       pergunta: diagnostico.pergunta,
+//       carroSelecionado: diagnostico.carroSelecionado,
+//       marcaSelecionada: diagnostico.carroSelecionado.marca.nome,
+//       modeloSelecionado: diagnostico.carroSelecionado.modelo.nome,
+//       motorSelecionado: diagnostico.carroSelecionado.motor.nome,
+//       diagnostico: diagnostico.diagnostico,
+//       solucao: diagnostico.solucao,
+//       explicacaoGeral: diagnostico.explicacaoGeral,
+//       explicacaoGeralNao: diagnostico.explicacaoGeralNao,
+//       como: diagnostico.como,
+//       evidencias: diagnostico.evidencias,
+//       triggeredRules: diagnostico.triggeredRules,
+//     };
+
+//     try {
+//       const response = await axios.post(`${getApiUrl()}/diagnostico/responder`, requestBody);
+
+//       if (response.data.estado === 'finalizado') {
+//         navigate('/conclusao', { state: { responseData: response.data } });
+//       } else if (!response.data || !response.data.carroSelecionado.marca || !response.data.carroSelecionado.hasOwnProperty("marca")) {
+//         navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
+//       } else {
+//         setDiagnostico(response.data);
+//       }
+
+//     } catch (err) {
+//       setError('Falha ao enviar resposta.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return { diagnostico, loading, error, handleAnswer };
+// };
 
 const DiagnosticoCarro = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const sistemaSelecionado = getSistemaSelecionado();
 
   const [nivelOleo, setNivelOleo] = useState(0.0);
   
@@ -17,9 +219,9 @@ const DiagnosticoCarro = () => {
 
   if (!diagnosticoData) return null;
 
-  const marca = diagnostico.carroSelecionado.marca.nome;
-  const modelo = diagnostico.carroSelecionado.modelo.nome;
-  const motor = diagnostico.carroSelecionado.motor.nome;
+  const marca = diagnostico?.carroSelecionado.marca?.nome || 'N/A';
+  const modelo = diagnostico?.carroSelecionado.modelo?.nome || 'N/A';
+  const motor = diagnostico?.carroSelecionado.motor?.nome || 'N/A';
 
   const getImagePath = () => {
     try {
@@ -34,20 +236,17 @@ const DiagnosticoCarro = () => {
 
   return (
     <Container>
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="100vh"
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
         <Card sx={{ position: 'relative', padding: 2 }}>
           <Box sx={{ position: 'absolute', top: 16, right: 16}}>
             <IconButton
               variant="contained"
               onClick={()=>navigate('/')}
               color='primary'
-              sx={{ color: 'primary', backgroundColor: 'white'}}
-            ><HomeIcon /></IconButton>
+              sx={{ color: 'primary', backgroundColor: 'white' }}
+            >
+              <HomeIcon />
+            </IconButton>
           </Box>
           <CardContent>
             <Typography variant="h4" component="h1" gutterBottom>
@@ -77,99 +276,31 @@ const DiagnosticoCarro = () => {
               </Box>
             )}
 
-            {/* {diagnostico.pergunta.includes("(Sim/Não)") && !loading && (
-              <Box sx={{ mt: 3 }}>
-                <Button 
-                  onClick={() => handleAnswer("Sim")}
-                  variant="contained"
-                  color="primary"
-                  sx={{ mr: 2 }}>
-                  Sim
-                </Button>
-                <Button 
-                  onClick={() => handleAnswer("Não")}
-                  variant="contained"
-                  color="secondary">
-                  Não
-                </Button>
-              </Box>
-            )} */}
-
             {diagnostico.pergunta && !loading && (
               <Box sx={{ mt: 3 }}>
-
-                {/* (Sim/Não) */}
                 {diagnostico.pergunta.includes("(Sim/Não)") && (
                   <>
-                    <Button
-                      onClick={() => handleAnswer("Sim")}
-                      variant="contained"
-                      color="primary"
-                      sx={{ mr: 2 }}>
-                      Sim
-                    </Button>
-                    <Button
-                      onClick={() => handleAnswer("Não")}
-                      variant="contained"
-                      color="secondary">
-                      Não
-                    </Button>
+                    <Button onClick={() => handleAnswer("Sim")} variant="contained" color="primary" sx={{ mr: 2 }}>Sim</Button>
+                    <Button onClick={() => handleAnswer("Não")} variant="contained" color="secondary">Não</Button>
                   </>
                 )}
 
-                {/* (Baixo/Alto/Normal) */}
                 {diagnostico.pergunta.includes("(Baixo/Alto/Normal)") && (
                   <>
-                    <Button
-                      onClick={() => handleAnswer("Baixo")}
-                      variant="contained"
-                      color="primary"
-                      sx={{ mr: 2 }}>
-                      Baixo
-                    </Button>
-                    <Button
-                      onClick={() => handleAnswer("Normal")}
-                      variant="contained"
-                      color="primary"
-                      sx={{ mr: 2 }}>
-                      Normal
-                    </Button>
-                    <Button
-                      onClick={() => handleAnswer("Alto")}
-                      variant="contained"
-                      color="primary">
-                      Alto
-                    </Button>
+                    <Button onClick={() => handleAnswer("Baixo")} variant="contained" color="primary" sx={{ mr: 2 }}>Baixo</Button>
+                    <Button onClick={() => handleAnswer("Normal")} variant="contained" color="primary" sx={{ mr: 2 }}>Normal</Button>
+                    <Button onClick={() => handleAnswer("Alto")} variant="contained" color="primary">Alto</Button>
                   </>
                 )}
 
-                {/* (Minimo/Maximo/Normal) */}
                 {diagnostico.pergunta.includes("(Minimo/Maximo/Normal)") && (
                   <>
-                    <Button
-                      onClick={() => handleAnswer("Minimo")}
-                      variant="contained"
-                      color="primary"
-                      sx={{ mr: 2 }}>
-                      Minimo
-                    </Button>
-                    <Button
-                      onClick={() => handleAnswer("Normal")}
-                      variant="contained"
-                      color="primary"
-                      sx={{ mr: 2 }}>
-                      Normal
-                    </Button>
-                    <Button
-                      onClick={() => handleAnswer("Maximo")}
-                      variant="contained"
-                      color="primary">
-                      Maximo
-                    </Button>
+                    <Button onClick={() => handleAnswer("Minimo")} variant="contained" color="primary" sx={{ mr: 2 }}>Minimo</Button>
+                    <Button onClick={() => handleAnswer("Normal")} variant="contained" color="primary" sx={{ mr: 2 }}>Normal</Button>
+                    <Button onClick={() => handleAnswer("Maximo")} variant="contained" color="primary">Maximo</Button>
                   </>
                 )}
                 
-                {/* "(Number.Number / Number.Number) Litros" */}
                 {diagnostico.pergunta.match(/\s+\((\d+\.\d+) \/ (\d+\.\d+)\)Litros/) && (
                   <>
                     {(() => {
@@ -179,32 +310,18 @@ const DiagnosticoCarro = () => {
 
                       return (
                         <>
-                          {/* <FloatInput min={minValue} max={maxValue} onValueChange={setNivelOleo} /> */}
                           <TextField 
                             type="number" 
                             step="0.1" 
                             min={minValue} 
                             max={maxValue} 
                             value={nivelOleo !== null ? nivelOleo : minValue}
-                            //onValueChange={setNivelOleo(parseFloat(this))} 
                             onChange={(e) => setNivelOleo(parseFloat(e.target.value))}
-                            style={{
-                              width:"100px",
-                            }}
-                            InputProps={{
-                              inputProps: {
-                                max: maxValue, 
-                                min: minValue
-                              }
-                            }}
+                            style={{ width:"100px" }}
+                            InputProps={{ inputProps: { max: maxValue, min: minValue } }}
                           />
                           
-                          <Button
-                            onClick={() => handleAnswer(nivelOleo)}
-                            variant="contained"
-                            color="primary"
-                            sx={{ ml: 2, mt: 2 }}
-                          >
+                          <Button onClick={() => handleAnswer(nivelOleo)} variant="contained" color="primary" sx={{ ml: 2, mt: 2 }}>
                             Enviar resposta
                           </Button>
                         </>
@@ -212,26 +329,13 @@ const DiagnosticoCarro = () => {
                     })()}
                   </>
                 )}
-
-                {/* Seleção de uma lista de componentes */}
+                
                 {diagnostico.pergunta.match(/Verifique os seguintes componentes\:/) && (
                   <>
                     {diagnostico.pergunta.match(/\d+/g).map((num, index) => (
-                      <Button
-                        key={index}
-                        onClick={() => handleAnswer(num)}
-                        variant="contained"
-                        color="primary"
-                        sx={{ mr: 2 }}>
+                      <Button key={index} onClick={() => handleAnswer(num)} variant="contained" color="primary" sx={{ mr: 2 }}>
                         {num}
                       </Button>
-                      // 1. Bomba de água
-                    //   <Button
-                    //   onClick={() => handleAnswer("0")}
-                    //   variant="contained"
-                    //   color="primary">
-                    //   0-Nenhum
-                    // </Button>
                     ))}
                   </>
                 )}
@@ -240,7 +344,6 @@ const DiagnosticoCarro = () => {
 
           </CardContent>
 
-          {/* DEBUG */}
           <CardContent>
             <Typography variant="body1" gutterBottom>
               JSON response:
@@ -260,7 +363,6 @@ const DiagnosticoCarro = () => {
               {JSON.stringify(diagnostico, null, 2)}
             </Box>
           </CardContent>
-
         </Card>
       </Box>
     </Container>
@@ -268,12 +370,3 @@ const DiagnosticoCarro = () => {
 };
 
 export default DiagnosticoCarro;
-
-// Opções de resposta existentes:
-// (Sim/Não)
-// (Baixo/Alto/Normal)
-// (Minimo/Maximo/Normal)
-// "Verifique os seguintes componentes:\n1. Bomba de água\n2. Alternador\n3. Compressor de ar condicionado\n4. Tensores da correia\nDigite o número correspondente ao componente com defeito, ou 0 se nenhum:"
-// (Entre " + oleoMotor.getValorMinimo() + " e " + oleoMotor.getValorMaximo() + " " + oleoMotor.getUnidade() + ")
-// Qual é o nível atual de óleo? (Entre 0.0 e 8.0 Litros)
-
