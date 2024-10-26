@@ -20,15 +20,15 @@ servidor(Port) :-
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
-:- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [methods([post, options])]).
-:- http_handler(root(responder), responder_handler, [methods([post, options])]).
+:- http_handler(root(obterNumeroCarro), http_handler_procurar_numero_carro, [methods([post, options])]).
+:- http_handler(root(responder), http_handler_responder, [methods([post, options])]).
 :- http_handler(root(porque), http_handler_porque, [method(post)]).
-:- http_handler(root(factos), factos_handler, [method(get)]).
-:- http_handler(root(factosTodos), factos_todos_handler, [method(get)]).
-:- http_handler(root(pergunta), pergunta_handler, [method(get)]).
-:- http_handler(root(como), como_handler, [method(get)]).
-:- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
-:- http_handler(root(carros), veiculos_handler, []).
+:- http_handler(root(factos), http_handler_factos, [method(get)]).
+:- http_handler(root(factosTodos), http_handler_factos_todos, [method(get)]).
+:- http_handler(root(pergunta), http_handler_pergunta, [method(get)]).
+:- http_handler(root(como), http_handler_como, [method(get)]).
+:- http_handler(root(diagnostico), http_handler_diagnostico, [method(get)]).
+:- http_handler(root(carros), http_handler_veiculos, [method(get)]).
 
 % Configuração manual dos cabeçalhos CORS
 cors_headers :-
@@ -36,12 +36,12 @@ cors_headers :-
     format('Access-Control-Allow-Methods: GET, POST, OPTIONS~n'),
     format('Access-Control-Allow-Headers: Content-Type~n').
 
-veiculos_handler(Request) :-
+http_handler_veiculos(Request) :-
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
     format('~n').
-veiculos_handler(_Request) :-
+http_handler_veiculos(_Request) :-
     cors_headers,                         % Adiciona cabeçalhos CORS à resposta normal
     veiculos_json(VeiculosJSON),
     reply_json(VeiculosJSON).
@@ -103,7 +103,7 @@ http_handler_listar_motores(Request) :-
     list_to_set(Motores, MotoresUnicos),
     reply_json(MotoresUnicos).
 	
-http_hanlder_procurar_numero_carro(Request) :-
+http_handler_procurar_numero_carro(Request) :-
 	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
@@ -111,7 +111,7 @@ http_hanlder_procurar_numero_carro(Request) :-
     format('~n').
 
 % Handler para obter número do carro
-http_hanlder_procurar_numero_carro(Request) :-
+http_handler_procurar_numero_carro(Request) :-
     cors_headers,  
     http_read_json_dict(Request, JsonIn),
     atom_string(Marca, JsonIn.marca),
@@ -234,13 +234,13 @@ procurar_carro(Numero, Carro) :-
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
 	
 
-factos_handler(_Request) :-
+http_handler_factos(_Request) :-
     % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
     findall(Descricao, (facto(_, Descricao), \+ (Descricao = proximo_teste(_, _); Descricao = diagnostico(_, _); Descricao = solucao(_, _))), Factos),
     maplist(facto_to_text, Factos, FactosJson),
     reply_json(FactosJson).
 
-factos_todos_handler(_Request) :-
+http_handler_factos_todos(_Request) :-
     % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
     findall(Descricao, facto(_, Descricao), Factos),
 	maplist(facto_to_text, Factos, FactosJson),
@@ -250,14 +250,14 @@ factos_todos_handler(_Request) :-
 facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
 	
-pergunta_handler(Request) :-
+http_handler_pergunta(Request) :-
 	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
     format('~n').
 
-pergunta_handler(_Request) :-
+http_handler_pergunta(_Request) :-
 	cors_headers,
     findall(P, facto(_, proximo_teste(_, P)), Testes),
     ( Testes = [Teste|_] ->  % Verifica se há mais testes
@@ -270,7 +270,7 @@ pergunta_handler(_Request) :-
     ).
 
 
-como_handler(_Request) :-
+http_handler_como(_Request) :-
     como_response(1, Response),
     reply_json(Response).
 
@@ -301,14 +301,14 @@ como_response(N, Response) :-
     ;   Response = []
     ).
 
-responder_handler(Request) :-
+http_handler_responder(Request) :-
 	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
     format('~n').
 
-responder_handler(Request) :-
+http_handler_responder(Request) :-
 	cors_headers,
     % Verifica se há perguntas por responder
     findall(P, facto(_, proximo_teste(_, P)), Perguntas),
@@ -340,7 +340,7 @@ responder_handler(Request) :-
         )
     ).
 
-diagnostico_handler(_Request) :-
+http_handler_diagnostico(_Request) :-
     % Filtrar factos diagnostico e solucao
     findall(D, facto(_, diagnostico(_, D)), Diagnostico),
     findall(S, facto(_, solucao(_, S)), Solucao),
