@@ -2,11 +2,9 @@
 % Geracao de explicacoes do tipo "Porque nao"
 % Exemplo: ?- whynot(classe(meu_veiculo,ligeiro)).
 whynot(Facto) :-
-	write('Teste 1'),nl,
     whynot(Facto, 1).
 
 whynot(Facto, _) :-
-	write('Teste 2'),nl,
     facto(_, Facto),
     !,
     write('O facto '), write(Facto), write(' nao e falso!'), nl.
@@ -26,12 +24,10 @@ whynot(Facto, Nivel) :-
 
 whynot(nao Facto, Nivel) :-
     formata(Nivel),
-	write('Teste 5'),nl,
     write('Porque:'), write(' O facto '), write(Facto),
     write(' e verdadeiro'), nl.
 whynot(Facto, Nivel) :-
     formata(Nivel),
-	write('Teste 6'),nl,
     write('Porque:'), write(' O facto '), write(Facto),
     write(' nao esta definido na base de conhecimento'), nl.
 

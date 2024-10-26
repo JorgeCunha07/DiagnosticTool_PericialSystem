@@ -15,13 +15,16 @@ servidor(Port) :-
 
 % Handlers para diferentes endpoints com método GET
 :- http_handler(root(escolherCarro), http_handler_escolher_carro, [method(post)]).
+:- http_handler(root(porqueNao), http_handler_whynot, [method(post)]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_hanlder_procurar_numero_carro, [method(post)]).
 :- http_handler(root(responder), responder_handler, [method(post)]).
+:- http_handler(root(porque), http_handler_porque, [method(post)]).
 :- http_handler(root(factos), factos_handler, [method(get)]).
 :- http_handler(root(pergunta), pergunta_handler, [method(get)]).
+:- http_handler(root(como), como_handler, [method(get)]).
 :- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
 
 log_message(Message) :-
@@ -77,6 +80,99 @@ http_handler_escolher_carro(Request) :-
     assertz(facto(1, proximo_teste(Numero, problemas))),
     reply_json(_{ carro_escolhido: Carro }).
 
+http_handler_porque(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    atom_string(FactoAtom, JsonIn.facto),      % Convertendo o fato JSON em átomo
+    term_to_atom(FactoTerm, FactoAtom),        % Convertendo o átomo em termo Prolog
+    porque_response(FactoTerm, Explicacao),
+    reply_json(Explicacao).
+
+porque_response(Facto, Explicacao) :-
+    (   call(facto(N, Facto))
+    ->  (N == 1
+        ->  term_to_atom(Facto, FactoAtom),
+            Explicacao = _{fato: FactoAtom, explicacao: "O facto é verdadeiro visto ser a primeira pergunta"}
+        ;   Facto =.. [_, _, Resposta],
+            NAnterior is N - 1,
+            justifica(NAnterior, ID, _),
+            call(facto(NAnterior, FactoAnterior)),
+            FactoAnterior =.. [_, _, RespostaAnterior],
+            pergunta(FactoAnterior, PerguntaAnteriorFormatada),
+            pergunta(Facto, PerguntaFormatada),
+            % Converter termos compostos em átomos para JSON
+            term_to_atom(Facto, FactoAtom),
+            term_to_atom(Resposta, RespostaAtom),
+            term_to_atom(RespostaAnterior, RespostaAnteriorAtom),
+            Explicacao = _{
+                fato: FactoAtom,
+                explicacao: "O facto é verdadeiro",
+                regra: ID,
+                resposta_anterior: RespostaAnteriorAtom,
+                pergunta_anterior: PerguntaAnteriorFormatada,
+                pergunta: PerguntaFormatada,
+                resposta: RespostaAtom
+            }
+        )
+    ;   term_to_atom(Facto, FactoAtom),
+        Explicacao = _{fato: FactoAtom, explicacao: "O facto não é verdadeiro"}
+    ).
+
+:- use_module(library(http/json)).
+:- use_module(library(http/http_dispatch)).
+:- use_module(library(http/http_json)).
+
+http_handler_whynot(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    atom_string(FactoAtom, JsonIn.facto),          % Convertendo o fato de JSON para átomo
+    term_to_atom(FactoTerm, FactoAtom),            % Convertendo o átomo para um termo Prolog
+    whynot_response(FactoTerm, 1, Explicacao),
+    reply_json(Explicacao).
+
+whynot_response(Facto, Nivel, Explicacao) :-
+    (   call(facto(_, Facto))
+    ->  term_to_atom(Facto, FactoAtom),
+        Explicacao = _{explicacao: "O facto não é falso!", fato: FactoAtom}
+    ;   encontra_regras_whynot(Facto, LLPF),
+        (   LLPF \= []
+        ->  whynot1_response(LLPF, Nivel, Explicacao)
+        ;   Nivel =:= 1
+        ->  term_to_atom(Facto, FactoAtom),
+            Explicacao = _{explicacao: "O facto não está definido na base de conhecimento", fato: FactoAtom}
+        ;   Explicacao = _{}
+        )
+    ).
+
+whynot1_response([], _, []).
+whynot1_response([(ID, LPF) | LLPF], Nivel, [Current | Rest]) :-
+    Nivel1 is Nivel + 1,
+    explica_porque_nao_response(LPF, Nivel1, ExplicacaoLista),
+    Current = _{
+        explicacao: "Porque pela regra",
+        regra_id: ID,
+        detalhes: ExplicacaoLista
+    },
+    whynot1_response(LLPF, Nivel, Rest).
+
+explica_porque_nao_response([], _, []).
+explica_porque_nao_response([nao avalia(X) | LPF], Nivel, [Current | Rest]) :-
+    term_to_atom(nao(X), CondicaoAtom),
+    Current = _{condicao: CondicaoAtom, explicacao: "A condição é falsa"},
+    explica_porque_nao_response(LPF, Nivel, Rest).
+explica_porque_nao_response([avalia(X) | LPF], Nivel, [Current | Rest]) :-
+    term_to_atom(X, CondicaoAtom),
+    Current = _{condicao: CondicaoAtom, explicacao: "A condição é falsa"},
+    explica_porque_nao_response(LPF, Nivel, Rest).
+explica_porque_nao_response([P | LPF], Nivel, [Current | Rest]) :-
+    term_to_atom(P, PremissaAtom),
+    Current = _{premissa: PremissaAtom, explicacao: "A premissa é falsa"},
+    Nivel1 is Nivel + 1,
+    whynot_response(P, Nivel1, SubExplicacao),
+    append([Current], SubExplicacao, _),
+    explica_porque_nao_response(LPF, Nivel, Rest).
+
+
+
+
 procurar_carro(Numero, Carro) :-
     carro(Numero, Marca, Modelo, Motor),
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
@@ -92,8 +188,44 @@ facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
 
 pergunta_handler(_Request) :-
-    findall(P, facto(_, proximo_teste(_, P)), Perguntas),
-    reply_json(Perguntas).
+    findall(P, facto(_, proximo_teste(_, P)), [Teste|_]),
+    functor(TesteTermo, Teste, 2),
+    pergunta(TesteTermo, Pergunta),
+    reply_json(Pergunta).
+
+
+como_handler(_Request) :-
+    como_response(1, Response),
+    reply_json(Response).
+
+como_response(N, Response) :-
+    NSeguinte is N + 1,
+    (   justifica(N, ID, _)
+    ->  facto(N, F),
+        F =.. [_, _, Regra],
+        pergunta(F, PerguntaFormatada),
+        % Transformar o termo composto em um átomo para JSON
+        term_to_atom(F, FAtom),
+        term_to_atom(Regra, RegraAtom),
+        % Criação de uma estrutura de resposta em JSON para a pergunta atual
+        Current = _{
+            pergunta: PerguntaFormatada,
+            resposta: RegraAtom,
+            fato: FAtom,
+            regra: ID
+        },
+        facto(NSeguinte, FSeguinte),
+        FSeguinte =.. [PerguntaSeguinte, _, RespostaSeguinte],
+        (   PerguntaSeguinte == diagnostico
+        ->  term_to_atom(RespostaSeguinte, DiagnosticoAtom),
+            Response = [Current, _{diagnostico: DiagnosticoAtom}]
+        ;   como_response(NSeguinte, NextResponse),
+            Response = [Current | NextResponse]
+        )
+    ;   Response = []
+    ).
+
+
         
 responder_handler(Request) :-
     % Verifica se há perguntas por responder
@@ -109,20 +241,21 @@ responder_handler(Request) :-
         (   string(JsonIn.resposta)
         ->  % Se for uma string, converter diretamente para atom
             atom_string(Resposta, JsonIn.resposta),
-            log_message("Diagnostico2.1"),
-            diagnostico2(Resposta),
-            !  % Parar a execução aqui
+            % Chamar diagnostico2/1 após responder
+            catch(diagnostico2(Resposta), Erro,
+                    log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   number(JsonIn.resposta)
         ->  % Se for um número, atribuir diretamente
             Resposta = JsonIn.resposta,
-            log_message("Diagnostico2.2"),
-            diagnostico2(Resposta),
-            !  % Parar a execução aqui
+            % Chamar diagnostico2/1 após responder
+            catch(diagnostico2(Resposta), Erro,
+                    log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   % Se não for nem string nem número, falhar com uma mensagem de erro
             reply_json(_{status: "erro", message: "O campo 'resposta' deve ser string ou número"}),
             fail  % Usar fail para parar a execução neste caso
         )
     ).
+
 
 diagnostico_handler(_Request) :-
     % Filtrar factos diagnostico e solucao
@@ -133,6 +266,8 @@ diagnostico_handler(_Request) :-
         solucao: Solucao
     },
     reply_json(Resposta).
+	
+
 
 % Utilidade para começar o servidor na porta 8080 (pode ser ajustada)
 :- servidor(8080).
