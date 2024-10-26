@@ -29,10 +29,6 @@ servidor(Port) :-
 :- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
 :- http_handler(root(carros), veiculos_handler, []).
 
-:- use_module(library(http/json)).
-:- use_module(library(http/http_dispatch)).
-:- use_module(library(http/http_json)).
-
 % Configuração manual dos cabeçalhos CORS
 cors_headers :-
     format('Access-Control-Allow-Origin: http://localhost:3000~n'),
@@ -46,36 +42,35 @@ veiculos_handler(Request) :-
     format('~n').
 veiculos_handler(_Request) :-
     cors_headers,                         % Adiciona cabeçalhos CORS à resposta normal
-    findall(VeiculoJson, veiculo_json(VeiculoJson), Veiculos),
-    reply_json(Veiculos).
+    veiculos_json(VeiculosJSON),
+    reply_json(VeiculosJSON).
 
-% Gera o JSON para cada veículo
-veiculo_json(_{
-    marca: _{nome: Marca},
-    modelo: _{nome: Modelo},
-    motor: _{nome: Motor},
-    componentes: Componentes
-}) :-
+% Define a lista de todos os veículos em JSON.
+veiculos_json(Veiculos) :-
+    findall(Veiculo, veiculo_json(Veiculo), Veiculos).
+
+% Cria o JSON de cada veículo com os componentes em formato de lista de pares.
+veiculo_json(_{marca: _{nome: Marca}, modelo: _{nome: Modelo}, motor: _{nome: Motor}, componentes: Componentes}) :-
     carro(Id, Marca, Modelo, Motor),
     componentes_json(Id, Componentes).
 
-% Cria a lista JSON dos componentes de cada veículo
+% Obtém todos os componentes para o veículo específico.
 componentes_json(Id, [
-    _{nome: "Bateria", valorMinimo: 0.0, valorMaximo: 80.0, valorMinimoIdeal: MinBateria, valorMaximoIdeal: MaxBateria, unidade: "Ah"},
-    _{nome: "Líquido de Arrefecimento", valorMinimo: 0.0, valorMaximo: 10.0, valorMinimoIdeal: MinArrefecimento, valorMaximoIdeal: MaxArrefecimento, unidade: "Litros"},
-    _{nome: "Óleo do Motor", valorMinimo: 0.0, valorMaximo: 8.0, valorMinimoIdeal: MinOleo, valorMaximoIdeal: MaxOleo, unidade: "Litros"},
-    _{nome: "Fluido de Travão", valorMinimo: 0.0, valorMaximo: 1.2, valorMinimoIdeal: MinTravao, valorMaximoIdeal: MaxTravao, unidade: "Litros"},
-    _{nome: "Fluido de Transmissão", valorMinimo: 0.0, valorMaximo: 3.0, valorMinimoIdeal: MinTransmissao, valorMaximoIdeal: MaxTransmissao, unidade: "Litros"},
-    _{nome: "Motor de Arranque", valorMinimo: 0.0, valorMaximo: 3.0, valorMinimoIdeal: MinArranque, valorMaximoIdeal: MaxArranque, unidade: "kW"},
-    _{nome: "Bloco de Motor", valorMinimo: 0.0, valorMaximo: 120.0, valorMinimoIdeal: MinBloco, valorMaximoIdeal: MaxBloco, unidade: "C"}
+    _{nome: "motor_arranque", min: MinA, max: MaxA, unidade: "V"},
+    _{nome: "bloco_motor", min: MinB, max: MaxB, unidade: "HP"},
+    _{nome: "bateria", min: MinC, max: MaxC, unidade: "Ah"},
+    _{nome: "liquido_arrefecimento", min: MinD, max: MaxD, unidade: "L"},
+    _{nome: "oleo_motor", min: MinE, max: MaxE, unidade: "L"},
+    _{nome: "fluido_travao", min: MinF, max: MaxF, unidade: "L"},
+    _{nome: "fluido_transmissao", min: MinG, max: MaxG, unidade: "L"}
 ]) :-
-    bateria(Id, MinBateria, MaxBateria),
-    liquido_arrefecimento(Id, MinArrefecimento, MaxArrefecimento),
-    oleo_motor(Id, MinOleo, MaxOleo),
-    fluido_travao(Id, MinTravao, MaxTravao),
-    fluido_transmissao(Id, MinTransmissao, MaxTransmissao),
-    motor_arranque(Id, MinArranque, MaxArranque),
-    bloco_motor(Id, MinBloco, MaxBloco).
+    motor_arranque(Id, MinA, MaxA),
+    bloco_motor(Id, MinB, MaxB),
+    bateria(Id, MinC, MaxC),
+    liquido_arrefecimento(Id, MinD, MaxD),
+    oleo_motor(Id, MinE, MaxE),
+    fluido_travao(Id, MinF, MaxF),
+    fluido_transmissao(Id, MinG, MaxG).
 
 
 log_message(Message) :-
