@@ -25,7 +25,7 @@ servidor(Port) :-
 :- http_handler(root(porque), http_handler_porque, [method(post)]).
 :- http_handler(root(factos), factos_handler, [method(get)]).
 :- http_handler(root(factosTodos), factos_todos_handler, [method(get)]).
-:- http_handler(root(pergunta), pergunta_handler, [methods([post, options])]).
+:- http_handler(root(pergunta), pergunta_handler, [method(get)]).
 :- http_handler(root(como), como_handler, [method(get)]).
 :- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
 :- http_handler(root(carros), veiculos_handler, []).
