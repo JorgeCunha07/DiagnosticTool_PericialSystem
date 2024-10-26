@@ -10,17 +10,20 @@ como(N) :-
             % unifica o F
             F =.. [_, _, Regra],
             pergunta(F, PerguntaFormatada),
-            write('pergunta ao utilizador: '), write(PerguntaFormatada), nl,
-            write('ao qual o mesmo respondeu: '), write(Regra), nl,
-            write('concluindo-se o facto numero '), write(N), write(' -> '), write(F), nl,
-            write('disparando assim a regra '), write(ID),
+            write('Pergunta: '), write(PerguntaFormatada), nl,
+            write('Resposta: '), write(Regra), nl,
+            write('gerou o facto numero '), write(N), write(' -> '), write(F), nl,
+            write('disparando assim a regra '), write(ID), nl,
             % proximo facto
             facto(NSeguinte, FSeguinte),
             FSeguinte =.. [PerguntaSeguinte, _, RespostaSeguinte],
             % caso o proximo facto seja diagnostico o "como" acaba
-            ( PerguntaSeguinte == diagnostico
-                -> write(' que gerou o seguinte diagnostico: '), write(RespostaSeguinte)
-                ;  write(' criando a seguinte '), como(NSeguinte)
-            )
+            continua_como(NSeguinte, PerguntaSeguinte, RespostaSeguinte)
         ;   !
     ).
+
+% caso o proximo facto seja diagnostico o "como" acaba
+continua_como(NSeguinte, PerguntaSeguinte, RespostaSeguinte):-
+    PerguntaSeguinte == diagnostico
+        -> write('Diagnostico: '), write(RespostaSeguinte)
+        ;  como(NSeguinte).
