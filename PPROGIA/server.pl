@@ -246,7 +246,8 @@ pergunta_handler(_Request) :-
     findall(P, facto(_, proximo_teste(_, P)), [Teste|_]),
     functor(TesteTermo, Teste, 2),
     pergunta(TesteTermo, Pergunta),
-    reply_json(_{pergunta: Pergunta}).
+	opcoes_validas(TesteTermo, OpcoesValidas),
+    reply_json(json{pergunta: Pergunta, respostas: OpcoesValidas}).
 
 como_handler(_Request) :-
     como_response(1, Response),
