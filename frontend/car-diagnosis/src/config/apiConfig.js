@@ -1,12 +1,25 @@
 // const API_URL = 'http://localhost:8080/api';
 
 // export default API_URL;
-let API_URL = 'http://localhost:8080/api';
+// let API_URL = 'http://localhost:8080/api';
 
-export const setApiUrl = (url) => {
+// export const setApiUrl = (url) => {
+//     API_URL = url;
+// };
+
+// export const getApiUrl = () => API_URL;
+
+// export default API_URL;
+
+let API_URL = 'http://localhost:8080/api';
+let sistemaSelecionado = 'Drools';
+
+export const setApiUrl = (url, identifier) => {
     API_URL = url;
+    sistemaSelecionado = identifier;
 };
 
 export const getApiUrl = () => API_URL;
+export const getSistemaSelecionado = () => sistemaSelecionado;
 
 export default API_URL;

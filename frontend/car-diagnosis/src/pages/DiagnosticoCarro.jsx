@@ -2,11 +2,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import { Alert, Box, Button, Card, CardContent, CircularProgress, Container, IconButton, TextField, Typography } from "@mui/material";
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getSistemaSelecionado } from '../config/apiConfig';
 import useDiagnostico from '../hooks/useDiagnostico';
 
 const DiagnosticoCarro = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const sistemaSelecionado = getSistemaSelecionado();
 
   const [nivelOleo, setNivelOleo] = useState(0.0);
   
@@ -49,7 +51,7 @@ const DiagnosticoCarro = () => {
           </Box>
           <CardContent>
             <Typography variant="h4" component="h1" gutterBottom>
-              Questionário Diagnóstico
+              Questionário Diagnóstico: {sistemaSelecionado}
             </Typography>
 
             <Typography variant="h6" component="h2">

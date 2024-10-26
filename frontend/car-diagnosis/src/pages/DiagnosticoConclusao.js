@@ -5,12 +5,14 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardContent, Container, Grid, IconButton, List, ListItem, Typography } from '@mui/material';
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getSistemaSelecionado } from '../config/apiConfig';
 import useConclusao from '../hooks/useConclusao';
 import { generatePDF } from '../utils/pdfConclusao';
 
 const ConclusionPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const sistemaSelecionado = getSistemaSelecionado();
   const { responseData } = location.state || {};
 
   const diagnostico = responseData?.diagnostico || 'N/A';
@@ -67,7 +69,7 @@ const ConclusionPage = () => {
           </Box>
           <CardContent>
             <Typography variant="h4" gutterBottom>
-              Diagnóstico Concluído
+              Diagnóstico Concluído: {sistemaSelecionado}
             </Typography>
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>

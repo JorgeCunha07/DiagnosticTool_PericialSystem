@@ -6,9 +6,9 @@ import { setApiUrl } from '../config/apiConfig';
 const Home = () => {
     const navigate = useNavigate();
 
-    const handleApiSelection = (apiUrl) => {
-        setApiUrl(apiUrl);
-        navigate('/selecao'); // pagina de selecao do carro
+    const handleApiSelection = (apiUrl, identifier) => {
+        setApiUrl(apiUrl, identifier);
+        navigate('/selecao');  // pagina de selecao do carro
     };
     
     return (
@@ -19,7 +19,7 @@ const Home = () => {
             <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleApiSelection('http://localhost:8080/api')} // Drools
+                onClick={() => handleApiSelection('http://localhost:8080/api', 'Drools')}
                 sx={{ margin: '10px' }}
             >
                 Drools
@@ -27,7 +27,7 @@ const Home = () => {
             <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => handleApiSelection('https://localhost:4040')} // PROLOG
+                onClick={() => handleApiSelection('https://localhost:4040', 'PROLOG')}
                 sx={{ margin: '10px' }}
             >
                 PROLOG
@@ -37,3 +37,4 @@ const Home = () => {
 };
 
 export default Home;
+

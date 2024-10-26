@@ -3,9 +3,11 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Gauge from "../components/Gauge";
 import TituloLinha from "../components/TituloLinha";
+import { getSistemaSelecionado } from '../config/apiConfig';
 import useSelecao from '../hooks/useSelecao';
 
 const SelecaoCarro = () => {
+  const sistemaSelecionado = getSistemaSelecionado();
   const navigate = useNavigate();
   const {
     marcas,
@@ -42,7 +44,7 @@ const SelecaoCarro = () => {
         <Card sx={{ maxWidth: 900 }}>
           <CardContent padding={2}>
             <Typography variant="h4" component="h1" gutterBottom>
-              Diagnóstico de Carro
+              Diagnóstico de Carro: {sistemaSelecionado}
             </Typography>
             <TituloLinha title="Selecione o Carro" lineColor="white" icon="DirectionsCar" position="13px" />
             <Grid 
