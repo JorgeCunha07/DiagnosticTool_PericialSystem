@@ -24,6 +24,7 @@ servidor(Port) :-
 :- http_handler(root(responder), responder_handler, [method(post)]).
 :- http_handler(root(porque), http_handler_porque, [method(post)]).
 :- http_handler(root(factos), factos_handler, [method(get)]).
+:- http_handler(root(factosTodos), factos_todos_handler, [method(get)]).
 :- http_handler(root(pergunta), pergunta_handler, [method(get)]).
 :- http_handler(root(como), como_handler, [method(get)]).
 :- http_handler(root(diagnostico), diagnostico_handler, [method(get)]).
@@ -131,6 +132,7 @@ http_handler_escolher_carro(Request) :-
     format('~n').
 	
 http_handler_escolher_carro(Request) :-
+    cors_headers,
     http_read_json_dict(Request, JsonIn),
     Numero = JsonIn.numero,
     procurar_carro(Numero, Carro),
@@ -236,6 +238,12 @@ factos_handler(_Request) :-
     % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
     findall(Descricao, (facto(_, Descricao), \+ (Descricao = proximo_teste(_, _); Descricao = diagnostico(_, _); Descricao = solucao(_, _))), Factos),
     maplist(facto_to_text, Factos, FactosJson),
+    reply_json(FactosJson).
+
+factos_todos_handler(_Request) :-
+    % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
+    findall(Descricao, facto(_, Descricao), Factos),
+	maplist(facto_to_text, Factos, FactosJson),
     reply_json(FactosJson).
 
 % Converter cada facto para texto sem mutação
