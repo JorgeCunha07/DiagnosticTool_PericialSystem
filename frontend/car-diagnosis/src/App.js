@@ -5,7 +5,9 @@ import './App.css';
 import DiagnosticoCarro from './pages/DiagnosticoCarro';
 import DiagnosticoConclusao from './pages/DiagnosticoConclusao';
 import DiagnosticoErro from './pages/DiagnosticoErro';
+import Home from './pages/Home';
 import SelecaoCarro from './pages/SelecaoCarro';
+
 
 const darkTheme = createTheme({
   palette: {
@@ -31,7 +33,8 @@ function App() {
         <Router>
           <Routes>
             {/* <Route path="/" element={<IdentificacaoUsuario />} /> */}
-            <Route path="/" element={<SelecaoCarro />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/selecao" element={<SelecaoCarro />} />
             <Route path="/diagnostico" element={<DiagnosticoCarro />} />
             <Route path="/error" element={<DiagnosticoErro />} />
             <Route path="/conclusao" element={<DiagnosticoConclusao />} />

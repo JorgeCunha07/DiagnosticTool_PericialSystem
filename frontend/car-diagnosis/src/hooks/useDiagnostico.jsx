@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API_URL from '../config/apiConfig';
+//import API_URL from '../config/apiConfig';
+import { getApiUrl } from '../config/apiConfig';
 
 const useDiagnostico = (initialData) => {
   const [diagnostico, setDiagnostico] = useState(initialData);
@@ -30,7 +31,8 @@ const useDiagnostico = (initialData) => {
     };
 
     try {
-      const response = await axios.post(`${API_URL}/diagnostico/responder`, requestBody);
+      const response = await axios.post(`${getApiUrl()}/diagnostico/responder`, requestBody);
+      //const response = await axios.post(`${API_URL}/diagnostico/responder`, requestBody);
 
       if (response.data.estado === 'finalizado') {
         navigate('/conclusao', { state: { responseData: response.data } });
