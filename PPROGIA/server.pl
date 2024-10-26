@@ -15,7 +15,7 @@ servidor(Port) :-
 :- consult("escolha_carro.pl").
 
 % Handlers para diferentes endpoints com método GET
-:- http_handler(root(diagnostico/iniciar), http_handler_escolher_carro, [methods([post, options])]).
+:- http_handler(root(selecionarCarro), http_handler_escolher_carro, [methods([post, options])]).
 :- http_handler(root(porqueNao), http_handler_whynot, [method(post)]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
@@ -72,7 +72,6 @@ componentes_json(Id, [
     fluido_travao(Id, MinF, MaxF),
     fluido_transmissao(Id, MinG, MaxG).
 
-
 log_message(Message) :-
     open('server.log', append, Stream),
     get_time(TimeStamp),
@@ -124,43 +123,15 @@ http_handler_escolher_carro(Request) :-
     format('~n').
 	
 http_handler_escolher_carro(Request) :-
-    cors_headers,   
-	log_message('Teste 1'),
     http_read_json_dict(Request, JsonIn),
-	log_message('Teste 2'),
-    atom_string(Marca, JsonIn.marca.nome),
-	log_message('Carro selecionado: ' + Marca),
-    atom_string(Modelo, JsonIn.modelo.nome),
-	atom_string(Motor, JsonIn.motor.nome),
-    procurar_carro(Marca, Modelo, Motor, Carro, Numero),
+    Numero = JsonIn.numero,
+    procurar_carro(Numero, Carro),
     log_message('Carro selecionado: ' + Carro),
     retractall(carro_selecionado(_)),
     assertz(carro_selecionado(Carro)),
     retractall(facto(_, _)),
     assertz(facto(1, proximo_teste(Numero, problemas))),
-    reply_json(_{
-        texto: "Diagnóstico iniciado.",
-        estado: "esperaRespostaProblemaInicial",
-        pergunta: "O carro apresenta algum problema? (Sim/Não)",
-  		carroSelecionado: {
-        marca: {
-            nome: Marca
-        },
-        modelo: {
-            nome: Modelo
-        },
-        motor: {
-            nome: Motor
-        }},
-        diagnostico: null,
-        solucao: null,
-        explicacaoGeral: null,
-        explicacaoGeralNao: null,
-        como: null,
-        evidencias: [],
-        triggeredRules: ["D01: Start Diagnostic"],
-        diagnosticoConcluido: false
-    }).
+    reply_json(_{ carro_escolhido: Carro }).
 
 http_handler_porque(Request) :-
     http_read_json_dict(Request, JsonIn),
@@ -248,10 +219,7 @@ explica_porque_nao_response([P | LPF], Nivel, [Current | Rest]) :-
     append([Current], SubExplicacao, _),
     explica_porque_nao_response(LPF, Nivel, Rest).
 
-
-
-
-procurar_carro(Marca, Modelo, Motor, Carro, Numero) :-
+procurar_carro(Numero, Carro) :-
     carro(Numero, Marca, Modelo, Motor),
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
 	
@@ -270,8 +238,7 @@ pergunta_handler(_Request) :-
     findall(P, facto(_, proximo_teste(_, P)), [Teste|_]),
     functor(TesteTermo, Teste, 2),
     pergunta(TesteTermo, Pergunta),
-    reply_json(Pergunta).
-
+    reply_json(_{pergunta: Pergunta}).
 
 como_handler(_Request) :-
     como_response(1, Response),
@@ -303,8 +270,6 @@ como_response(N, Response) :-
         )
     ;   Response = []
     ).
-
-
         
 responder_handler(Request) :-
     % Verifica se há perguntas por responder
@@ -320,12 +285,14 @@ responder_handler(Request) :-
         (   string(JsonIn.resposta)
         ->  % Se for uma string, converter diretamente para atom
             atom_string(Resposta, JsonIn.resposta),
+            reply_json(_{status: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
             catch(diagnostico2(Resposta), Erro,
                     log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   number(JsonIn.resposta)
         ->  % Se for um número, atribuir diretamente
             Resposta = JsonIn.resposta,
+            reply_json(_{status: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
             catch(diagnostico2(Resposta), Erro,
                     log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
@@ -334,7 +301,6 @@ responder_handler(Request) :-
             fail  % Usar fail para parar a execução neste caso
         )
     ).
-
 
 diagnostico_handler(_Request) :-
     % Filtrar factos diagnostico e solucao
