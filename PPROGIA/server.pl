@@ -323,19 +323,19 @@ responder_handler(Request) :-
         (   string(JsonIn.resposta)
         ->  % Se for uma string, converter diretamente para atom
             atom_string(Resposta, JsonIn.resposta),
-            reply_json(_{status: "OK", message: "Respondido"}),
+            reply_json(_{estado: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
             catch(diagnostico2(Resposta), Erro,
                     log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   number(JsonIn.resposta)
         ->  % Se for um número, atribuir diretamente
             Resposta = JsonIn.resposta,
-            reply_json(_{status: "OK", message: "Respondido"}),
+            reply_json(_{estado: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
             catch(diagnostico2(Resposta), Erro,
                     log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   % Se não for nem string nem número, falhar com uma mensagem de erro
-            reply_json(_{status: "erro", message: "O campo 'resposta' deve ser string ou número"}),
+            reply_json(_{estado: "erro", message: "O campo 'resposta' deve ser string ou número"}),
             fail  % Usar fail para parar a execução neste caso
         )
     ).
