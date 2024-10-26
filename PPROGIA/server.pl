@@ -123,7 +123,6 @@ http_hanlder_procurar_numero_carro(Request) :-
     ;   reply_json(_{ error: 'Carro não encontrado' }, [status(404)])
     ).
 
-
 http_handler_escolher_carro(Request) :-
 	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
@@ -251,11 +250,16 @@ facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
 
 pergunta_handler(_Request) :-
-    findall(P, facto(_, proximo_teste(_, P)), [Teste|_]),
-    functor(TesteTermo, Teste, 2),
-    pergunta(TesteTermo, Pergunta),
-	opcoes_validas(TesteTermo, OpcoesValidas),
-    reply_json(json{pergunta: Pergunta, respostas: OpcoesValidas}).
+    findall(P, facto(_, proximo_teste(_, P)), Testes),
+    ( Testes = [Teste|_] ->  % Verifica se há mais testes
+        functor(TesteTermo, Teste, 2),
+        pergunta(TesteTermo, Pergunta),
+        opcoes_validas(TesteTermo, OpcoesValidas),
+        reply_json(json{pergunta: Pergunta, respostas: OpcoesValidas, estado: "ongoing"})
+    ;   % Caso não haja mais perguntas
+        reply_json(json{estado: "finalizado"})
+    ).
+
 
 como_handler(_Request) :-
     como_response(1, Response),
@@ -295,7 +299,7 @@ responder_handler(Request) :-
     
     (   N = 0
     ->  % Se a lista está vazia, retornar erro
-        reply_json(_{status: "erro", message: "Não há perguntas para responder"})
+	    reply_json(_{estado: "finalizado", message: "Não há perguntas para responder"})
     ;   % Caso contrário, continuar
         http_read_json_dict(Request, JsonIn),
         
