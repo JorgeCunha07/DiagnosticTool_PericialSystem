@@ -179,7 +179,7 @@ avalia(N, P) :-
     P =.. [Functor, Entidade, Operando, MinOuMax],
     P1 =.. [Functor, Entidade, ValorReal],
     facto(N, P1),
-    P2 =.. [Functor, Entidade, ValorMin, ValorMax],
+    P2 =.. [Functor, Entidade, ValorMin, ValorMax, _],
     call(P2),
     ( MinOuMax == 'Min' -> Valor = ValorMin ; Valor = ValorMax ),
     compara(ValorReal, Operando, Valor).
