@@ -144,6 +144,14 @@ http_handler_escolher_carro(Request) :-
     reply_json(_{ carro_escolhido: Carro }).
 
 http_handler_porque(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
+
+http_handler_porque(Request) :-
+	cors_headers,
     http_read_json_dict(Request, JsonIn),
     atom_string(FactoAtom, JsonIn.facto),      % Convertendo o fato JSON em átomo
     term_to_atom(FactoTerm, FactoAtom),        % Convertendo o átomo em termo Prolog
@@ -179,8 +187,16 @@ porque_response(Facto, Explicacao) :-
     ;   term_to_atom(Facto, FactoAtom),
         Explicacao = _{fato: FactoAtom, explicacao: "O facto não é verdadeiro"}
     ).
+	
+http_handler_whynot(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
 
 http_handler_whynot(Request) :-
+	cors_headers,
     http_read_json_dict(Request, JsonIn),
     atom_string(FactoAtom, JsonIn.facto),          % Convertendo o fato de JSON para átomo
     term_to_atom(FactoTerm, FactoAtom),            % Convertendo o átomo para um termo Prolog
@@ -268,9 +284,16 @@ http_handler_pergunta(_Request) :-
     ;   % Caso não haja mais perguntas
         reply_json(json{estado: "finalizado"})
     ).
-
+	
+http_handler_como(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
 
 http_handler_como(_Request) :-
+    cors_headers, 
     como_response(1, Response),
     reply_json(Response).
 
@@ -339,8 +362,16 @@ http_handler_responder(Request) :-
             fail  % Usar fail para parar a execução neste caso
         )
     ).
+	
+http_handler_diagnostico(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
 
 http_handler_diagnostico(_Request) :-
+	cors_headers,
     % Filtrar factos diagnostico e solucao
     findall(D, facto(_, diagnostico(_, D)), Diagnostico),
     findall(S, facto(_, solucao(_, S)), Solucao),
