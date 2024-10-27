@@ -4,10 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.dei.facts.How;
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
+import org.dei.facts.parser.DiagnosticPath;
 import org.dei.whynot.DroolsWithWhyNot;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -16,6 +19,19 @@ public class DiagnosticService {
     private KieSession diagSession;
     private FactHandle respostaHandle;
     private DroolsWithWhyNot drools;
+    private final DiagnosticParserService diagnosticParserService;
+
+    public DiagnosticService(DiagnosticParserService diagnosticParserService) {
+        this.diagnosticParserService = diagnosticParserService;
+    }
+
+
+    // Métodos para obter os caminhos de diagnóstico
+    public List<DiagnosticPath> obterDiagnosticPaths() {
+        String filePath = "src/main/resources/org/dei/diagnostic.drl";
+        diagnosticParserService.processDiagnosticFile(filePath);
+        return diagnosticParserService.getDiagnosticPaths();
+    }
 
     // Inicializa o diagnóstico e retorna a primeira pergunta
     public Resposta iniciarDiagnostico(Carro selectedCar) {
@@ -105,4 +121,8 @@ public class DiagnosticService {
             return null;
         }
     }
+
+
+
+
 }

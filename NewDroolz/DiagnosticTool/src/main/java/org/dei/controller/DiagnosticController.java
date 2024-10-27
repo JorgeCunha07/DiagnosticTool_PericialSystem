@@ -3,10 +3,12 @@ package org.dei.controller;
 import org.dei.facts.Resposta;
 import org.dei.facts.Why;
 import org.dei.facts.model.Carro;
+import org.dei.facts.parser.DiagnosticPath;
 import org.dei.service.DiagnosticService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -44,4 +46,10 @@ public class DiagnosticController {
         return ResponseEntity.badRequest().body("Nenhuma evidência encontrada para determinar a pergunta anterior.");
     }
 
+    // Novo endpoint para obter caminhos de diagnóstico
+    @GetMapping("/caminhosDiagnostico")
+    public ResponseEntity<List<DiagnosticPath>> obterCaminhosDiagnostico() {
+        List<DiagnosticPath> diagnosticPaths = diagnosticService.obterDiagnosticPaths();
+        return ResponseEntity.ok(diagnosticPaths);
+    }
 }

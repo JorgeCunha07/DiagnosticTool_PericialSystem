@@ -1,6 +1,6 @@
 package org.dei.controller;
 
-import org.dei.ImportFile;
+import org.dei.facts.parser.ImportFile;
 import org.dei.facts.Resposta;
 import org.dei.facts.model.Carro;
 import org.dei.service.CarSelectionService;

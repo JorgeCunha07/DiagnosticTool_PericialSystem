@@ -1,4 +1,4 @@
-package org.dei;
+package org.dei.facts.parser;
 
 import org.dei.facts.model.*;
 
