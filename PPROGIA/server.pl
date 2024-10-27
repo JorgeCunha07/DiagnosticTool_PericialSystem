@@ -28,6 +28,7 @@ servidor(Port) :-
 :- http_handler(root(pergunta), http_handler_pergunta, [method(get)]).
 :- http_handler(root(como), http_handler_como, [method(get)]).
 :- http_handler(root(diagnostico), http_handler_diagnostico, [method(get)]).
+:- http_handler(root(diagnosticoPossiveis), http_handler_diagnostico_possiveis, [method(get)]).
 :- http_handler(root(carros), http_handler_veiculos, [method(get)]).
 
 % Configuração manual dos cabeçalhos CORS
@@ -380,6 +381,22 @@ http_handler_diagnostico(_Request) :-
         solucao: Solucao
     },
     reply_json(Resposta).
+	
+http_handler_diagnostico_possiveis(Request) :-
+	log_message('cors_headers'),
+    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    !,                                    
+    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    format('~n').
+
+http_handler_diagnostico_possiveis(_Request) :-
+	cors_headers,
+    listar_diagnosticos_possiveis(Diagnosticos),        % Chama o predicado para obter os diagnósticos
+    prolog_to_json(Diagnosticos, DiagnosticosJSON),     % Converte para JSON
+    reply_json(DiagnosticosJSON).                       % Envia a resposta JSON
+
+% Converte a lista de diagnósticos para um formato JSON
+prolog_to_json(Lista, json{diagnosticos: Lista}).
 	
 % Utilidade para começar o servidor na porta 8080 (pode ser ajustada)
 :- servidor(4040).
