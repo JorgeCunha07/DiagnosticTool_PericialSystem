@@ -6,8 +6,8 @@ import { setApiUrl } from '../config/apiConfig';
 const Home = () => {
     const navigate = useNavigate();
 
-    const handleApiSelection = (apiUrl, identifier) => {
-        setApiUrl(apiUrl, identifier);
+    const handleApiSelection = (identifier) => {
+        setApiUrl(identifier);
         navigate('/selecao');
     };
 
@@ -16,13 +16,13 @@ const Home = () => {
     return (
         <Container sx={{ width: '1000px', margin: 'auto', padding: '20px' }}>
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-                <Card sx={{ width: 500, height: 400, padding: 2 }}>
+                <Card sx={{ width: 500, height: 360, padding: 5 }}>
                     <CardContent>
                         <Typography
                             variant="h4"
                             component="h1"
                             sx={{
-                                height: img_tamanho
+                                height: "80px"
                             }}
                             gutterBottom
                         >
@@ -32,18 +32,18 @@ const Home = () => {
                         <Box display="flex" justifyContent="center" gap={4}>
                             <Box display="flex" flexDirection="column" alignItems="center">
                                 <ButtonBase
-                                    onClick={() => handleApiSelection('Drools', 'Drools')}
+                                    onClick={() => handleApiSelection('Drools')}
                                     sx={{
                                         borderRadius: '50%',
                                         height: img_tamanho,
                                         width: img_tamanho,
                                         display: 'flex',
-                                        position: 'relative', // Needed for shadow
+                                        position: 'relative',
                                         '&:hover': {
                                             //border: '5px solid black',
-                                            filter: 'grayscale(100%) hue-rotate(210deg)', // Blue scale effect
-                                            transition: 'filter 0.3s ease, box-shadow 0.3s ease', // Add transition for box-shadow
-                                            boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.5)', // Dropdown shadow
+                                            filter: 'grayscale(100%)',
+                                            transition: 'filter 0.3s ease, box-shadow 0.3s ease',
+                                            boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.5)',
                                         },
                                     }}
                                 >
@@ -53,9 +53,9 @@ const Home = () => {
                                         height={img_tamanho}
                                         style={{
                                             padding: "10px",
-                                            borderRadius: '50%', // Make the image circular
-                                            objectFit: 'cover',   // Cover to maintain aspect ratio
-                                            transition: 'filter 0.3s ease', // Ensure image filter transitions smoothly
+                                            borderRadius: '50%',
+                                            objectFit: 'cover',
+                                            transition: 'filter 0.3s ease',
                                         }}
                                     />
                                 </ButtonBase>
@@ -66,16 +66,16 @@ const Home = () => {
 
                             <Box display="flex" flexDirection="column" alignItems="center">
                                 <ButtonBase
-                                    onClick={() => handleApiSelection('PROLOG', 'PROLOG')}
+                                    onClick={() => handleApiSelection('PROLOG')}
                                     sx={{
                                         borderRadius: '50%',
                                         display: 'flex',
-                                        position: 'relative', // Needed for shadow
+                                        position: 'relative',
                                         '&:hover': {
                                             //border: '5px solid black',
-                                            filter: 'grayscale(100%) hue-rotate(210deg)', // Blue scale effect
-                                            transition: 'filter 0.3s ease, box-shadow 0.3s ease', // Add transition for box-shadow
-                                            boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.5)', // Dropdown shadow
+                                            filter: 'grayscale(100%) hue-rotate(210deg)',
+                                            transition: 'filter 0.3s ease, box-shadow 0.3s ease',
+                                            boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.5)',
                                         },
                                     }}
                                 >
@@ -85,9 +85,9 @@ const Home = () => {
                                         height={img_tamanho}
                                         style={{
                                             padding: "10px",
-                                            borderRadius: '50%', // Make the image circular
-                                            objectFit: 'cover',   // Cover to maintain aspect ratio
-                                            transition: 'filter 0.3s ease', // Ensure image filter transitions smoothly
+                                            borderRadius: '50%',
+                                            objectFit: 'cover',
+                                            transition: 'filter 0.3s ease',
                                         }}
                                     />
                                 </ButtonBase>

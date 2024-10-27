@@ -22,7 +22,7 @@ servidor(Port) :-
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_handler_procurar_numero_carro, [methods([post, options])]).
 :- http_handler(root(responder), http_handler_responder, [methods([post, options])]).
-:- http_handler(root(porque), http_handler_porque, [method(post)]).
+:- http_handler(root(porque), http_handler_porque, [methods([post, options])]).
 :- http_handler(root(factos), http_handler_factos, [method(get)]).
 :- http_handler(root(factosTodos), http_handler_factos_todos, [method(get)]).
 :- http_handler(root(pergunta), http_handler_pergunta, [method(get)]).
