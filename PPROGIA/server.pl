@@ -16,7 +16,7 @@ servidor(Port) :-
 
 % Handlers para diferentes endpoints com método GET
 :- http_handler(root(selecionarCarro), http_handler_escolher_carro, [methods([post, options])]).
-:- http_handler(root(porqueNao), http_handler_whynot, [method(post)]).
+:- http_handler(root(porqueNao), http_handler_whynot, [methods([post, options])]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
@@ -26,7 +26,7 @@ servidor(Port) :-
 :- http_handler(root(factos), http_handler_factos, [method(get)]).
 :- http_handler(root(factosTodos), http_handler_factos_todos, [method(get)]).
 :- http_handler(root(pergunta), http_handler_pergunta, [method(get)]).
-:- http_handler(root(como), http_handler_como, [method(get)]).
+:- http_handler(root(como), http_handler_como, [methods([get, options])]).
 :- http_handler(root(diagnostico), http_handler_diagnostico, [method(get)]).
 :- http_handler(root(diagnosticoPossiveis), http_handler_diagnostico_possiveis, [method(get)]).
 :- http_handler(root(carros), http_handler_veiculos, [method(get)]).
