@@ -128,19 +128,37 @@ public class DiagnosticParser {
         }
     }
 
-    public void traverseGraph(StateNode currentNode, List<String> path, List<DiagnosticPath> diagnosticPaths, Set<String> visited, String diagnosis) {
-        if (visited.contains(currentNode.estadoName)) return;
-        visited.add(currentNode.estadoName);
-        path.add(currentNode.estadoName);
-        if (currentNode.isDiagnosisState()) diagnosis = currentNode.getDiagnosis();
-        if (currentNode.estadoName.equals("finalizado") && diagnosis != null) {
-            diagnosticPaths.add(new DiagnosticPath(diagnosis, new ArrayList<>(path)));
+    public void traverseGraph(StateNode currentNode, List<String> path, List<DiagnosticPath> diagnosticPaths, Set<String> visited, String diagnosis, List<String> rules) {
+        if (visited.contains(currentNode.getEstadoName())) {
+            return; // Evita ciclos
+        }
+
+        visited.add(currentNode.getEstadoName());
+        path.add(currentNode.getEstadoName());
+
+        if (currentNode.isDiagnosisState() && diagnosis == null) {
+            diagnosis = currentNode.getDiagnosis();
+        }
+
+        if ("finalizado".equals(currentNode.getEstadoName())) {
+            if (diagnosis != null) {
+                diagnosticPaths.add(new DiagnosticPath(diagnosis, new ArrayList<>(path), new ArrayList<>(rules)));
+            }
         } else {
             for (Transition transition : currentNode.getTransitions()) {
-                traverseGraph(transition.getTargetState(), new ArrayList<>(path), diagnosticPaths, new HashSet<>(visited), diagnosis);
+                // Adiciona o nome da regra ao caminho das regras antes da transição
+                List<String> newRules = new ArrayList<>(rules);
+                newRules.add(transition.getRuleName());
+
+                List<String> newPath = new ArrayList<>(path);
+                Set<String> newVisited = new HashSet<>(visited);
+
+                traverseGraph(transition.getTargetState(), newPath, diagnosticPaths, newVisited, diagnosis, newRules);
             }
         }
+
         path.remove(path.size() - 1);
-        visited.remove(currentNode.estadoName);
+        visited.remove(currentNode.getEstadoName());
     }
+
 }

@@ -5,9 +5,10 @@ import lombok.Getter;
 import java.util.*;
 
 public class StateNode {
-    String estadoName;
     @Getter
-    List<Transition> transitions = new ArrayList<>();
+    private String estadoName; // Tornando-o privado com um getter
+    @Getter
+    private List<Transition> transitions = new ArrayList<>();
     private boolean isDiagnosisState;
     @Getter
     private String diagnosis;
@@ -28,5 +29,4 @@ public class StateNode {
         this.diagnosis = diagnosis;
         this.isDiagnosisState = true;
     }
-
 }
