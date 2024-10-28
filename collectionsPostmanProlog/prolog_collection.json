@@ -1,0 +1,76 @@
+{
+	"info": {
+		"_postman_id": "7275cd6f-fcef-460f-8ddc-664c0125be7a",
+		"name": "PROLOG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39295369"
+	},
+	"item": [
+		{
+			"name": "carros",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "obterNumeroCarro",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "selecionarCarro",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "pergunta",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4040/pergunta",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"pergunta"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "responder",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "factos",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "diagnostico",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
