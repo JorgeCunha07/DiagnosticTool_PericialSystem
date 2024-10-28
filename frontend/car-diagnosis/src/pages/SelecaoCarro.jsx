@@ -148,7 +148,7 @@ const SelecaoCarro = () => {
   return (
     <CardWrapper titulo={`Diagnóstico de Carro`}>
 
-      <TituloLinha title="Selecione o Carro" lineColor="white" icon="DirectionsCar" position="13px" />
+      <TituloLinha title="Selecione o Carro" lineColor="white" icon="InfoTwoTone" position="13px" />
 
       <Grid container spacing={2} padding={2} sx={{ width: '850px', margin: 'auto'}}>
         <Grid item xs={12} md={6} sx={{ width:tamanho_img, margin: 'auto'}}>
@@ -217,7 +217,7 @@ const SelecaoCarro = () => {
         {componentes.length > 0 && (
           <Box mt={2} padding={2}>
 
-            <TituloLinha title="Níveis Ideais dos Componentes" lineColor="white" icon="Settings"/>
+            <TituloLinha title="Níveis Ideais dos Componentes" lineColor="white" icon="BuildCircleTwoTone"/>
 
             <Box>
               <Grid container spacing={2}>

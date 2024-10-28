@@ -1,19 +1,39 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Help from '@mui/icons-material/Help';
+import InfoIcon from '@mui/icons-material/Info';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Grid, IconButton, List, ListItem, Typography } from '@mui/material';
+import {
+  Accordion, AccordionDetails, AccordionSummary, Box,
+  Button,
+  FormControl,
+  Grid,
+  IconButton,
+  InputLabel, List, ListItem, MenuItem, Select,
+  SvgIcon,
+  Typography
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import CardWrapper from "../components/CardWrapper";
 import { generatePDF } from '../utils/pdfConclusaoProlog';
 
 const DiagnosticoConclusaoProlog = () => {
-
   const [diagnostico, setDiagnostico] = useState([]);
   const [solucao, setSolucao] = useState([]);
   const [como, setComo] = useState([]);
   const [responseText, setResponseText] = useState('');
   const [activeButtonIndex, setActiveButtonIndex] = useState(null);
   const [responseTextVisible, setResponseTextVisible] = useState(false);
+  const [falhaResponseTextVisible, setFalhaResponseTextVisible] = useState(false);
+  const [falhas, setFalhas] = useState([]);
+  const [falha, setFalha] = useState('');
+  const [falhaDetalhes, setFalhaDetalhes] = useState(null);
+
+  useEffect(() => {
+    fetchDiagnostico();
+    fetchComo();
+    fetchFalhas();
+  }, []);
 
   const fetchDiagnostico = async () => {
     try {
@@ -44,6 +64,21 @@ const DiagnosticoConclusaoProlog = () => {
     }
   };
 
+  const fetchFalhas = async () => {
+    try {
+      const response = await fetch('http://localhost:4040/diagnosticoPossiveis');
+      if (response.ok) {
+        const data = await response.json();
+        setFalhas(data.diagnosticos || []);
+      } else {
+        console.error('Erro carregando dados do "diagnosticosPossiveis":', response.statusText);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
+
+
   const handlePorque = async (fact, index) => {
     const body = { facto: fact };
     try {
@@ -73,10 +108,33 @@ const DiagnosticoConclusaoProlog = () => {
     }
   };
 
-  useEffect(() => {
-    fetchDiagnostico();
-    fetchComo();
-  }, []);
+  const handleFalhasChange = async (event) => {
+    const selectedFalha = event.target.value;
+    setFalha(selectedFalha);
+
+    const body = { facto: `diagnostico(Veiculo, '${selectedFalha}')` };
+    try {
+      const response = await fetch('http://localhost:4040/porqueNao', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setFalhaDetalhes(data);
+
+        console.log(data);
+
+        setFalhaResponseTextVisible(false);
+        setTimeout(() => setFalhaResponseTextVisible(true), 100);
+      } else {
+        console.error('Erro buscando porqueNao:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
+  };
 
   return (
     <CardWrapper titulo={`Diagnóstico Concluído`}>
@@ -95,6 +153,7 @@ const DiagnosticoConclusaoProlog = () => {
       </Box>
       <Accordion defaultExpanded variant="outlined">
         <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ color: 'lime' }}>
+          <SvgIcon component={LightbulbCircleIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left', color: 'inherit' }}>
             Diagnóstico Geral
           </Typography>
@@ -118,6 +177,7 @@ const DiagnosticoConclusaoProlog = () => {
 
       <Accordion defaultExpanded variant="outlined">
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <SvgIcon component={InfoIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
             Explicações
           </Typography>
@@ -169,6 +229,64 @@ const DiagnosticoConclusaoProlog = () => {
               <ListItem>Nenhuma evidência encontrada.</ListItem>
             )}
           </List>
+        </AccordionDetails>
+      </Accordion>
+      
+      <Accordion variant="outlined">
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
+              <em>Porque Não</em> Outro Diagnóstico?
+          </Typography>
+          {/* <Typography variant="h6" sx={{ color: 'text.secondary' }}>Entenda <i>porque não</i> outro diagnóstico</Typography> */}
+        </AccordionSummary>
+        <AccordionDetails>
+          {falhas.length > 0 && (
+            <FormControl fullWidth>
+              <InputLabel>Todas falhas</InputLabel>
+              <Select value={falha} onChange={handleFalhasChange}>
+                <MenuItem value="">
+                  <em>Selecione a Falha</em>
+                </MenuItem>
+                {falhas.map((m, idx) => (
+                  <MenuItem key={idx} value={m}>
+                    {m}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+          
+          {/* Mostra PorqueNao */}
+            {falhaDetalhes && falhaResponseTextVisible && (
+              <Box sx={{ mt: 2 }}>
+                {Array.isArray(falhaDetalhes) ? (
+                  [...falhaDetalhes].sort((a, b) => a.explicacao.localeCompare(b.explicacao)).map((detalhe, index) => (
+                    <Box key={index} sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime' }}>
+                      <Typography variant="body2">
+                        {detalhe.explicacao} {detalhe.regra_id}:
+                      </Typography>
+                      <List>
+                        {detalhe.detalhes.map((det, idx) => (
+                          <ListItem key={idx} sx={{ pl: 2 }}>
+                            <Typography variant="body1" sx={{ color: 'lime' }}>
+                              {det.explicacao} - {det.premissa}
+                            </Typography>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Box>
+                  ))
+                ) : (
+                  // Se falhaDetalhes não for array, o diagnostico final é igual ao diagnóstico escolhido no PorqueNao
+                  <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid red' }}>
+                    <Typography variant="body2">
+                      {falhaDetalhes.explicacao} É o diagnóstico final.
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+            )}
+
         </AccordionDetails>
       </Accordion>
     </CardWrapper>

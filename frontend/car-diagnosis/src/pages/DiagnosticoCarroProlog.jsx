@@ -61,7 +61,7 @@ const DiagnosticoCarroProlog = () => {
 
   return (
     <CardWrapper titulo={`Questionário Diagnóstico`}>
-      <TituloLinha title="Pergunta" lineColor="white" icon="QuestionMark" position="13px" />
+      <TituloLinha title="Pergunta" lineColor="white" icon="HelpTwoTone" position="13px" />
       
       <Box sx={{ mt: 3 , display: 'flex', justifyContent: 'center', alignItems: 'center', whiteSpace:'pre-line', paddingBottom:'70px' }}>
         <Typography variant="h5" component="h2" sx={{ mt: 2 }}>
