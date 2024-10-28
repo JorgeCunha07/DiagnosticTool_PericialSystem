@@ -1,0 +1,458 @@
+{
+	"info": {
+		"_postman_id": "eaa0f181-ec8f-41b0-adae-9ea261c5b828",
+		"name": "PROLOG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38823052"
+	},
+	"item": [
+		{
+			"name": "carros",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4040/carros",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"carros"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "escolherCarro/marca",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/escolherCarro/marca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"escolherCarro",
+						"marca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "escolherCarro/modelo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"marca\": \"Opel\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/escolherCarro/modelo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"escolherCarro",
+						"modelo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "escolherCarro/motor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"marca\": \"Opel\",\r\n    \"modelo\": \"Grandland X\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/escolherCarro/motor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"escolherCarro",
+						"motor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obterNumeroCarro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"marca\":\"Opel\",\"modelo\":\"Corsa E\",\"motor\":\"1.4 Ecotec\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/obterNumeroCarro",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"obterNumeroCarro"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "selecionarCarro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"numero\":10}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/selecionarCarro",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"selecionarCarro"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "pergunta",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:4040/pergunta",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"pergunta"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "responder",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"resposta\": \"sim\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:4040/responder",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"responder"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "como",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4040/como",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"como"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "porque",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"facto\": \"liga(11,sim)\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/porque",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"porque"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "diagnostico",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/diagnostico",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"diagnostico"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "porqueNao",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"facto\": \"diagnostico(Veiculo, 'Bateria com defeito ou sem carga.')\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4040/porqueNao",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"porqueNao"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "diagnosticosPossiveis",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4040/diagnosticoPossiveis",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"diagnosticoPossiveis"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "factosTodos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4040/factosTodos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4040",
+					"path": [
+						"factosTodos"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "password",
+				"value": "hL-x19iPMgVrEb6b7g2HqTflts3QkvkVaOO3_QMvWmSoY2NPmHeImZnwb4I69IYOnlJ2ioBG0Q_NfCdiViUmCw",
+				"type": "string"
+			},
+			{
+				"key": "scope",
+				"value": "hL-x19iPMgVrEb6b7g2HqTflts3QkvkVaOO3_QMvWmSoY2NPmHeImZnwb4I69IYOnlJ2ioBG0Q_NfCdiViUmCw",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "SEGAUTOMOTIVE_PRD#GE_nN70a8VyKdrC18RwnN1G1pWVe_e1zj7oYqJ6ZcRMWPMxg55SaeVOmCXXjJSiWig5us61aNKHSArM5zVlcGw",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "password_credentials",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "zv3F78bPuJtS9u6AO1Vef_bb6_0VlWUwXLFVc47Z1RY1piViqe7W8sDw8gIh5ABua02ARmC3ove6GIYf-IoYxA",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "SEGAUTOMOTIVE_PRD~ovu-cCxGvYhKhGE-Ed-kHPI-2-XxqxfQCwAzC0eUhsw",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://mingle-sso.eu1.inforcloudsuite.com:443/SEGAUTOMOTIVE_PRD/as/token.oauth2",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "SEGAUTOMOTIVE_PRD",
+				"type": "string"
+			},
+			{
+				"key": "refreshRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "tokenRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "authRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "queryParams",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
