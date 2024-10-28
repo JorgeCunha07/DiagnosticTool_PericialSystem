@@ -1,9 +1,9 @@
-import HomeIcon from '@mui/icons-material/Home';
-import { Box, Button, Card, CardContent, Container, FormControl, Grid, IconButton, InputLabel, List, ListItem, MenuItem, Select, Typography } from "@mui/material";
+import { Box, Button, FormControl, Grid, InputLabel, List, ListItem, MenuItem, Select, Typography } from "@mui/material";
 import axios from 'axios';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CardWrapper from "../components/CardWrapper";
 import Gauge from "../components/Gauge";
 import TituloLinha from "../components/TituloLinha";
 import { getApiUrl, getSistemaSelecionado } from '../config/apiConfig';
@@ -102,7 +102,6 @@ const SelecaoCarro = () => {
 
 
           prolog_response = await axios.post(url, body);
-          const carro_escolhido = prolog_response.data.carro_escolhido;
           //console.log(">>>> carro_escolhido: " + carro_escolhido);
 
           navigate('/diagnostico/prolog', { state: { diagnosticoData: prolog_response.data } });
@@ -126,7 +125,7 @@ const SelecaoCarro = () => {
           const response = await axios.post(url, body);
           navigate('/diagnostico', { state: { diagnosticoData: response.data } });
         } catch (err) {
-            setError('Falha ao iniciar diagnostico: ${url}');
+            setError(`Falha ao iniciar diagnostico: ${url}`);
         }
 
     } else {
@@ -147,132 +146,121 @@ const SelecaoCarro = () => {
   };
 
   return (
-    <Container sx={{ width: '1000px', margin: 'auto', padding: '20px'}}>
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <Card sx={{ position: 'relative', padding: 2 }}>
-          <Box sx={{ position: 'absolute', top: 16, right: 16}}>
-            <IconButton
-              variant="contained"
-              onClick={()=>navigate('/')}
-              color='primary'
-              sx={{ color: 'primary', backgroundColor: 'white' }}
-            >
-              <HomeIcon />
-            </IconButton>
+    <CardWrapper titulo={`Diagnóstico de Carro`}>
+
+      <TituloLinha title="Selecione o Carro" lineColor="white" icon="DirectionsCar" position="13px" />
+
+      <Grid container spacing={2} padding={2} sx={{ width: '850px', margin: 'auto'}}>
+        <Grid item xs={12} md={6} sx={{ width:tamanho_img, margin: 'auto'}}>
+          <Box mt={2} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <img src={getImagePath()} alt="Carro Selecionado" style={{ width:tamanho_img }} />
           </Box>
-          <CardContent padding={2}>
-            <Typography variant="h4" component="h1" gutterBottom>
-              Diagnóstico de Carro: {sistemaSelecionado}
-            </Typography>
-            <TituloLinha title="Selecione o Carro" lineColor="white" icon="DirectionsCar" position="13px" />
-            <Grid container spacing={2} padding={2} sx={{ width: '850px', margin: 'auto'}}>
-              <Grid item xs={12} md={6} sx={{ width:tamanho_img, margin: 'auto'}}>
-                <Box mt={2}>
-                  <img src={getImagePath()} alt="Carro Selecionado" style={{ width:tamanho_img }} />
-                </Box>
-              </Grid>
+        </Grid>
 
-              <Grid item xs={12} md={6} sx={{ height:'220px', margin: 'auto'}}>
-                <List>
-                  <ListItem>
-                    <FormControl fullWidth>
-                      <InputLabel>Marca</InputLabel>
-                      <Select value={marca} onChange={handleMarcaChange}>
-                        <MenuItem value="">
-                          <em>Selecione a Marca</em>
-                        </MenuItem>
-                        {marcas.map((m, idx) => (
-                          <MenuItem key={idx} value={m}>
-                            {m}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </ListItem>
+        <Grid item xs={12} md={6} sx={{ height:'220px', margin: 'auto'}}>
+          <List>
+            <ListItem>
+              <FormControl fullWidth>
+                <InputLabel>Marca</InputLabel>
+                <Select value={marca} onChange={handleMarcaChange}>
+                  <MenuItem value="">
+                    <em>Selecione a Marca</em>
+                  </MenuItem>
+                  {marcas.map((m, idx) => (
+                    <MenuItem key={idx} value={m}>
+                      {m}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </ListItem>
 
-                  <ListItem>
-                    {modelos.length > 0 && (
-                      <FormControl fullWidth>
-                        <InputLabel>Modelo</InputLabel>
-                        <Select value={modelo} onChange={handleModeloChange}>
-                          <MenuItem value="">
-                            <em>Selecione o Modelo</em>
-                          </MenuItem>
-                          {modelos.map((m, idx) => (
-                            <MenuItem key={idx} value={m}>
-                              {m}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    )}
-                  </ListItem>
-
-                  <ListItem>
-                    {motores.length > 0 && (
-                      <FormControl fullWidth>
-                        <InputLabel>Motor</InputLabel>
-                        <Select value={motor} onChange={handleMotorChange}>
-                          <MenuItem value="">
-                            <em>Selecione o Motor</em>
-                          </MenuItem>
-                          {motores.map((m, idx) => (
-                            <MenuItem key={idx} value={m}>
-                              {m}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    )}
-                  </ListItem>
-                </List>
-              </Grid>
-            </Grid>
-
-            {componentes.length > 0 && (
-              <Box mt={2} padding={2}>
-                <TituloLinha title="Níveis Ideais dos Componentes" lineColor="white" icon="Settings"/>
-                <Box>
-                  <Grid container spacing={2}>
-                    {componentes.map((comp, idx) => (
-                      <Grid item xs={12} md={3} key={idx}>
-                        {/* Se valores Drools forem undefined (??), mostra os valores Prolog */}
-                        <Gauge
-                          value={comp.valorMinimoIdeal ?? comp.minIdeal}
-                          min={comp.valorMinimo ?? comp.min}
-                          max={comp.valorMaximo ?? comp.max}
-                          max_ideal={comp.valorMaximoIdeal ?? comp.maxIdeal}
-                          label={comp.nome.replace(/_/g, " ") ?? "N/A"} // substitui o "_" por " " (espaço)
-                          units={comp.unidade ?? "N/A"}
-                        />
-                      </Grid>
+            <ListItem>
+              {modelos.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel>Modelo</InputLabel>
+                  <Select value={modelo} onChange={handleModeloChange}>
+                    <MenuItem value="">
+                      <em>Selecione o Modelo</em>
+                    </MenuItem>
+                    {modelos.map((m, idx) => (
+                      <MenuItem key={idx} value={m}>
+                        {m}
+                      </MenuItem>
                     ))}
+                  </Select>
+                </FormControl>
+              )}
+            </ListItem>
+
+            <ListItem>
+              {motores.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel>Motor</InputLabel>
+                  <Select value={motor} onChange={handleMotorChange}>
+                    <MenuItem value="">
+                      <em>Selecione o Motor</em>
+                    </MenuItem>
+                    {motores.map((m, idx) => (
+                      <MenuItem key={idx} value={m}>
+                        {m}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                )}
+              </ListItem>
+            </List>
+          </Grid>
+        </Grid>
+
+        {componentes.length > 0 && (
+          <Box mt={2} padding={2}>
+
+            <TituloLinha title="Níveis Ideais dos Componentes" lineColor="white" icon="Settings"/>
+
+            <Box>
+              <Grid container spacing={2}>
+                {componentes.map((comp, idx) => (
+                  <Grid item xs={12} md={3} key={idx}>
+                    {/* Se valores Drools forem undefined (??), mostra os valores Prolog */}
+                    <Gauge
+                      value={comp.valorMinimoIdeal ?? comp.minIdeal}
+                      min={comp.valorMinimo ?? comp.min}
+                      max={comp.valorMaximo ?? comp.max}
+                      max_ideal={comp.valorMaximoIdeal ?? comp.maxIdeal}
+                      label={comp.nome.replace(/_/g, " ") ?? "N/A"} // substitui o "_" por " " (espaço)
+                      units={comp.unidade ?? "N/A"}
+                    />
                   </Grid>
-                </Box>
-              </Box>
-            )}
-            {marca && modelo && motor && componentes.length > 0 && (
-              <>
-                <Box sx={{ height: '0.5px', background: 'white', marginBottom: '30px' }} />
-                <Button
-                  onClick={iniciarDiagnostico}
-                  color="primary"
-                  variant="contained"
-                  sx={{ width: '300px', height: '50px', fontSize: '1.2rem' }}
-                >
-                  Iniciar Diagnostico
-                </Button>
-              </>
-            )}
-            {error && (
-              <Typography variant="caption" color="error" gutterBottom sx={{ display: 'block' }}>
-                {error}
-              </Typography>
-            )}
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+                ))}
+              </Grid>
+            </Box>
+          </Box>
+        )}
+          
+        {marca && modelo && motor && componentes.length > 0 && (
+          <>
+            <Box sx={{ height: '0.5px', width: "100%", background: 'white', marginBottom: '30px'}} />
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                onClick={iniciarDiagnostico}
+                color="primary"
+                variant="contained"
+                sx={{ width: '300px', height: '50px', fontSize: '1.2rem' }}
+              >
+                Iniciar Diagnostico
+              </Button>
+            </Box>
+          </>
+        )}
+      {error && (
+        <Typography variant="caption" color="error" gutterBottom sx={{ display: 'block' }}>
+          {error}
+        </Typography>
+      )}
+    </CardWrapper>
   );
 };
 

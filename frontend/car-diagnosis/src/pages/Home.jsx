@@ -18,6 +18,7 @@ const Home = () => {
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
                 <Card sx={{ width: 500, height: 360, padding: 5 }}>
                     <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Typography
                             variant="h4"
                             component="h1"
@@ -28,6 +29,7 @@ const Home = () => {
                         >
                             Selecione o Sistema
                         </Typography>
+                        </Box>
 
                         <Box display="flex" justifyContent="center" gap={4}>
                             <Box display="flex" flexDirection="column" alignItems="center">
@@ -40,7 +42,6 @@ const Home = () => {
                                         display: 'flex',
                                         position: 'relative',
                                         '&:hover': {
-                                            //border: '5px solid black',
                                             filter: 'grayscale(100%)',
                                             transition: 'filter 0.3s ease, box-shadow 0.3s ease',
                                             boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.5)',
@@ -72,8 +73,7 @@ const Home = () => {
                                         display: 'flex',
                                         position: 'relative',
                                         '&:hover': {
-                                            //border: '5px solid black',
-                                            filter: 'grayscale(100%) hue-rotate(210deg)',
+                                            filter: 'grayscale(100%)',
                                             transition: 'filter 0.3s ease, box-shadow 0.3s ease',
                                             boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.5)',
                                         },

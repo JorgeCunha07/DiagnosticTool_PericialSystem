@@ -1,16 +1,17 @@
-import * as Icons from '@mui/icons-material'; // Import all icons
-import { Box, SvgIcon, Typography } from '@mui/material'; // Import SvgIcon for rendering icons
+import * as Icons from '@mui/icons-material';
+import { Box, SvgIcon, Typography } from '@mui/material';
 import React from 'react';
 
 const TituloLinha = ({ title, lineColor = 'blue', icon, position = '0px'}) => {
-  const IconComponent = icon ? Icons[icon] : null; // Get the icon component based on the icon prop
+  // Icon prop
+  const IconComponent = icon ? Icons[icon] : null;
 
   return (
     <Box
       sx={{
         display: 'flex',
         alignItems: 'flex-end',
-        paddingLeft: '5px',
+        paddingLeft: '0px',
         paddingBottom: '20px',
         marginLeft: position,
       }}
@@ -27,14 +28,14 @@ const TituloLinha = ({ title, lineColor = 'blue', icon, position = '0px'}) => {
           marginBottom: '10px',
         }}
       /> */}
-      <Typography variant="h6" sx={{ margin: 0, paddingRight: '5px' }}>
+      <Typography variant="h6" sx={{ margin: 0, paddingRight: '10px' }}>
         {title}
       </Typography>
       <Box
         sx={{
           flex: 1,
-          height: '1px', // Height of the line
-          background: `linear-gradient(to right, ${lineColor}, transparent)`, // Gradient background
+          height: '1px',
+          background: `linear-gradient(to right, ${lineColor}, transparent)`,
           marginBottom: '10px',
         }}
       />

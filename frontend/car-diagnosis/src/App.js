@@ -1,6 +1,7 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './App.css';
 import DiagnosticoCarro from './pages/DiagnosticoCarro';
 import DiagnosticoCarroProlog from './pages/DiagnosticoCarroProlog';
@@ -9,8 +10,8 @@ import DiagnosticoConclusaoProlog from "./pages/DiagnosticoConclusaoProlog";
 import DiagnosticoErro from './pages/DiagnosticoErro';
 import Home from './pages/Home';
 import SelecaoCarro from './pages/SelecaoCarro';
+import './styles/FadeTransition.css';
 
- 
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -27,13 +28,15 @@ const darkTheme = createTheme({
   },
 });
 
-function App() {
+const App = () => {
+  const location = useLocation();
+
   return (
-    <ThemeProvider theme={darkTheme}>
-    <CssBaseline />
-      <div className="App">
-        <Router>
-          <Routes>
+    <TransitionGroup>
+      <CSSTransition key={location.key} classNames="fade" timeout={300}>
+        <ThemeProvider theme={darkTheme}>
+          <CssBaseline />
+          <Routes location={location}>
             {/* <Route path="/" element={<IdentificacaoUsuario />} /> */}
             <Route path="/" element={<Home />} />
             <Route path="/selecao" element={<SelecaoCarro />} />
@@ -43,9 +46,9 @@ function App() {
             <Route path="/conclusao/prolog" element={<DiagnosticoConclusaoProlog />} />
             <Route path="/error" element={<DiagnosticoErro />} />
           </Routes>
-        </Router>
-      </div>
-    </ThemeProvider>
+        </ThemeProvider>
+      </CSSTransition>
+    </TransitionGroup>
   );
 }
 
