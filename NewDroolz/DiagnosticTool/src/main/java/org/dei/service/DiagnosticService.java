@@ -25,15 +25,12 @@ public class DiagnosticService {
         this.diagnosticParserService = diagnosticParserService;
     }
 
-
-    // Métodos para obter os caminhos de diagnóstico
     public List<DiagnosticPath> obterDiagnosticPaths() {
         String filePath = "src/main/resources/org/dei/diagnostic.drl";
         diagnosticParserService.processDiagnosticFile(filePath);
         return diagnosticParserService.getDiagnosticPaths();
     }
 
-    // Inicializa o diagnóstico e retorna a primeira pergunta
     public Resposta iniciarDiagnostico(Carro selectedCar) {
         try {
             if (selectedCar == null) {
@@ -43,7 +40,6 @@ public class DiagnosticService {
 
             log.info("Starting diagnostic for car: " + selectedCar.getMarca() + " " + selectedCar.getModelo());
 
-            // Verifica se a sessão Drools com WhyNot já foi inicializada
             if (!DroolsWithWhyNot.isInitialized()) {
                 log.info("Initializing DroolsWithWhyNot...");
                 this.drools = DroolsWithWhyNot.init("org.dei.facts");
@@ -52,7 +48,6 @@ public class DiagnosticService {
                 this.drools = DroolsWithWhyNot.getInstance();
             }
 
-            // Reinitialize KieSession if it is null
             if (this.drools.getKieSession() == null) {
                 log.info("KieSession is null. Reinitializing...");
                 this.diagSession = drools.getKnowledgeBase().getKieBase().newKieSession();
@@ -69,7 +64,6 @@ public class DiagnosticService {
             log.info("KieSession successfully initialized. Inserting global selectedCar into session.");
             diagSession.setGlobal("selectedCar", selectedCar);
 
-            // Create new Resposta object for diagnostic session
             Resposta diagResposta = new Resposta();
             diagResposta.setEstado("iniciarDiagnostico");
             diagResposta.setTexto("");
@@ -77,7 +71,6 @@ public class DiagnosticService {
 
             this.respostaHandle = diagSession.insert(diagResposta);
 
-            // Fire rules and return first question
             log.info("Firing rules to start the diagnostic session...");
             diagSession.fireAllRules();
             log.info("Rules fired. Diagnostic started.");
@@ -89,7 +82,6 @@ public class DiagnosticService {
         }
     }
 
-    // Processa as respostas subsequentes e retorna a próxima pergunta
     public Resposta processarResposta(Resposta diagResposta) {
         try {
             log.info("Processing response for the diagnostic...");

@@ -46,7 +46,6 @@ public class DiagnosticController {
         return ResponseEntity.badRequest().body("Nenhuma evidência encontrada para determinar a pergunta anterior.");
     }
 
-    // Novo endpoint para obter caminhos de diagnóstico
     @GetMapping("/caminhosDiagnostico")
     public ResponseEntity<List<DiagnosticPath>> obterCaminhosDiagnostico() {
         List<DiagnosticPath> diagnosticPaths = diagnosticService.obterDiagnosticPaths();

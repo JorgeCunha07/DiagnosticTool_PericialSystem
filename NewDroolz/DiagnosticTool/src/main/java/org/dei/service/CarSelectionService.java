@@ -20,46 +20,39 @@ public class CarSelectionService {
     private FactHandle respostaHandle;
 
     public CarSelectionService() {
-        // Configurar KieServices e KieSession
         KieServices ks = KieServices.Factory.get();
         KieContainer kc = ks.getKieClasspathContainer();
         this.kSession = kc.newKieSession("ksession-rules");
 
-        // Inicializa o objeto resposta
         this.resposta = new Resposta();
-        resposta.setEstado(""); // Inicializa o estado com uma string vazia
-        resposta.setTexto("");  // Inicializa o texto com uma string vazia
+        resposta.setEstado("");
+        resposta.setTexto("");
 
-        // Definir variáveis globais
+
         kSession.setGlobal("triggeredRules", new ArrayList<String>());
         kSession.setGlobal("LOG", LoggerFactory.getLogger(CarSelectionService.class));
 
-        // Inserir o objeto resposta na sessão
         this.respostaHandle = kSession.insert(resposta);
     }
 
     public Resposta processarResposta(List<Carro> carros, String inputTexto) {
-        // Definir a lista de carros como variável global
+
         kSession.setGlobal("carros", carros);
 
-        // Atualiza o texto da resposta
         resposta.setTexto(inputTexto);
 
-        // Atualiza o objeto resposta na sessão
         if (respostaHandle != null) {
             kSession.update(respostaHandle, resposta);
         } else {
             respostaHandle = kSession.insert(resposta);
         }
 
-        // Processa as regras
         kSession.fireAllRules();
 
         if (resposta.getEstado().equals("finalizado")) {
             kSession.dispose();
             resposta.setCarroSelecionado(getCarroSelecionado(carros,resposta));
         }
-        // Retorna a resposta atualizada
         return resposta;
     }
 

@@ -22,12 +22,10 @@ public class WhyNot {
         List<String> untriggeredRules = droolsWithWhyNot.getUntriggeredRules();
         List<String> triggeredRules = droolsWithWhyNot.getTriggeredRules();
 
-        // Filtra as regras relacionadas à conclusão esperada
         List<String> relevantUntriggeredRules = untriggeredRules.stream()
                 .filter(rule -> rule.contains(expectedConclusion))
                 .collect(Collectors.toList());
 
-        // Se nenhuma regra relevante foi disparada, gerar a explicação
         if (!relevantUntriggeredRules.isEmpty()) {
             StringBuilder explanation = new StringBuilder();
             explanation.append("A conclusão '").append(expectedConclusion).append("' não foi atingida porque as seguintes regras não foram disparadas:\n");

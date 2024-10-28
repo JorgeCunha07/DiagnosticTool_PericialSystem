@@ -20,18 +20,12 @@ public class DiagnosticParserService {
 
         StateNode initialState = stateNodes.get("iniciarDiagnostico");
         if (initialState == null) {
-           // System.out.println("Estado inicial 'iniciarDiagnostico' não encontrado.");
             return;
         }
 
         List<String> path = new ArrayList<>();
         Set<String> visited = new HashSet<>();
         parser.traverseGraph(initialState, path, diagnosticPaths, visited, null);
-
-        for (DiagnosticPath dp : diagnosticPaths) {
-         //   System.out.println("Diagnóstico: " + dp.diagnosis);
-         //   System.out.println("Caminho completo: " + dp.path);
-        }
     }
 
 }
