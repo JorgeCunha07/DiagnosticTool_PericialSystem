@@ -138,7 +138,9 @@ http_handler_escolher_carro(Request) :-
     procurar_carro(Numero, Carro),
     log_message('Carro selecionado: ' + Carro),
     retractall(carro_selecionado(_)),
+	retractall(carro_numero_selecionado(_)),
     assertz(carro_selecionado(Carro)),
+	assertz(carro_numero_selecionado(Numero)),
     retractall(facto(_, _)),
     assertz(facto(0, proximo_teste(Numero, problemas))),
 	asserta(ultimo_facto(0)),
@@ -275,12 +277,14 @@ http_handler_pergunta(Request) :-
     format('~n').
 
 http_handler_pergunta(_Request) :-
+	log_message('http_handler_pergunta'),
 	cors_headers,
     findall(P, facto(_, proximo_teste(_, P)), Testes),
     ( Testes = [Teste|_] ->  % Verifica se há mais testes
         functor(TesteTermo, Teste, 2),
         pergunta(TesteTermo, Pergunta),
         opcoes_validas(TesteTermo, OpcoesValidas),
+		log_message(OpcoesValidas),
         reply_json(json{pergunta: Pergunta, respostas: OpcoesValidas, estado: "ongoing"})
     ;   % Caso não haja mais perguntas
         reply_json(json{estado: "finalizado"})
@@ -333,36 +337,37 @@ http_handler_responder(Request) :-
     format('~n').
 
 http_handler_responder(Request) :-
-	cors_headers,
+    cors_headers,
     % Verifica se há perguntas por responder
     findall(P, facto(_, proximo_teste(_, P)), Perguntas),
     length(Perguntas, N),
     
     (   N = 0
     ->  % Se a lista está vazia, retornar erro
-	    reply_json(_{estado: "finalizado", message: "Não há perguntas para responder"})
+        reply_json(_{estado: "finalizado", message: "Não há perguntas para responder"})
     ;   % Caso contrário, continuar
         http_read_json_dict(Request, JsonIn),
         
-        (   string(JsonIn.resposta)
-        ->  % Se for uma string, converter diretamente para atom
+        (   (string(JsonIn.resposta) ; atom(JsonIn.resposta))
+        ->  % Se for uma string ou átomo, converte para átomo se necessário
             atom_string(Resposta, JsonIn.resposta),
             reply_json(_{estado: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
             catch(diagnostico2(Resposta), Erro,
-                    log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
+                  log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   number(JsonIn.resposta)
         ->  % Se for um número, atribuir diretamente
             Resposta = JsonIn.resposta,
             reply_json(_{estado: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
             catch(diagnostico2(Resposta), Erro,
-                    log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
+                  log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   % Se não for nem string nem número, falhar com uma mensagem de erro
             reply_json(_{estado: "erro", message: "O campo 'resposta' deve ser string ou número"}),
             fail  % Usar fail para parar a execução neste caso
         )
     ).
+
 	
 http_handler_diagnostico(Request) :-
 	log_message('cors_headers'),

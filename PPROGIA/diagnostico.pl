@@ -66,20 +66,40 @@ tratar_problema(Id, Veiculo, Teste) :-
         format('~w ~w ', [Pergunta, OpcoesValidas]),
         repeat,
         read(Resposta),
-        ( member(Resposta, OpcoesValidas) ->
-            NovoFacto =.. [Teste, Veiculo, Resposta],
-            retract(ultimo_facto(N1)),
-            N is N1 + 1,
-            asserta(ultimo_facto(N)),
-            assertz(facto(N, NovoFacto)),
-            retract(facto(Id, proximo_teste(Veiculo, Teste))),
-            !
-        ;
-            write('Resposta invalida. Por favor, responda com uma das opcoes: '), write(OpcoesValidas), nl,
-            fail
+        (
+            % Verificar se OpcoesValidas define um intervalo numérico
+            OpcoesValidas = [Min, Max],
+            number(Min), number(Max),
+            number(Resposta) ->
+                (Resposta >= Min, Resposta =< Max ->
+                    NovoFacto =.. [Teste, Veiculo, Resposta],
+                    retract(ultimo_facto(N1)),
+                    N is N1 + 1,
+                    asserta(ultimo_facto(N)),
+                    assertz(facto(N, NovoFacto)),
+                    retract(facto(Id, proximo_teste(Veiculo, Teste))),
+                    !
+                ;
+                    write('Resposta inválida. Insira um número entre '), write(Min), write(' e '), write(Max), nl,
+                    fail
+                )
+            ;
+            % Caso contrário, verificar resposta nas opções válidas diretamente
+            (member(Resposta, OpcoesValidas) ->
+                NovoFacto =.. [Teste, Veiculo, Resposta],
+                retract(ultimo_facto(N1)),
+                N is N1 + 1,
+                asserta(ultimo_facto(N)),
+                assertz(facto(N, NovoFacto)),
+                retract(facto(Id, proximo_teste(Veiculo, Teste))),
+                !
+            ;
+                write('Resposta inválida. Por favor, responda com uma das opções: '), write(OpcoesValidas), nl,
+                fail
+            )
         )
     ;
-        write('Teste nao e perguntavel: '), write(Teste), nl
+        write('Teste não é perguntável: '), write(Teste), nl
     ).
 
 % Tratar cada problema individualmente

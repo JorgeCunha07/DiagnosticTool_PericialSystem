@@ -241,49 +241,48 @@ texto_pergunta(sistema_escape(_, _), Pergunta, Carro) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define as opções válidas para as respostas
-opcoes_validas(problemas(_, _), [sim, nao, nao_sei]).
-opcoes_validas(liga(_, _), [sim, nao, nao_sei]).
-opcoes_validas(bateria(_, _), _).
-opcoes_validas(motor_arranque_defeito(_, _), [sim, nao, nao_sei]).
-opcoes_validas(ignicao_falha(_, _), [sim, nao, nao_sei]).
-opcoes_validas(sistema_seguranca_ativado(_, _), [sim, nao, nao_sei]).
-opcoes_validas(fios_danificados(_, _), [sim, nao, nao_sei]).
-opcoes_validas(vai_abaixo(_, _), [sim, nao, nao_sei]).
-opcoes_validas(motor_sobreaquece(_, _), [sim, nao, nao_sei]).
-opcoes_validas(radiador_ventoinha_defeito(_, _), [sim, nao, nao_sei]).
-opcoes_validas(fuga_arrefecimento(_, _), [sim, nao, nao_sei]).
-opcoes_validas(termostato_defeituoso(_, _), [sim, nao, nao_sei]).
-opcoes_validas(bomba_agua_defeituosa(_, _), [sim, nao, nao_sei]).
-opcoes_validas(falta_combustivel_ou_bomba_defeito(_, _), [sim, nao, nao_sei]).
-opcoes_validas(filtro_combustivel_entupido(_, _), [sim, nao, nao_sei]).
-opcoes_validas(injecao_combustivel_defeito(_, _), [sim, nao, nao_sei]).
-opcoes_validas(velas_ignicao_defeito(_, _), [sim, nao, nao_sei]).
-opcoes_validas(sensores_defeituosos(_, _), [sim, nao, nao_sei]).
-opcoes_validas(barulho_anormal(_, _), [sim, nao, nao_sei]).
-opcoes_validas(barulho_no_motor(_, _), [sim, nao, nao_sei]).
-opcoes_validas(correia_dentada_gasta(_, _), [sim, nao, nao_sei]).
-opcoes_validas(amortecedores_gastos(_, _), [sim, nao, nao_sei]).
-opcoes_validas(dificuldade_travar(_, _), [sim, nao, nao_sei]).
-opcoes_validas(pastilhas_travao_gastas(_, _), [sim, nao, nao_sei]).
-opcoes_validas(discos_travao_gastos(_, _), [sim, nao, nao_sei]).
-opcoes_validas(fluido_travao(_, _), _).
-opcoes_validas(problemas_caixa_velocidades(_, _), [sim, nao, nao_sei]).
-opcoes_validas(fluido_transmissao(_, _), _).
-opcoes_validas(embraiagem_gasta(_, _), [sim, nao, nao_sei]).
-opcoes_validas(barulho_suspensao_rodas(_, _), [sim, nao, nao_sei]).
-opcoes_validas(problema_pneus_jantes_calcos(_, _), [sim, nao, nao_sei]).
-opcoes_validas(servofreio(_, _), [sim, nao, nao_sei]).
-opcoes_validas(sistema_ABS(_, _), [sim, nao, nao_sei]).
-opcoes_validas(alternador_defeito(_, _), [sim, nao, nao_sei]).
-opcoes_validas(compressor_AC(_, _), [sim, nao, nao_sei]).
-opcoes_validas(tensores(_, _), [sim, nao, nao_sei]).
-opcoes_validas(oleo_motor(_, _), _).
-opcoes_validas(sistema_escape(_, _), _).
+opcoes_validas(problemas(_, _), [sim, nao]).
+opcoes_validas(liga(_, _), [sim, nao]).
+opcoes_validas(bateria(_, _), [0, Max]):-carro_numero_selecionado(Carro),bateria(Carro, _, _, Max).
+opcoes_validas(motor_arranque_defeito(_, _), [sim, nao]).
+opcoes_validas(ignicao_falha(_, _), [sim, nao]).
+opcoes_validas(sistema_seguranca_ativado(_, _), [sim, nao]).
+opcoes_validas(fios_danificados(_, _), [sim, nao]).
+opcoes_validas(vai_abaixo(_, _), [sim, nao]).
+opcoes_validas(motor_sobreaquece(_, _), [sim, nao]).
+opcoes_validas(radiador_ventoinha_defeito(_, _), [sim, nao]).
+opcoes_validas(fuga_arrefecimento(_, _), [sim, nao]).
+opcoes_validas(termostato_defeituoso(_, _), [sim, nao]).
+opcoes_validas(bomba_agua_defeituosa(_, _), [sim, nao]).
+opcoes_validas(falta_combustivel_ou_bomba_defeito(_, _), [sim, nao]).
+opcoes_validas(filtro_combustivel_entupido(_, _), [sim, nao]).
+opcoes_validas(injecao_combustivel_defeito(_, _), [sim, nao]).
+opcoes_validas(velas_ignicao_defeito(_, _), [sim, nao]).
+opcoes_validas(sensores_defeituosos(_, _), [sim, nao]).
+opcoes_validas(barulho_anormal(_, _), [sim, nao]).
+opcoes_validas(barulho_no_motor(_, _), [sim, nao]).
+opcoes_validas(correia_dentada_gasta(_, _), [sim, nao]).
+opcoes_validas(amortecedores_gastos(_, _), [sim, nao]).
+opcoes_validas(dificuldade_travar(_, _), [sim, nao]).
+opcoes_validas(pastilhas_travao_gastas(_, _), [sim, nao]).
+opcoes_validas(discos_travao_gastos(_, _), [sim, nao]).
+opcoes_validas(fluido_travao(_, _), [0, Max]):-carro_numero_selecionado(Carro),fluido_travao(Carro, _, _, Max).
+opcoes_validas(problemas_caixa_velocidades(_, _), [sim, nao]).
+opcoes_validas(fluido_transmissao(_, _), [0, Max]):-carro_numero_selecionado(Carro),fluido_transmissao(Carro, _, _, Max).
+opcoes_validas(embraiagem_gasta(_, _), [sim, nao]).
+opcoes_validas(barulho_suspensao_rodas(_, _), [sim, nao]).
+opcoes_validas(problema_pneus_jantes_calcos(_, _), [sim, nao]).
+opcoes_validas(servofreio(_, _), [sim, nao]).
+opcoes_validas(sistema_ABS(_, _), [sim, nao]).
+opcoes_validas(alternador_defeito(_, _), [sim, nao]).
+opcoes_validas(compressor_AC(_, _), [sim, nao]).
+opcoes_validas(tensores(_, _), [sim, nao]).
+opcoes_validas(oleo_motor(_, _), [0, Max]):-carro_numero_selecionado(Carro),oleo_motor(Carro, _, _, Max).
+opcoes_validas(sistema_escape(_, _), [0, Max]):-carro_numero_selecionado(Carro),sistema_escape(Carro, _, _, Max).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ultimo_facto(1).
-% por fazer
 % ultima_regra(8).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

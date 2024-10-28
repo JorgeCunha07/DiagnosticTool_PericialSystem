@@ -60,7 +60,9 @@ obter_numero_carro :-
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]),
     write('O carro selecionado foi: '), write(Carro), nl,
     retractall(carro_selecionado(_)),
+	retractall(carro_numero_selecionado(_)),
     assertz(carro_selecionado(Carro)),
+	assertz(carro_numero_selecionado(Numero)),
     % Reinicia os factos com o primeiro teste
     retractall(ultimo_facto(_)),
     assertz(ultimo_facto(0)),

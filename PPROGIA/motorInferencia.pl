@@ -12,6 +12,7 @@
 :- dynamic ultimo_facto/1.
 :- dynamic factos_processados/1.
 :- dynamic carro_selecionado/1.
+:- dynamic carro_numero_selecionado/1.
 
 :- consult('bc.pl').
 :- consult('escolha_carro.pl').
