@@ -30,19 +30,20 @@ public class DiagnosticParser {
                 }
 
                 if (currentRule != null) {
-                    if (line.trim().equals("when")) {
-                        inWhenSection = true;
-                        inThenSection = false;
-                        continue;
-                    } else if (line.trim().equals("then")) {
-                        inWhenSection = false;
-                        inThenSection = true;
-                        continue;
-                    } else if (line.trim().equals("end")) {
-                        parseThenBlock(currentRule, thenBlockLines);
-                        addRuleToGraph(currentRule);
-                        currentRule = null;
-                        continue;
+                    switch (line.trim()) {
+                        case "when":
+                            inWhenSection = true;
+                            inThenSection = false;
+                            continue;
+                        case "then":
+                            inWhenSection = false;
+                            inThenSection = true;
+                            continue;
+                        case "end":
+                            parseThenBlock(currentRule, thenBlockLines);
+                            addRuleToGraph(currentRule);
+                            currentRule = null;
+                            continue;
                     }
 
                     if (inWhenSection) {
