@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -50,5 +51,11 @@ public class DiagnosticController {
     public ResponseEntity<List<DiagnosticPath>> obterCaminhosDiagnostico() {
         List<DiagnosticPath> diagnosticPaths = diagnosticService.obterDiagnosticPaths();
         return ResponseEntity.ok(diagnosticPaths);
+    }
+
+    @PostMapping("/caminhosDiagnostico")
+    public ResponseEntity<Map<String, List<String>>> obterRegrasFaltantesParaDiagnosticosAlternativos(@RequestBody Resposta resposta) {
+        Map<String, List<String>> missingRules = diagnosticService.getMissingRulesForAlternativeDiagnoses(resposta);
+        return ResponseEntity.ok(missingRules);
     }
 }

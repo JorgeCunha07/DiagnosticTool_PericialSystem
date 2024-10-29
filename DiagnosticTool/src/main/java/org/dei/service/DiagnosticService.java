@@ -10,7 +10,10 @@ import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.rule.FactHandle;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -114,7 +117,25 @@ public class DiagnosticService {
         }
     }
 
+    public Map<String, List<String>> getMissingRulesForAlternativeDiagnoses(Resposta resposta ) {
+        if (diagnosticParserService.getDiagnosticPaths().isEmpty()) {
+            obterDiagnosticPaths();
+        }
+        List<DiagnosticPath> diagnosticPaths = diagnosticParserService.getDiagnosticPaths();
 
+        List<String> triggeredRules = resposta.getTriggeredRules();
+        Map<String, List<String>> missingRulesByDiagnosis = new HashMap<>();
 
+        for (DiagnosticPath dp : diagnosticPaths) {
+            List<String> missingRules = dp.getRules().stream()
+                    .filter(rule -> !triggeredRules.contains(rule))
+                    .collect(Collectors.toList());
+
+            if (!missingRules.isEmpty()) {
+                missingRulesByDiagnosis.put(dp.getDiagnosis(), missingRules);
+            }
+        }
+        return missingRulesByDiagnosis;
+    }
 
 }
