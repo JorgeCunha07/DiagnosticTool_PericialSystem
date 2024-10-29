@@ -125,9 +125,8 @@ http_handler_escolher_carro(Request) :-
 	
 	assertz(carro_selecionado(Carro)),
 	assertz(carro_numero_selecionado(Numero)),
-    %assertz(facto(0, proximo_teste(Numero, problemas))),
 	assertz(ultimo_facto(0)),
-	
+	%assertz(facto(0, proximo_teste(Numero, problemas))),
     cria_facto2(proximo_teste(Numero, problemas), 0, 0),
     
 	reply_json(_{ carro_escolhido: Carro }).
@@ -160,7 +159,6 @@ componentes_json(Id, [
     fluido_transmissao(Id, MinG, MaxG, Max7).
 
 http_handler_porque(Request) :-
-	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
@@ -205,7 +203,6 @@ porque_response(Facto, Explicacao) :-
     ).
 	
 http_handler_whynot(Request) :-
-	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
@@ -283,14 +280,12 @@ facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
 	
 http_handler_pergunta(Request) :-
-	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
     format('~n').
 
 http_handler_pergunta(_Request) :-
-	log_message('http_handler_pergunta'),
 	cors_headers,
     findall(P, facto(_, proximo_teste(_, P)), Testes),
     ( Testes = [Teste|_] ->  % Verifica se há mais testes
@@ -304,7 +299,6 @@ http_handler_pergunta(_Request) :-
     ).
 	
 http_handler_como(Request) :-
-	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
@@ -343,7 +337,6 @@ como_response(N, Response) :-
     ).
 
 http_handler_responder(Request) :-
-	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
@@ -381,7 +374,6 @@ http_handler_responder(Request) :-
 
 	
 http_handler_diagnostico(Request) :-
-	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
