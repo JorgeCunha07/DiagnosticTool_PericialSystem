@@ -127,6 +127,19 @@ mostrar_solucao :-
     carro_selecionado(Info),
     format('Solucao para ~w: ~w~n', [Info, Solucao]).
 
+% Predicado que retorna todos os diagnósticos possíveis
+listar_diagnosticos_possiveis(Diagnosticos) :-
+    listar_diagnosticos_possiveis_aux(Diagnosticos, []).
+
+% Predicado auxiliar com acumulador
+listar_diagnosticos_possiveis_aux(Diagnosticos, Acumulador) :-
+    regra _ se _ entao RHS,
+    member(cria_facto(diagnostico(_, Diagnostico)), RHS),
+    \+ member(Diagnostico, Acumulador), % Evitar duplicados
+    !,
+    listar_diagnosticos_possiveis_aux(Diagnosticos, [Diagnostico | Acumulador]).
+listar_diagnosticos_possiveis_aux(Diagnosticos, Diagnosticos).
+
 % Retirar um facto
 retirar_facto(F) :-
     retract(facto(_, F)),
