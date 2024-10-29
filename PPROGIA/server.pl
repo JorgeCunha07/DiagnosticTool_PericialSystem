@@ -113,15 +113,24 @@ http_handler_escolher_carro(Request) :-
     http_read_json_dict(Request, JsonIn),
     Numero = JsonIn.numero,
     procurar_carro(Numero, Carro),
+	
     log_message('Carro selecionado: ' + Carro),
-    retractall(carro_selecionado(_)),
+    
+	retractall(carro_selecionado(_)),
 	retractall(carro_numero_selecionado(_)),
-    assertz(carro_selecionado(Carro)),
-	assertz(carro_numero_selecionado(Numero)),
     retractall(facto(_, _)),
-    assertz(facto(0, proximo_teste(Numero, problemas))),
-	asserta(ultimo_facto(0)),
-    reply_json(_{ carro_escolhido: Carro }).
+	retractall(ultimo_facto(_)),
+	retractall(justifica(_,_,_)),
+	retractall(factos_processados(_)),
+	
+	assertz(carro_selecionado(Carro)),
+	assertz(carro_numero_selecionado(Numero)),
+    %assertz(facto(0, proximo_teste(Numero, problemas))),
+	assertz(ultimo_facto(0)),
+	
+    cria_facto2(proximo_teste(Numero, problemas), 0, 0),
+    
+	reply_json(_{ carro_escolhido: Carro }).
 
 % Define a lista de todos os veículos em JSON.
 veiculos_json(Veiculos) :-
@@ -357,15 +366,13 @@ http_handler_responder(Request) :-
             atom_string(Resposta, JsonIn.resposta),
             reply_json(_{estado: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
-            catch(diagnostico2(Resposta), Erro,
-                  log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
+            catch(diagnostico2(Resposta), Erro, log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   number(JsonIn.resposta)
         ->  % Se for um número, atribuir diretamente
             Resposta = JsonIn.resposta,
             reply_json(_{estado: "OK", message: "Respondido"}),
             % Chamar diagnostico2/1 após responder
-            catch(diagnostico2(Resposta), Erro,
-                  log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
+            catch(diagnostico2(Resposta), Erro, log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
         ;   % Se não for nem string nem número, falhar com uma mensagem de erro
             reply_json(_{estado: "erro", message: "O campo 'resposta' deve ser string ou número"}),
             fail  % Usar fail para parar a execução neste caso
