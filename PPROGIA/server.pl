@@ -2,7 +2,7 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_json)).
 :- use_module(library(http/json)).
-:- use_module(library(http/http_cors)).  % ensure you have this library
+:- use_module(library(http/http_cors)).
 :- encoding(utf8).
 
 % Iniciar o servidor na porta especificada
@@ -14,7 +14,7 @@ servidor(Port) :-
 :- consult("diagnostico.pl").
 :- consult("escolha_carro.pl").
 
-% Handlers para diferentes endpoints com método GET
+% Handlers para os diferentes endpoints.
 % Escolher Carro
 :- http_handler(root(carros), http_handler_veiculos, [method(get)]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
@@ -122,9 +122,6 @@ http_handler_escolher_carro(Request) :-
     assertz(facto(0, proximo_teste(Numero, problemas))),
 	asserta(ultimo_facto(0)),
     reply_json(_{ carro_escolhido: Carro }).
-	
-
-
 
 % Define a lista de todos os veículos em JSON.
 veiculos_json(Veiculos) :-
@@ -152,16 +149,6 @@ componentes_json(Id, [
     oleo_motor(Id, MinE, MaxE, Max5),
     fluido_travao(Id, MinF, MaxF, Max6),
     fluido_transmissao(Id, MinG, MaxG, Max7).
-
-
-
-
-
-
-	
-
-
-
 
 http_handler_porque(Request) :-
 	log_message('cors_headers'),
