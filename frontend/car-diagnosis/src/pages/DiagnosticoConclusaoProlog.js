@@ -68,8 +68,19 @@ const DiagnosticoConclusaoProlog = () => {
     try {
       const response = await fetch('http://localhost:4040/diagnosticoPossiveis');
       if (response.ok) {
+
         const data = await response.json();
-        setFalhas(data.diagnosticos || []);
+
+        // Filtra o diagnóstico encontrado. 
+        //Alterei para filtragem acontecer no componente, para ter todos os dados dos diagnósticos possíveis
+        //const filteredFalhas = data.diagnosticos?.filter(falha => falha != diagnostico) || [];
+
+        const filteredFalhas = data.diagnosticos || [];
+        
+
+        const uniqueFalhas = Array.from(new Set(filteredFalhas));
+        setFalhas(uniqueFalhas);
+
       } else {
         console.error('Erro carregando dados do "diagnosticosPossiveis":', response.statusText);
       }
@@ -124,7 +135,7 @@ const DiagnosticoConclusaoProlog = () => {
         const data = await response.json();
         setFalhaDetalhes(data);
 
-        console.log(data);
+        //console.log(data);
 
         setFalhaResponseTextVisible(false);
         setTimeout(() => setFalhaResponseTextVisible(true), 100);
@@ -247,9 +258,12 @@ const DiagnosticoConclusaoProlog = () => {
                 <MenuItem value="">
                   <em>Selecione a Falha</em>
                 </MenuItem>
-                {falhas.map((m, idx) => (
-                  <MenuItem key={idx} value={m}>
-                    {m}
+                {falhas.filter(f => f != diagnostico).map((f, idx) => (
+                // {falhas.map((m, idx) => (
+                  <MenuItem key={idx} value={f}>
+                    {/* {console.log(f)} */}
+                    {/* {console.log(diagnostico)} */}
+                    {f}
                   </MenuItem>
                 ))}
               </Select>
@@ -269,7 +283,10 @@ const DiagnosticoConclusaoProlog = () => {
                         {detalhe.detalhes.map((det, idx) => (
                           <ListItem key={idx} sx={{ pl: 2 }}>
                             <Typography variant="body1" sx={{ color: 'lime' }}>
-                              {det.explicacao} - {det.premissa}
+
+                              {/* return mystring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); */}
+
+                              {det.explicacao} - {det.premissa} {det.condicao}
                             </Typography>
                           </ListItem>
                         ))}

@@ -1,6 +1,8 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+// generatePDF(carro=null, diagnostico, solucao, explicacaoGeral=null, explicacaoGeralNao=null, como, evidencias=null, triggeredRules=null)
+
 export const generatePDF = (carro, diagnostico, solucao, explicacaoGeral, explicacaoGeralNao, como, evidencias, triggeredRules) => {
   const doc = new jsPDF();
   const altura_pagina = doc.internal.pageSize.height;  // 298 eh o tamanho A4
@@ -45,7 +47,9 @@ export const generatePDF = (carro, diagnostico, solucao, explicacaoGeral, explic
   })();
 
   const lineBreaker = (text) => {
-    return text.split('\n');
+    if (text instanceof String){
+      return text.split('\n');
+    }
   };
 
   const addFooter = () => {
@@ -73,14 +77,15 @@ export const generatePDF = (carro, diagnostico, solucao, explicacaoGeral, explic
   let y_line = y_position();
   doc.line(x_position(), y_line, 200, y_line);
 
-  doc.setFontSize(14);
-  doc.text(`Veículo Analisado`, x_position(), y_position());
-  doc.setFontSize(12);
-  doc.text(`Marca: ${carro.marca?.nome || 'N/A'}`, x_position(), y_position());
-  doc.text(`Modelo: ${carro.modelo?.nome || 'N/A'}`, x_position(), y_position());
-  doc.text(`Motor: ${carro.motor?.nome || 'N/A'}`, x_position(), y_position());
-  doc.text('Níveis ideais dos componentes para este veículo', x_position(), y_position());
-
+  if(carro) {
+    doc.setFontSize(14);
+    doc.text(`Veículo Analisado`, x_position(), y_position());
+    doc.setFontSize(12);
+    doc.text(`Marca: ${carro.marca?.nome || 'N/A'}`, x_position(), y_position());
+    doc.text(`Modelo: ${carro.modelo?.nome || 'N/A'}`, x_position(), y_position());
+    doc.text(`Motor: ${carro.motor?.nome || 'N/A'}`, x_position(), y_position());
+    doc.text('Níveis ideais dos componentes para este veículo', x_position(), y_position());
+  
 
   doc.setFontSize(10);
   if (carro.componentes?.length > 0) {
@@ -108,6 +113,8 @@ export const generatePDF = (carro, diagnostico, solucao, explicacaoGeral, explic
   } else {
     doc.text('Nenhum componente encontrado.', x_position(1), y_position());
   }
+
+}
 // UMA COLUNA
   // if (carro.componentes?.length > 0) {
   //   carro.componentes.forEach((componente, index) => {
@@ -132,25 +139,35 @@ export const generatePDF = (carro, diagnostico, solucao, explicacaoGeral, explic
   doc.setFontSize(14);
   doc.text('Explicações', x_position(), y_position());
   doc.setFontSize(12);
-  doc.text('Explicação Geral:', x_position(), y_position());
-  doc.text(`${explicacaoGeral}`, x_position(), y_position());
-  doc.text('Explicação Geral (Não):', x_position(), y_position());
-  doc.text(`${explicacaoGeralNao}`, x_position(), y_position());
+
+  if (explicacaoGeral){
+    doc.text('Explicação Geral:', x_position(), y_position());
+    doc.text(`${explicacaoGeral}`, x_position(), y_position());
+    doc.text('Explicação Geral (Não):', x_position(), y_position());
+    doc.text(`${explicacaoGeralNao}`, x_position(), y_position());
+  }
 
   doc.text('Como chegou-se ao diagnóstico?', x_position(), y_position());
   //doc.text(como, 10, y_position());
 
 //  doc.setFontSize(10);
-  const como_array = lineBreaker(como);
-  como_array.forEach((line) => {
-    doc.text(line, x_position(1), y_position());
-  });
+if (como.isArray){
+
+} else {
+  if (como instanceof String){
+    const como_array = lineBreaker(como);
+
+    como_array.forEach((line) => {
+      doc.text(line, x_position(1), y_position());
+    });
+  }
+}
 
   doc.setFontSize(12);
   doc.text('Porquê estas evidências?', x_position(), y_position());
 
   //doc.setFontSize(10);
-  if (evidencias.length > 0) {
+  if (evidencias && evidencias.length > 0) {
     evidencias.forEach((evidencia, index) => {
       doc.text(`${index + 1}. ${evidencia.fact}`, x_position(1), y_position());
     });
@@ -165,7 +182,7 @@ export const generatePDF = (carro, diagnostico, solucao, explicacaoGeral, explic
   doc.setFontSize(14);
   doc.text('Regras acionadas', x_position(), y_position());
   doc.setFontSize(12);
-  if (triggeredRules.length > 0) {
+  if (triggeredRules && triggeredRules.length > 0) {
     triggeredRules.forEach((regra, index) => {
       let y = y_position();
       doc.text(`${index + 1}. ${regra}, ${y}`, x_position(1), y);
