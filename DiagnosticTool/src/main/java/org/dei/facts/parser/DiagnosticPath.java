@@ -1,7 +1,10 @@
 package org.dei.facts.parser;
 
+import lombok.Getter;
+
 import java.util.*;
 
+@Getter
 public class DiagnosticPath {
     public String diagnosis;
     public List<String> path;

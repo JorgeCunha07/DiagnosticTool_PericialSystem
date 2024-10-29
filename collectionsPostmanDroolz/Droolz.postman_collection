@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "a73d1dee-250c-4e1e-87d8-0f0b58edfa3b",
-		"name": "AI",
+		"name": "Droolz",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "30234530"
 	},
@@ -283,6 +283,36 @@
 			"request": {
 				"method": "GET",
 				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/diagnostico/caminhosDiagnostico",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"diagnostico",
+						"caminhosDiagnostico"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "WhyNot Com Resposta DTO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"texto\": \"Sim\",\r\n    \"estado\": \"finalizado\",\r\n    \"pergunta\": \"Verifique o sistema de arrefecimento. O radiador ou ventoinha está com defeito? (Sim/Não)\",\r\n    \"carroSelecionado\": {\r\n        \"marca\": {\r\n            \"nome\": \"Opel\"\r\n        },\r\n        \"modelo\": {\r\n            \"nome\": \"Astra J\"\r\n        },\r\n        \"motor\": {\r\n            \"nome\": \"1.6 CDTi\"\r\n        },\r\n        \"componentes\": [\r\n            {\r\n                \"nome\": \"Bateria\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 75.0,\r\n                \"valorMinimoIdeal\": 65.0,\r\n                \"valorMaximoIdeal\": 75.0,\r\n                \"unidade\": \"Ah\"\r\n            },\r\n            {\r\n                \"nome\": \"Líquido de Arrefecimento\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 10.0,\r\n                \"valorMinimoIdeal\": 6.0,\r\n                \"valorMaximoIdeal\": 8.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Óleo do Motor\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 8.0,\r\n                \"valorMinimoIdeal\": 4.5,\r\n                \"valorMaximoIdeal\": 5.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Fluido de Travão\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 1.2,\r\n                \"valorMinimoIdeal\": 0.6,\r\n                \"valorMaximoIdeal\": 1.0,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Fluido de Transmissão\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 3.0,\r\n                \"valorMinimoIdeal\": 2.0,\r\n                \"valorMaximoIdeal\": 2.5,\r\n                \"unidade\": \"Litros\"\r\n            },\r\n            {\r\n                \"nome\": \"Motor de Arranque\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 3.0,\r\n                \"valorMinimoIdeal\": 1.4,\r\n                \"valorMaximoIdeal\": 1.4,\r\n                \"unidade\": \"kW\"\r\n            },\r\n            {\r\n                \"nome\": \"Bloco de Motor\",\r\n                \"valorMinimo\": 0.0,\r\n                \"valorMaximo\": 120.0,\r\n                \"valorMinimoIdeal\": 85.0,\r\n                \"valorMaximoIdeal\": 110.0,\r\n                \"unidade\": \"C\"\r\n            }\r\n        ]\r\n    },\r\n    \"marcaSelecionada\": null,\r\n    \"modeloSelecionado\": null,\r\n    \"motorSelecionado\": null,\r\n    \"diagnostico\": \"Problema no radiador ou ventoinha\",\r\n    \"solucao\": \"Substituir radiador/ventoinha\",\r\n    \"explicacaoGeral\": \"O radiador ou a ventoinha estão com defeito\",\r\n    \"explicacaoGeralNao\": \"Outros componentes do sistema de arrefecimento estão funcionais\",\r\n    \"como\": null,\r\n    \"evidencias\": [\r\n        {\r\n            \"description\": \"\",\r\n            \"fact\": \"O carro apresenta algum problema?\",\r\n            \"value\": \"Sim\"\r\n        },\r\n        {\r\n            \"description\": \"\",\r\n            \"fact\": \"O carro liga a chave?\",\r\n            \"value\": \"Sim\"\r\n        },\r\n        {\r\n            \"description\": \"\",\r\n            \"fact\": \"O carro liga mas vai abaixo?\",\r\n            \"value\": \"Sim\"\r\n        },\r\n        {\r\n            \"description\": \"\",\r\n            \"fact\": \"Motor a sobreaquecer?\",\r\n            \"value\": \"Sim\"\r\n        },\r\n        {\r\n            \"description\": \"\",\r\n            \"fact\": \"O radiador ou ventoinha está com defeito?\",\r\n            \"value\": \"Sim\"\r\n        }\r\n    ],\r\n    \"triggeredRules\": [\r\n        \"D01: Start Diagnostic\",\r\n        \"D02: Process response - Carro tem problema 'Sim'\",\r\n        \"D04: Ask 'O carro liga a chave?'\",\r\n        \"D05: Process 'O carro liga a chave?'\",\r\n        \"D22: Perguntar 'O carro liga mas vai abaixo?'\",\r\n        \"D23: Processar 'O carro liga mas vai abaixo? Sim'\",\r\n        \"D25: Verificar sobreaquecimento do motor\",\r\n        \"D26: Processar 'Motor a sobreaquecer? Sim'\",\r\n        \"D28: Verificar sistema de arrefecimento\",\r\n        \"D29: Processar 'Radiador ou ventoinha com defeito? Sim'\",\r\n        \"DX: Diagnóstico Concluído\"\r\n    ],\r\n    \"diagnosticoConcluido\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://localhost:8080/api/diagnostico/caminhosDiagnostico",
 					"protocol": "http",

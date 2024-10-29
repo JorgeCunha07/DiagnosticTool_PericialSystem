@@ -175,6 +175,29 @@ cria_facto(F, ID, LFactos) :-
     ),
     !.
 
+cria_facto2(F, ID, LFactos) :-
+    (
+    %caso crie um facto proximo_teste
+    F = proximo_teste(_, _) ->
+        ultimo_facto(N),
+        assertz(facto(N, F)),
+        assertz(justifica(N, ID, LFactos))
+    ;
+    F = solucao(_, _) ->
+        retract(ultimo_facto(N1)),
+        N is N1 + 1,
+        asserta(ultimo_facto(N)),
+        assertz(facto(N, F))
+    ;
+    % caso crie um facto diagnostico
+        retract(ultimo_facto(N1)),
+        N is N1 + 1,
+        asserta(ultimo_facto(N)),
+        assertz(justifica(N1, ID, LFactos)),
+        assertz(facto(N, F))
+    ),
+    !.
+
 % Avaliar condicoes
 avalia(N, P) :-
     P =.. [Functor, Entidade, Operando, MinOuMax],

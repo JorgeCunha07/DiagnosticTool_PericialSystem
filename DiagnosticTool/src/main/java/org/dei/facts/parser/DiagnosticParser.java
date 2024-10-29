@@ -30,19 +30,20 @@ public class DiagnosticParser {
                 }
 
                 if (currentRule != null) {
-                    if (line.trim().equals("when")) {
-                        inWhenSection = true;
-                        inThenSection = false;
-                        continue;
-                    } else if (line.trim().equals("then")) {
-                        inWhenSection = false;
-                        inThenSection = true;
-                        continue;
-                    } else if (line.trim().equals("end")) {
-                        parseThenBlock(currentRule, thenBlockLines);
-                        addRuleToGraph(currentRule);
-                        currentRule = null;
-                        continue;
+                    switch (line.trim()) {
+                        case "when":
+                            inWhenSection = true;
+                            inThenSection = false;
+                            continue;
+                        case "then":
+                            inWhenSection = false;
+                            inThenSection = true;
+                            continue;
+                        case "end":
+                            parseThenBlock(currentRule, thenBlockLines);
+                            addRuleToGraph(currentRule);
+                            currentRule = null;
+                            continue;
                     }
 
                     if (inWhenSection) {
@@ -128,37 +129,34 @@ public class DiagnosticParser {
         }
     }
 
-    public void traverseGraph(StateNode currentNode, List<String> path, List<DiagnosticPath> diagnosticPaths, Set<String> visited, String diagnosis, List<String> rules) {
-        if (visited.contains(currentNode.getEstadoName())) {
-            return; // Evita ciclos
-        }
+    public void traverseGraph(StateNode currentNode, List<String> path, List<DiagnosticPath> diagnosticPaths, Set<String> visited) {
+        traverseGraphHelper(currentNode, path, diagnosticPaths, visited, new ArrayList<>(), null);
+    }
 
-        visited.add(currentNode.getEstadoName());
+    private void traverseGraphHelper(StateNode currentNode, List<String> path, List<DiagnosticPath> diagnosticPaths, Set<String> visited, List<String> rules, String diagnosis) {
+        if (visited.contains(currentNode.getEstadoName())) return; // Avoid cycles
+
         path.add(currentNode.getEstadoName());
+        visited.add(currentNode.getEstadoName());
 
-        if (currentNode.isDiagnosisState() && diagnosis == null) {
+        // Update diagnosis if in a diagnosis state
+        if (currentNode.isDiagnosisState()) {
             diagnosis = currentNode.getDiagnosis();
         }
 
-        if ("finalizado".equals(currentNode.getEstadoName())) {
-            if (diagnosis != null) {
-                diagnosticPaths.add(new DiagnosticPath(diagnosis, new ArrayList<>(path), new ArrayList<>(rules)));
-            }
+        // If reached final state, add to diagnostic paths if diagnosis is present
+        if ("finalizado".equals(currentNode.getEstadoName()) && diagnosis != null) {
+            diagnosticPaths.add(new DiagnosticPath(diagnosis, new ArrayList<>(path), new ArrayList<>(rules)));
         } else {
             for (Transition transition : currentNode.getTransitions()) {
-                // Adiciona o nome da regra ao caminho das regras antes da transição
                 List<String> newRules = new ArrayList<>(rules);
                 newRules.add(transition.getRuleName());
 
-                List<String> newPath = new ArrayList<>(path);
-                Set<String> newVisited = new HashSet<>(visited);
-
-                traverseGraph(transition.getTargetState(), newPath, diagnosticPaths, newVisited, diagnosis, newRules);
+                traverseGraphHelper(transition.getTargetState(), new ArrayList<>(path), diagnosticPaths, new HashSet<>(visited), newRules, diagnosis);
             }
         }
 
         path.remove(path.size() - 1);
         visited.remove(currentNode.getEstadoName());
     }
-
 }

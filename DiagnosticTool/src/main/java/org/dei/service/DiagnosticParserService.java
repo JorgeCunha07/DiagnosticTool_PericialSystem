@@ -24,14 +24,9 @@ public class DiagnosticParserService {
         }
 
         List<String> path = new ArrayList<>();
-        List<String> rules = new ArrayList<>(); // Lista para manter as regras aplicadas
         Set<String> visited = new HashSet<>();
-        parser.traverseGraph(initialState, path, diagnosticPaths, visited, null, rules);
+        parser.traverseGraph(initialState, path, diagnosticPaths, visited);
 
-        for (DiagnosticPath dp : diagnosticPaths) {
-            System.out.println("Diagnóstico: " + dp.diagnosis);
-            System.out.println("Caminho de Estados: " + dp.path);
-            System.out.println("Regras aplicadas: " + dp.rules);
-        }
+
     }
 }

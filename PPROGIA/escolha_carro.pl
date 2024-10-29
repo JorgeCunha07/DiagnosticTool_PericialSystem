@@ -59,14 +59,16 @@ obter_numero_carro :-
     write('O número do carro é: '), write(Numero), nl,
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]),
     write('O carro selecionado foi: '), write(Carro), nl,
-    retractall(carro_selecionado(_)),
+    
+	retractall(carro_selecionado(_)),
 	retractall(carro_numero_selecionado(_)),
-    assertz(carro_selecionado(Carro)),
+	retractall(facto(_, _)),        % Reinicia os factos com o primeiro teste
+	retractall(ultimo_facto(_)),
+    retractall(justifica(_,_,_)), 	% Apaga todas as justificações para o como
+	
+	assertz(carro_selecionado(Carro)),
 	assertz(carro_numero_selecionado(Numero)),
-    % Reinicia os factos com o primeiro teste
-    retractall(ultimo_facto(_)),
     assertz(ultimo_facto(0)),
-    retractall(facto(_, _)),
-    cria_facto(proximo_teste(Numero, problemas), 0, 0),
-    % Apaga todas as justificações para o como
-    retractall(justifica(_,_,_)).
+    
+    cria_facto(proximo_teste(Numero, problemas), 0, 0).
+    
