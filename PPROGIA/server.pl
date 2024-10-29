@@ -15,21 +15,32 @@ servidor(Port) :-
 :- consult("escolha_carro.pl").
 
 % Handlers para diferentes endpoints com método GET
-:- http_handler(root(selecionarCarro), http_handler_escolher_carro, [methods([post, options])]).
-:- http_handler(root(porqueNao), http_handler_whynot, [methods([post, options])]).
+% Escolher Carro
+:- http_handler(root(carros), http_handler_veiculos, [method(get)]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_handler_procurar_numero_carro, [methods([post, options])]).
-:- http_handler(root(responder), http_handler_responder, [methods([post, options])]).
-:- http_handler(root(porque), http_handler_porque, [methods([post, options])]).
+:- http_handler(root(selecionarCarro), http_handler_escolher_carro, [methods([post, options])]).
+% Diagnostico
+:- http_handler(root(pergunta), http_handler_pergunta, [method(get)]).
 :- http_handler(root(factos), http_handler_factos, [method(get)]).
 :- http_handler(root(factosTodos), http_handler_factos_todos, [method(get)]).
-:- http_handler(root(pergunta), http_handler_pergunta, [method(get)]).
-:- http_handler(root(como), http_handler_como, [methods([get, options])]).
+:- http_handler(root(responder), http_handler_responder, [methods([post, options])]).
 :- http_handler(root(diagnostico), http_handler_diagnostico, [method(get)]).
+% Esclarecimentos
+:- http_handler(root(como), http_handler_como, [methods([get, options])]).
+:- http_handler(root(porque), http_handler_porque, [methods([post, options])]).
+:- http_handler(root(porqueNao), http_handler_whynot, [methods([post, options])]).
 :- http_handler(root(diagnosticoPossiveis), http_handler_diagnostico_possiveis, [method(get)]).
-:- http_handler(root(carros), http_handler_veiculos, [method(get)]).
+
+
+log_message(Message) :-
+    open('server.log', append, Stream),
+    get_time(TimeStamp),
+    format_time(atom(FormattedTime), '%Y-%m-%d %H:%M:%S', TimeStamp),
+    format(Stream, '~w: ~w~n', [FormattedTime, Message]),
+    close(Stream).
 
 % Configuração manual dos cabeçalhos CORS
 cors_headers :-
@@ -37,15 +48,83 @@ cors_headers :-
     format('Access-Control-Allow-Methods: GET, POST, OPTIONS~n'),
     format('Access-Control-Allow-Headers: Content-Type~n').
 
+% Escolher Carro
+
 http_handler_veiculos(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    memberchk(method(options), Request),
     !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    cors_headers,
     format('~n').
 http_handler_veiculos(_Request) :-
-    cors_headers,                         % Adiciona cabeçalhos CORS à resposta normal
+    cors_headers,
     veiculos_json(VeiculosJSON),
     reply_json(VeiculosJSON).
+
+% Handler para listar marcas
+http_handler_listar_marcas(_Request) :-
+    findall(Marca, carro(_, Marca, _, _), Marcas),
+    list_to_set(Marcas, MarcasUnicas),
+    reply_json(MarcasUnicas).
+
+% Handler para listar modelos
+http_handler_listar_modelos(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    atom_string(Marca, JsonIn.marca),
+    findall(Modelo, carro(_, Marca, Modelo, _), Modelos),
+    list_to_set(Modelos, ModelosUnicos),
+    reply_json(ModelosUnicos).
+
+% Handler para listar motores
+http_handler_listar_motores(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    atom_string(Marca, JsonIn.marca),
+    atom_string(Modelo, JsonIn.modelo),
+    findall(Motor, carro(_, Marca, Modelo, Motor), Motores),
+    list_to_set(Motores, MotoresUnicos),
+    reply_json(MotoresUnicos).
+
+http_handler_procurar_numero_carro(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
+    format('~n').
+
+% Handler para obter número do carro
+http_handler_procurar_numero_carro(Request) :-
+    cors_headers,  
+    http_read_json_dict(Request, JsonIn),
+    atom_string(Marca, JsonIn.marca),
+    atom_string(Modelo, JsonIn.modelo),
+    atom_string(Motor, JsonIn.motor),
+    log_message('Dados obtidos: ' + Marca + Modelo + Motor),
+    (   carro(Numero, Marca, Modelo, Motor)
+    ->  reply_json(_{ numero: Numero })
+    ;   reply_json(_{ error: 'Carro não encontrado' }, [status(404)])
+    ).
+
+http_handler_escolher_carro(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
+    format('~n').
+	
+http_handler_escolher_carro(Request) :-
+    cors_headers,
+    http_read_json_dict(Request, JsonIn),
+    Numero = JsonIn.numero,
+    procurar_carro(Numero, Carro),
+    log_message('Carro selecionado: ' + Carro),
+    retractall(carro_selecionado(_)),
+	retractall(carro_numero_selecionado(_)),
+    assertz(carro_selecionado(Carro)),
+	assertz(carro_numero_selecionado(Numero)),
+    retractall(facto(_, _)),
+    assertz(facto(0, proximo_teste(Numero, problemas))),
+	asserta(ultimo_facto(0)),
+    reply_json(_{ carro_escolhido: Carro }).
+	
+
+
 
 % Define a lista de todos os veículos em JSON.
 veiculos_json(Veiculos) :-
@@ -74,77 +153,15 @@ componentes_json(Id, [
     fluido_travao(Id, MinF, MaxF, Max6),
     fluido_transmissao(Id, MinG, MaxG, Max7).
 
-log_message(Message) :-
-    open('server.log', append, Stream),
-    get_time(TimeStamp),
-    format_time(atom(FormattedTime), '%Y-%m-%d %H:%M:%S', TimeStamp),
-    format(Stream, '~w: ~w~n', [FormattedTime, Message]),
-    close(Stream).
 
-% Handler para listar marcas
-http_handler_listar_marcas(_Request) :-
-    findall(Marca, carro(_, Marca, _, _), Marcas),
-    list_to_set(Marcas, MarcasUnicas),
-    reply_json(MarcasUnicas).
 
-% Handler para listar modelos
-http_handler_listar_modelos(Request) :-
-    http_read_json_dict(Request, JsonIn),
-    atom_string(Marca, JsonIn.marca),
-    findall(Modelo, carro(_, Marca, Modelo, _), Modelos),
-    list_to_set(Modelos, ModelosUnicos),
-    reply_json(ModelosUnicos).
 
-% Handler para listar motores
-http_handler_listar_motores(Request) :-
-    http_read_json_dict(Request, JsonIn),
-    atom_string(Marca, JsonIn.marca),
-    atom_string(Modelo, JsonIn.modelo),
-    findall(Motor, carro(_, Marca, Modelo, Motor), Motores),
-    list_to_set(Motores, MotoresUnicos),
-    reply_json(MotoresUnicos).
+
+
 	
-http_handler_procurar_numero_carro(Request) :-
-	log_message('cors_headers'),
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
-    !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
-    format('~n').
 
-% Handler para obter número do carro
-http_handler_procurar_numero_carro(Request) :-
-    cors_headers,  
-    http_read_json_dict(Request, JsonIn),
-    atom_string(Marca, JsonIn.marca),
-    atom_string(Modelo, JsonIn.modelo),
-    atom_string(Motor, JsonIn.motor),
-    log_message('Dados obtidos: ' + Marca + Modelo + Motor),
-    (   carro(Numero, Marca, Modelo, Motor)
-    ->  reply_json(_{ numero: Numero })
-    ;   reply_json(_{ error: 'Carro não encontrado' }, [status(404)])
-    ).
 
-http_handler_escolher_carro(Request) :-
-	log_message('cors_headers'),
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
-    !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
-    format('~n').
-	
-http_handler_escolher_carro(Request) :-
-    cors_headers,
-    http_read_json_dict(Request, JsonIn),
-    Numero = JsonIn.numero,
-    procurar_carro(Numero, Carro),
-    log_message('Carro selecionado: ' + Carro),
-    retractall(carro_selecionado(_)),
-	retractall(carro_numero_selecionado(_)),
-    assertz(carro_selecionado(Carro)),
-	assertz(carro_numero_selecionado(Numero)),
-    retractall(facto(_, _)),
-    assertz(facto(0, proximo_teste(Numero, problemas))),
-	asserta(ultimo_facto(0)),
-    reply_json(_{ carro_escolhido: Carro }).
+
 
 http_handler_porque(Request) :-
 	log_message('cors_headers'),
@@ -388,7 +405,6 @@ http_handler_diagnostico(_Request) :-
     reply_json(Resposta).
 	
 http_handler_diagnostico_possiveis(Request) :-
-	log_message('cors_headers'),
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
