@@ -175,7 +175,7 @@ cria_facto(F, ID, LFactos) :-
     ),
     !.
 
-cria_facto2(F, ID, LFactos) :-
+cria_facto_server(F, ID, LFactos) :-
     (
     %caso crie um facto proximo_teste
     F = proximo_teste(_, _) ->

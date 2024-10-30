@@ -15,13 +15,14 @@ servidor(Port) :-
 :- consult("escolha_carro.pl").
 
 % Handlers para os diferentes endpoints.
-% Escolher Carro
+% Predicados para Escolher Carro
 :- http_handler(root(carros), http_handler_veiculos, [method(get)]).
 :- http_handler(root(escolherCarro/marca), http_handler_listar_marcas, [method(get)]).
 :- http_handler(root(escolherCarro/modelo), http_handler_listar_modelos, [method(post)]).
 :- http_handler(root(escolherCarro/motor), http_handler_listar_motores, [method(post)]).
 :- http_handler(root(obterNumeroCarro), http_handler_procurar_numero_carro, [methods([post, options])]).
 :- http_handler(root(selecionarCarro), http_handler_escolher_carro, [methods([post, options])]).
+
 % Diagnostico
 :- http_handler(root(pergunta), http_handler_pergunta, [method(get)]).
 :- http_handler(root(factos), http_handler_factos, [method(get)]).
@@ -48,93 +49,25 @@ cors_headers :-
     format('Access-Control-Allow-Methods: GET, POST, OPTIONS~n'),
     format('Access-Control-Allow-Headers: Content-Type~n').
 
-% Escolher Carro
+% Predicados para Escolher Carro
 
+% Handler para listar info dos Carros
 http_handler_veiculos(Request) :-
     memberchk(method(options), Request),
     !,                                    
     cors_headers,
     format('~n').
+
+% Handler para listar info dos Carros
 http_handler_veiculos(_Request) :-
     cors_headers,
     veiculos_json(VeiculosJSON),
     reply_json(VeiculosJSON).
-
-% Handler para listar marcas
-http_handler_listar_marcas(_Request) :-
-    findall(Marca, carro(_, Marca, _, _), Marcas),
-    list_to_set(Marcas, MarcasUnicas),
-    reply_json(MarcasUnicas).
-
-% Handler para listar modelos
-http_handler_listar_modelos(Request) :-
-    http_read_json_dict(Request, JsonIn),
-    atom_string(Marca, JsonIn.marca),
-    findall(Modelo, carro(_, Marca, Modelo, _), Modelos),
-    list_to_set(Modelos, ModelosUnicos),
-    reply_json(ModelosUnicos).
-
-% Handler para listar motores
-http_handler_listar_motores(Request) :-
-    http_read_json_dict(Request, JsonIn),
-    atom_string(Marca, JsonIn.marca),
-    atom_string(Modelo, JsonIn.modelo),
-    findall(Motor, carro(_, Marca, Modelo, Motor), Motores),
-    list_to_set(Motores, MotoresUnicos),
-    reply_json(MotoresUnicos).
-
-http_handler_procurar_numero_carro(Request) :-
-    memberchk(method(options), Request),
-    !,                                    
-    cors_headers,
-    format('~n').
-
-% Handler para obter número do carro
-http_handler_procurar_numero_carro(Request) :-
-    cors_headers,  
-    http_read_json_dict(Request, JsonIn),
-    atom_string(Marca, JsonIn.marca),
-    atom_string(Modelo, JsonIn.modelo),
-    atom_string(Motor, JsonIn.motor),
-    log_message('Dados obtidos: ' + Marca + Modelo + Motor),
-    (   carro(Numero, Marca, Modelo, Motor)
-    ->  reply_json(_{ numero: Numero })
-    ;   reply_json(_{ error: 'Carro não encontrado' }, [status(404)])
-    ).
-
-http_handler_escolher_carro(Request) :-
-    memberchk(method(options), Request),
-    !,                                    
-    cors_headers,
-    format('~n').
 	
-http_handler_escolher_carro(Request) :-
-    cors_headers,
-    http_read_json_dict(Request, JsonIn),
-    Numero = JsonIn.numero,
-    procurar_carro(Numero, Carro),
-	
-    log_message('Carro selecionado: ' + Carro),
-    
-	retractall(carro_selecionado(_)),
-	retractall(carro_numero_selecionado(_)),
-    retractall(facto(_, _)),
-	retractall(ultimo_facto(_)),
-	retractall(justifica(_,_,_)),
-	retractall(factos_processados(_)),
-	
-	assertz(carro_selecionado(Carro)),
-	assertz(carro_numero_selecionado(Numero)),
-	assertz(ultimo_facto(0)),
-	%assertz(facto(0, proximo_teste(Numero, problemas))),
-    cria_facto2(proximo_teste(Numero, problemas), 0, 0),
-    
-	reply_json(_{ carro_escolhido: Carro }).
-
 % Define a lista de todos os veículos em JSON.
 veiculos_json(Veiculos) :-
     findall(Veiculo, veiculo_json(Veiculo), Veiculos).
-
+	
 % Cria o JSON de cada veículo com os componentes em formato de lista de pares.
 veiculo_json(_{marca: _{nome: Marca}, modelo: _{nome: Modelo}, motor: _{nome: Motor}, componentes: Componentes}) :-
     carro(Id, Marca, Modelo, Motor),
@@ -156,8 +89,88 @@ componentes_json(Id, [
     liquido_arrefecimento(Id, MinD, MaxD, Max4),
     oleo_motor(Id, MinE, MaxE, Max5),
     fluido_travao(Id, MinF, MaxF, Max6),
-    fluido_transmissao(Id, MinG, MaxG, Max7).
+    fluido_transmissao(Id, MinG, MaxG, Max7).	
+	
+% Handler para listar marcas
+http_handler_listar_marcas(_Request) :-
+    listar_marcas(MarcasUnicas),
+    reply_json(MarcasUnicas).
 
+% Handler para listar modelos
+http_handler_listar_modelos(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    atom_string(Marca, JsonIn.marca),
+    listar_modelos(Marca, ModelosUnicos),
+    reply_json(ModelosUnicos).
+
+% Handler para listar motores
+http_handler_listar_motores(Request) :-
+    http_read_json_dict(Request, JsonIn),
+    atom_string(Marca, JsonIn.marca),
+    atom_string(Modelo, JsonIn.modelo),
+    listar_motores(Marca, Modelo, MotoresUnicos),
+    reply_json(MotoresUnicos).
+
+% Handler para obter id do carro
+http_handler_procurar_numero_carro(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
+    format('~n').
+	
+http_handler_procurar_numero_carro(Request) :-
+    cors_headers,  
+    http_read_json_dict(Request, JsonIn),
+    atom_string(Marca, JsonIn.marca),
+    atom_string(Modelo, JsonIn.modelo),
+    atom_string(Motor, JsonIn.motor),
+    log_message('Dados obtidos: ' + Marca + Modelo + Motor),
+    (   carro(Numero, Marca, Modelo, Motor)
+    ->  reply_json(_{ numero: Numero })
+    ;   reply_json(_{ error: 'Carro não encontrado' }, [status(404)])
+    ).
+
+% Handler para escolher o carro
+http_handler_escolher_carro(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
+    format('~n').
+	
+http_handler_escolher_carro(Request) :-
+    cors_headers,
+    http_read_json_dict(Request, JsonIn),
+    Numero = JsonIn.numero,
+    obter_numero_carro(Numero, Carro),
+	reply_json(_{ carro_escolhido: Carro }).
+
+% Predicados para Diagnostico
+
+% Handler para escolher o carro
+http_handler_pergunta(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
+    format('~n').
+	
+http_handler_pergunta(_Request) :-
+	cors_headers,
+    findall(P, facto(_, proximo_teste(_, P)), Testes),
+    ( Testes = [Teste|_] ->  % Verifica se há mais testes
+        functor(TesteTermo, Teste, 2),
+        pergunta(TesteTermo, Pergunta),
+        opcoes_validas(TesteTermo, OpcoesValidas),
+		log_message(OpcoesValidas),
+        reply_json(json{pergunta: Pergunta, respostas: OpcoesValidas, estado: "ongoing"})
+    ;   % Caso não haja mais perguntas
+        reply_json(json{estado: "finalizado"})
+    ).
+
+
+
+
+
+% Handler para escolher o carro
 http_handler_porque(Request) :-
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
@@ -226,11 +239,6 @@ safe_term_string(Term, String) :-
 safe_term_string(_, _) :-
     throw(error(syntax_error('Invalid term in "facto" field'), _)).
 
-procurar_carro(Numero, Carro) :-
-    carro(Numero, Marca, Modelo, Motor),
-    format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).
-	
-
 http_handler_factos(_Request) :-
     % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
     findall(Descricao, (facto(_, Descricao), \+ (Descricao = proximo_teste(_, _); Descricao = diagnostico(_, _); Descricao = solucao(_, _))), Factos),
@@ -247,24 +255,8 @@ http_handler_factos_todos(_Request) :-
 facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
 	
-http_handler_pergunta(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
-    !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
-    format('~n').
 
-http_handler_pergunta(_Request) :-
-	cors_headers,
-    findall(P, facto(_, proximo_teste(_, P)), Testes),
-    ( Testes = [Teste|_] ->  % Verifica se há mais testes
-        functor(TesteTermo, Teste, 2),
-        pergunta(TesteTermo, Pergunta),
-        opcoes_validas(TesteTermo, OpcoesValidas),
-		log_message(OpcoesValidas),
-        reply_json(json{pergunta: Pergunta, respostas: OpcoesValidas, estado: "ongoing"})
-    ;   % Caso não haja mais perguntas
-        reply_json(json{estado: "finalizado"})
-    ).
+
 	
 http_handler_como(Request) :-
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
