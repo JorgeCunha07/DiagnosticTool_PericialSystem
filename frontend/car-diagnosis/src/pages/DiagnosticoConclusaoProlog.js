@@ -4,13 +4,17 @@ import InfoIcon from '@mui/icons-material/Info';
 import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import {
-  Accordion, AccordionDetails, AccordionSummary, Box,
+  Accordion, AccordionDetails, AccordionSummary,
+  Autocomplete,
+  Box,
   Button,
+  Collapse,
   FormControl,
   Grid,
   IconButton,
-  InputLabel, List, ListItem, MenuItem, Select,
+  List, ListItem,
   SvgIcon,
+  TextField,
   Typography
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -71,7 +75,7 @@ const DiagnosticoConclusaoProlog = () => {
 
         const data = await response.json();
 
-        // Filtra o diagnóstico encontrado. 
+        // Filtra o diagnóstico encontrado.
         //Alterei para filtragem acontecer no componente, para ter todos os dados dos diagnósticos possíveis
         //const filteredFalhas = data.diagnosticos?.filter(falha => falha != diagnostico) || [];
 
@@ -109,7 +113,7 @@ const DiagnosticoConclusaoProlog = () => {
         setActiveButtonIndex(index);
 
         setResponseTextVisible(false);
-        setTimeout(() => setResponseTextVisible(true), 100);
+        setTimeout(() => setResponseTextVisible(true), 200);
 
       } else {
         console.error('Erro buscando diagnostico:', response.statusText);
@@ -119,32 +123,36 @@ const DiagnosticoConclusaoProlog = () => {
     }
   };
 
-  const handleFalhasChange = async (event) => {
-    const selectedFalha = event.target.value;
-    setFalha(selectedFalha);
+  const handleFalhasChange = async (event, newValue) => {
+    //const selectedFalha = event.target.value; // Usar se for componente Select
+    const selectedFalha = newValue;
 
-    const body = { facto: `diagnostico(Veiculo, '${selectedFalha}')` };
-    try {
-      const response = await fetch('http://localhost:4040/porqueNao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+    if (newValue){
+      setFalha(selectedFalha);
 
-      if (response.ok) {
-        const data = await response.json();
-        setFalhaDetalhes(data);
+      const body = { facto: `diagnostico(Veiculo, '${selectedFalha}')` };
+      try {
+        const response = await fetch('http://localhost:4040/porqueNao', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
 
-        //console.log(data);
+        if (response.ok) {
+          const data = await response.json();
+          setFalhaDetalhes(data);
 
-        setFalhaResponseTextVisible(false);
-        setTimeout(() => setFalhaResponseTextVisible(true), 100);
-      } else {
-        console.error('Erro buscando porqueNao:', response.statusText);
+          setFalhaResponseTextVisible(false);
+          setTimeout(() => setFalhaResponseTextVisible(true), 100);
+        } else {
+          console.error('Erro buscando porqueNao:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
       }
-    } catch (error) {
-      console.error('Fetch error:', error);
-    }
+  } else {
+    setFalhaResponseTextVisible(false);
+  }
   };
 
   return (
@@ -153,7 +161,23 @@ const DiagnosticoConclusaoProlog = () => {
         <IconButton
           variant="contained"
           onClick={() =>
-            generatePDF(null, diagnostico, solucao, null, null, como, null, null)
+            generatePDF(
+              null, 
+              diagnostico, 
+              solucao, 
+              null, 
+              null, 
+              como, 
+              null, 
+              null, 
+              responseText, 
+              activeButtonIndex, 
+              responseTextVisible, 
+              falha,
+              falhaDetalhes, 
+              falhaResponseTextVisible ? falhaDetalhes : null
+            )
+            //generatePDF(null, diagnostico, solucao, null, null, como, null, null)
           }
           sx={{ color: 'red', backgroundColor: 'white', marginLeft:'10px',
             '&:hover': { backgroundColor: 'rgba(255, 0, 0, 0.1)', },
@@ -207,21 +231,30 @@ const DiagnosticoConclusaoProlog = () => {
                           Pergunta: {evidencia.pergunta}<br/>
                           Resposta: {evidencia.resposta}
                         </Typography>
+                        {/* <Collapse in={responseTextVisible} timeout={500}> */}
                         {activeButtonIndex === index && responseText && (
-                          <Typography
-                            variant="body2"
-                            sx={{
+                          <Box
+                          sx={{
+                            mt: 2,
+                            pl: 2,
+                            opacity: responseTextVisible ? 1 : 0,
+                            visibility: responseTextVisible ? 'visible' : 'hidden',
+                            //display: responseTextVisible ? 'block' : 'none',
+                            transition: 'opacity 0.8s ease-in-out, visibility 0.8s ease-in-out',
+                            borderLeft: '3px solid lime',
+                          }}
+                        >
+                            <Typography variant="body2" sx={{
                               mt: 1,
                               color: 'lime',
-                              whiteSpace: 'pre-line',
-                              opacity: responseTextVisible ? 1 : 0,
-                              transform: responseTextVisible ? 'translateY(0)' : 'translateY(10px)',
-                              transition: 'opacity 0.3s ease, transform 0.3s ease'
-                            }}
-                          >
+                              whiteSpace: 'pre-line'
+                              }}
+                            >
                             {responseText}
                           </Typography>
+                        </Box>
                         )}
+                        {/* </Collapse> */}
                       </Grid>
                       <Grid item>
                         <Button
@@ -248,33 +281,28 @@ const DiagnosticoConclusaoProlog = () => {
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
               <em>Porque Não</em> Outro Diagnóstico?
           </Typography>
-          {/* <Typography variant="h6" sx={{ color: 'text.secondary' }}>Entenda <i>porque não</i> outro diagnóstico</Typography> */}
         </AccordionSummary>
         <AccordionDetails>
           {falhas.length > 0 && (
             <FormControl fullWidth>
-              <InputLabel>Todas falhas</InputLabel>
-              <Select value={falha} onChange={handleFalhasChange}>
-                <MenuItem value="">
-                  <em>Selecione a Falha</em>
-                </MenuItem>
-                {falhas.filter(f => f != diagnostico).map((f, idx) => (
-                // {falhas.map((m, idx) => (
-                  <MenuItem key={idx} value={f}>
-                    {/* {console.log(f)} */}
-                    {/* {console.log(diagnostico)} */}
-                    {f}
-                  </MenuItem>
-                ))}
-              </Select>
+              <Autocomplete
+                options={falhas.filter((f) => f !== diagnostico)} // Filtra o diagnostico final
+                value={falha}
+                onChange={handleFalhasChange}
+                renderInput={(params) => (
+                  <TextField {...params} label="Todos outros diagnósticos possíveis" variant="outlined" />
+                )}
+              />
             </FormControl>
           )}
           
-          {/* Mostra PorqueNao */}
-            {falhaDetalhes && falhaResponseTextVisible && (
-              <Box sx={{ mt: 2 }}>
-                {Array.isArray(falhaDetalhes) ? (
-                  [...falhaDetalhes].sort((a, b) => a.explicacao.localeCompare(b.explicacao)).map((detalhe, index) => (
+          <Collapse in={falhaResponseTextVisible} timeout={500}>
+          {falhaDetalhes && falhaResponseTextVisible && (
+            <Box sx={{ mt: 2 }}>
+              {Array.isArray(falhaDetalhes) ? (
+                [...falhaDetalhes]
+                  .sort((a, b) => a.explicacao.localeCompare(b.explicacao))
+                  .map((detalhe, index) => (
                     <Box key={index} sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime' }}>
                       <Typography variant="body2">
                         {detalhe.explicacao} {detalhe.regra_id}:
@@ -283,9 +311,6 @@ const DiagnosticoConclusaoProlog = () => {
                         {detalhe.detalhes.map((det, idx) => (
                           <ListItem key={idx} sx={{ pl: 2 }}>
                             <Typography variant="body1" sx={{ color: 'lime' }}>
-
-                              {/* return mystring.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); */}
-
                               {det.explicacao} - {det.premissa} {det.condicao}
                             </Typography>
                           </ListItem>
@@ -293,17 +318,19 @@ const DiagnosticoConclusaoProlog = () => {
                       </List>
                     </Box>
                   ))
-                ) : (
-                  // Se falhaDetalhes não for array, o diagnostico final é igual ao diagnóstico escolhido no PorqueNao
-                  <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid red' }}>
-                    <Typography variant="body2">
-                      {falhaDetalhes.explicacao} É o diagnóstico final.
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-            )}
-
+              ) : (
+                <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid red' }}>
+                  <Typography variant="body2">
+                    {falhaDetalhes.explicacao}
+                  </Typography>
+                  <Typography variant="body2">
+                    Selecione outro diagnóstico
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          )}
+          </Collapse>
         </AccordionDetails>
       </Accordion>
     </CardWrapper>

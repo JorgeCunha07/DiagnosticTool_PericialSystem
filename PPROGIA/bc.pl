@@ -640,7 +640,7 @@ regra 89
 % Se os sensores do motor estao com defeito
 regra 91
 	se [sensores_defeituosos(Veiculo, sim)]
-    entao [cria_facto(diagnostico(Veiculo, 'Sensor dor motor com falha.')), cria_facto(solucao(Veiculo, 'Verificar e substituir sensores.'))].
+    entao [cria_facto(diagnostico(Veiculo, 'Sensor do motor com falha.')), cria_facto(solucao(Veiculo, 'Verificar e substituir sensores.'))].
 
 % Se os sensores do motor NAO estao com defeito
 regra 92
