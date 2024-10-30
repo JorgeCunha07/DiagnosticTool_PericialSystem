@@ -10,17 +10,16 @@ whynot(Facto, _) :-
     write('O facto '), write(Facto), write(' nao e falso!'), nl.
 whynot(Facto, Nivel) :-
     encontra_regras_whynot(Facto, LLPF),
-    (   
+    (
         LLPF \= [] ->
         whynot1(LLPF, Nivel)
-    ;   
-        Nivel =:= 1 ->
+    ;
         formata(Nivel),
-        write('Porque:'), write(' O facto '), write(Facto),
-        write(' nao esta definido na base de conhecimento'), nl
-    ;   
-        true
+        %write('Porque: O facto '), write(Facto),
+        %write(' não está definido na base de conhecimento'), nl
+		write('Parou no nivel'), write(Nivel)
     ).
+
 
 whynot(nao Facto, Nivel) :-
     formata(Nivel),
@@ -46,12 +45,12 @@ encontra_regras_whynot(Facto, LLPF) :-
 
 % Explicar "whynot"
 whynot1([], _).
-whynot1([(ID, LPF) | LLPF], Nivel) :-
+whynot1([(ID, LPF) | _], Nivel) :-
     formata(Nivel),
     write('Porque pela regra '), write(ID), write(':'), nl,
     Nivel1 is Nivel + 1,
     explica_porque_nao(LPF, Nivel1),
-    whynot1(LLPF, Nivel).
+    !.
 
 % Encontrar premissas falsas
 encontra_premissas_falsas([nao X e Y], LPF) :-
@@ -81,22 +80,25 @@ encontra_premissas_falsas([]).
 
 % Explicar porque nao
 explica_porque_nao([], _).
-explica_porque_nao([nao avalia(X) | LPF], Nivel) :-
-    !,
+explica_porque_nao([P | _], Nivel) :-
     formata(Nivel),
-    write('A condicao nao '), write(X), write(' e falsa'), nl,
-    explica_porque_nao(LPF, Nivel).
-explica_porque_nao([avalia(X) | LPF], Nivel) :-
-    !,
-    formata(Nivel),
-    write('A condicao '), write(X), write(' e falsa'), nl,
-    explica_porque_nao(LPF, Nivel).
-explica_porque_nao([P | LPF], Nivel) :-
-    formata(Nivel),
-    write('A premissa '), write(P), write(' e falsa'), nl,
+    write('A premissa '), write(P), write(' é falsa'), nl,
+    functor(P, TesteAnterior, _),
     Nivel1 is Nivel + 1,
-    whynot(P, Nivel1),
-    explica_porque_nao(LPF, Nivel).
+    
+    % Verifica se o TesteAnterior é 'avalia' e manipula de acordo
+    ( TesteAnterior == avalia ->
+        P =.. [_, InnerTerm | _],      % Decompor para obter o termo dentro de avalia(...)
+        functor(InnerTerm, Functor, _), % Extrair o nome do functor (e.g., fluido_transmissao)
+        NextFact = proximo_teste(_, Functor)  % Define NextFact com o functor extraído
+    ;
+        % Caso contrário, usa TesteAnterior diretamente
+        NextFact = proximo_teste(_, TesteAnterior)
+    ),
+    
+    % Continua com o próximo diagnóstico
+    whynot(NextFact, Nivel1).
+
 
 % Formatar saida
 formata(Nivel) :-

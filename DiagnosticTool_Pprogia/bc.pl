@@ -278,7 +278,7 @@ opcoes_validas(alternador_defeito(_, _), [sim, nao]).
 opcoes_validas(compressor_AC(_, _), [sim, nao]).
 opcoes_validas(tensores(_, _), [sim, nao]).
 opcoes_validas(oleo_motor(_, _), [0, Max]):-carro_numero_selecionado(Carro),oleo_motor(Carro, _, _, Max).
-opcoes_validas(sistema_escape(_, _), [0, Max]):-carro_numero_selecionado(Carro),sistema_escape(Carro, _, _, Max).
+opcoes_validas(sistema_escape(_, _), [sim, nao]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -10,15 +10,17 @@ whynot(Facto, _) :-
     write('O facto '), write(Facto), write(' nao e falso!'), nl.
 whynot(Facto, Nivel) :-
     encontra_regras_whynot(Facto, LLPF),
-    (
+    (   
         LLPF \= [] ->
         whynot1(LLPF, Nivel)
-    ;
+    ;   
+        Nivel =:= 1 ->
         formata(Nivel),
-        write('Porque: O facto '), write(Facto),
-        write(' não está definido na base de conhecimento'), nl
+        write('Porque:'), write(' O facto '), write(Facto),
+        write(' nao esta definido na base de conhecimento'), nl
+    ;   
+        true
     ).
-
 
 whynot(nao Facto, Nivel) :-
     formata(Nivel),
@@ -49,7 +51,7 @@ whynot1([(ID, LPF) | LLPF], Nivel) :-
     write('Porque pela regra '), write(ID), write(':'), nl,
     Nivel1 is Nivel + 1,
     explica_porque_nao(LPF, Nivel1),
-    !.
+    whynot1(LLPF, Nivel).
 
 % Encontrar premissas falsas
 encontra_premissas_falsas([nao X e Y], LPF) :-
@@ -79,13 +81,22 @@ encontra_premissas_falsas([]).
 
 % Explicar porque nao
 explica_porque_nao([], _).
+explica_porque_nao([nao avalia(X) | LPF], Nivel) :-
+    !,
+    formata(Nivel),
+    write('A condicao nao '), write(X), write(' e falsa'), nl,
+    explica_porque_nao(LPF, Nivel).
+explica_porque_nao([avalia(X) | LPF], Nivel) :-
+    !,
+    formata(Nivel),
+    write('A condicao '), write(X), write(' e falsa'), nl,
+    explica_porque_nao(LPF, Nivel).
 explica_porque_nao([P | LPF], Nivel) :-
     formata(Nivel),
-    write('A premissa '), write(P), write(' é falsa'), nl,
-    functor(P, FunctorName, _),
+    write('A premissa '), write(P), write(' e falsa'), nl,
     Nivel1 is Nivel + 1,
-    NextFact = proximo_teste(_, FunctorName),
-    whynot(NextFact, Nivel1).
+    whynot(P, Nivel1),
+    explica_porque_nao(LPF, Nivel).
 
 % Formatar saida
 formata(Nivel) :-

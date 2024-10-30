@@ -208,55 +208,23 @@ http_handler_whynot(Request) :-
     cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
     format('~n').
 
+% Handler for the '/whynot' endpoint
 http_handler_whynot(Request) :-
-	cors_headers,
+    cors_enable,
     http_read_json_dict(Request, JsonIn),
-    atom_string(FactoAtom, JsonIn.facto),          % Convertendo o fato de JSON para átomo
-    term_to_atom(FactoTerm, FactoAtom),            % Convertendo o átomo para um termo Prolog
-    whynot_response(FactoTerm, 1, Explicacao),
-    reply_json(Explicacao).
+    (   _{facto: FactoString} :< JsonIn
+    ->  atom_string(FactoAtom, FactoString),
+        safe_term_string(FactoTerm, FactoAtom)
+    ;   reply_json_dict(_{error: 'Missing "facto" field in JSON input'}, [status(400)])
+    ),
+    with_output_to(string(Output), whynot(FactoTerm)),
+    reply_json_dict(_{explanation: Output}).
 
-whynot_response(Facto, Nivel, Explicacao) :-
-    (   call(facto(_, Facto))
-    ->  term_to_atom(Facto, FactoAtom),
-        Explicacao = _{explicacao: "O facto não é falso!", fato: FactoAtom}
-    ;   encontra_regras_whynot(Facto, LLPF),
-        (   LLPF \= []
-        ->  whynot1_response(LLPF, Nivel, Explicacao)
-        ;   Nivel =:= 1
-        ->  term_to_atom(Facto, FactoAtom),
-            Explicacao = _{explicacao: "O facto não está definido na base de conhecimento", fato: FactoAtom}
-        ;   Explicacao = _{}
-        )
-    ).
-
-whynot1_response([], _, []).
-whynot1_response([(ID, LPF) | LLPF], Nivel, [Current | Rest]) :-
-    Nivel1 is Nivel + 1,
-    explica_porque_nao_response(LPF, Nivel1, ExplicacaoLista),
-    Current = _{
-        explicacao: "Porque pela regra",
-        regra_id: ID,
-        detalhes: ExplicacaoLista
-    },
-    whynot1_response(LLPF, Nivel, Rest).
-
-explica_porque_nao_response([], _, []).
-explica_porque_nao_response([nao avalia(X) | LPF], Nivel, [Current | Rest]) :-
-    term_to_atom(nao(X), CondicaoAtom),
-    Current = _{condicao: CondicaoAtom, explicacao: "A condição é falsa"},
-    explica_porque_nao_response(LPF, Nivel, Rest).
-explica_porque_nao_response([avalia(X) | LPF], Nivel, [Current | Rest]) :-
-    term_to_atom(X, CondicaoAtom),
-    Current = _{condicao: CondicaoAtom, explicacao: "A condição é falsa"},
-    explica_porque_nao_response(LPF, Nivel, Rest).
-explica_porque_nao_response([P | LPF], Nivel, [Current | Rest]) :-
-    term_to_atom(P, PremissaAtom),
-    Current = _{premissa: PremissaAtom, explicacao: "A premissa é falsa"},
-    Nivel1 is Nivel + 1,
-    whynot_response(P, Nivel1, SubExplicacao),
-    append([Current], SubExplicacao, _),
-    explica_porque_nao_response(LPF, Nivel, Rest).
+% Safe parsing of terms to prevent code injection
+safe_term_string(Term, String) :-
+    catch(read_from_chars(String, Term), _, fail), !.
+safe_term_string(_, _) :-
+    throw(error(syntax_error('Invalid term in "facto" field'), _)).
 
 procurar_carro(Numero, Carro) :-
     carro(Numero, Marca, Modelo, Motor),
