@@ -1,0 +1,55 @@
+@startuml
+node "Frontend (localhost:3000)" as Frontend {
+    [React App]
+}
+
+node "Backend - Prolog (localhost:4040)" as BackendProlog {
+    [Prolog Server]
+}
+
+node "Backend - Spring Boot (API Drools) (localhost:8080)" as BackendDrools {
+    [Drools Server]
+}
+
+BackendProlog <--> Frontend : REST API / HTTP Request
+Frontend <--> BackendDrools : REST API / HTTP Request
+
+note left of BackendProlog
+== Escolher Carro ==
+- GET /carros
+- GET /escolherCarro/marca
+- POST /escolherCarro/modelo
+- POST /escolherCarro/motor
+- POST /obterNumeroCarro
+- POST /selecionarCarro
+
+== Diagnostico ==
+- GET /pergunta
+- GET /factos
+- GET /factosTodos
+- POST, OPTIONS /responder
+- GET /diagnostico
+
+== Esclarecimentos ==
+- GET /como
+- POST /porque
+- POST /porqueNao
+- GET /diagnosticoPossiveis
+end note
+
+note right of BackendDrools
+== Escolher Carro ==
+- GET /api/carro/start
+- GET /api/carros
+
+== DiagnÃ³stico ==
+- POST /api/diagnostico/iniciar
+- POST /api/diagnostico/responder
+
+== Esclarecimentos ==
+- POST /api/diagnostico/responder
+- POST /api/diagnostico/perguntaAnterior
+- GET /api/diagnostico/caminhosDiagnostico
+- POST /api/diagnostico/caminhosDiagnostico
+end note
+@enduml
