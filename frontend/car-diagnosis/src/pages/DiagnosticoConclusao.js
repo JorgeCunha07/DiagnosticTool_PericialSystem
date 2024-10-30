@@ -1,8 +1,10 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Help from '@mui/icons-material/Help';
+import InfoIcon from '@mui/icons-material/Info';
+import LightbulbCircleIcon from '@mui/icons-material/LightbulbCircle';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, Grid, IconButton, InputLabel, List, ListItem, MenuItem, Select, Typography } from '@mui/material';
-import { default as React, useEffect, useState } from 'react';
+import { Accordion, AccordionDetails, AccordionSummary, Autocomplete, Box, Button, Collapse, FormControl, Grid, IconButton, List, ListItem, SvgIcon, TextField, Typography } from '@mui/material';
+import { default as React, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import CardWrapper from '../components/CardWrapper';
 import { getApiUrl } from '../config/apiConfig';
@@ -18,8 +20,8 @@ const ConclusionPage = () => {
   const explicacaoGeralNao = responseData?.explicacaoGeralNao || 'N/A';
   const como = responseData?.como || 'N/A';
   const evidencias = responseData?.evidencias || [];
-  const triggeredRules = responseData?.triggeredRules || [];
   const carro = responseData?.carroSelecionado || {};
+  const triggeredRules = useMemo(() => responseData?.triggeredRules || [], [responseData]);
 
   const [responseText, setResponseText] = useState('');
   const [activeButtonIndex, setActiveButtonIndex] = useState(null);
@@ -28,7 +30,6 @@ const ConclusionPage = () => {
   const [falhas, setFalhas] = useState([]);
   const [falha, setFalha] = useState('');
   const [falhaDetalhes, setFalhaDetalhes] = useState(null);
-  const [responseTextVisible, setResponseTextVisible] = useState(false);
 
 
   useEffect(() => {
@@ -59,11 +60,13 @@ const ConclusionPage = () => {
   fetchFalhas();
 }, [triggeredRules]);
 
-  const handleFalhasChange = async (event) => {
-    const selectedFalha = event.target.value;
-    setFalha(selectedFalha);
+  const handleFalhasChange = async (event, value) => {
+    //const selectedFalha = event.target.value; // for select component
+    const selectedFalha = value;
   
     if (selectedFalha) {
+      setFalha(selectedFalha);
+
       const selectedFalhaDetails = falhasData[selectedFalha];
       
       setFalhaDetalhes(selectedFalhaDetails);
@@ -71,7 +74,8 @@ const ConclusionPage = () => {
       setFalhaResponseTextVisible(false);
       setTimeout(() => setFalhaResponseTextVisible(true), 100);
     } else {
-      console.error('Erro buscando detalhes para:', selectedFalha);
+      setFalhaResponseTextVisible(false);
+      console.error('Erro buscando detalhes porqueNao para:', selectedFalha);
     }
   };
   
@@ -138,7 +142,22 @@ const ConclusionPage = () => {
         <IconButton
           variant="contained"
           onClick={() =>
-            generatePDF(carro, diagnostico, solucao, explicacaoGeral, explicacaoGeralNao, como, evidencias, triggeredRules)
+            generatePDF(
+              carro,
+              diagnostico,
+              solucao,
+              explicacaoGeral,
+              explicacaoGeralNao,
+              como,
+              evidencias,
+              triggeredRules,
+              falha, // porqueNao
+              falhaDetalhes, // detalhes do porque nao
+              responseText, // detalhes do porque
+
+               // index to porque, é +1 porque no mapeamento de evidencias pulamos a primeira
+              activeButtonIndex+1,
+            )
           }
           sx={{
             color: 'red',
@@ -180,6 +199,7 @@ const ConclusionPage = () => {
 
       <Accordion defaultExpanded variant="outlined">
         <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ color: 'lime' }}>
+          <SvgIcon component={LightbulbCircleIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left', color: 'inherit' }}>
             Diagnóstico Geral
           </Typography>
@@ -205,6 +225,7 @@ const ConclusionPage = () => {
 
       <Accordion defaultExpanded variant="outlined">
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <SvgIcon component={InfoIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
             Explicações
           </Typography>
@@ -213,6 +234,7 @@ const ConclusionPage = () => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
+
           <List>
             <ListItem>
               <Typography variant="h6" gutterBottom>
@@ -229,7 +251,7 @@ const ConclusionPage = () => {
               <Grid item xs={12}>
                 <Accordion variant="elevation">
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6">Como chegou-se ao diagnóstico?</Typography>
+                    <Typography variant="h6"><em>Como</em> chegou-se ao diagnóstico?</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <List>
@@ -246,7 +268,7 @@ const ConclusionPage = () => {
               <Grid item xs={12}>
                 <Accordion variant="elevation">
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant="h6">Porquê estas evidências?</Typography>
+                    <Typography variant="h6"><em>Porquê</em> estas evidências?</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
                     <List>
@@ -283,36 +305,60 @@ const ConclusionPage = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Accordion variant="elevation">
+                <Accordion variant="elevation" defaultExpanded>
                   <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
                       <em>Porque Não</em> Outro Diagnóstico?
                     </Typography>
                   </AccordionSummary>
                   <AccordionDetails>
-                    <FormControl fullWidth>
-                      <InputLabel>Todas falhas</InputLabel>
-                      <Select value={falha} onChange={handleFalhasChange}>
-                        <MenuItem value="">
-                          <em>Selecione a Falha</em>
-                        </MenuItem>
-                        {falhas.map((f, idx) => (
-                          <MenuItem key={idx} value={f}>
-                            {f}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-  
-                    {falha && falhaDetalhes && (
-                      <Box sx={{ mt: 2 }}>
-                        {falhaDetalhes.map((detalhe, index) => (
-                          <Box key={index} sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime' }}>
-                            <Typography variant="body2">{detalhe}</Typography>
-                          </Box>
-                        ))}
-                      </Box>
+                    {falhas.length > 0 && (
+                      <FormControl fullWidth>
+                        <Autocomplete
+                          options={falhas}
+                          value={falha}
+                          onChange={handleFalhasChange}
+                          renderInput={(params) => <TextField {...params} label="Todos outros diagnósticos possíveis" variant="outlined" />}
+                        />
+                      </FormControl>
                     )}
+                    <Collapse in={falhaResponseTextVisible} timeout={500}>
+                      {falhaDetalhes && falhaResponseTextVisible && (
+                        <Box mt={2}>
+                          {falhaDetalhes.map((detalhe, index) => (
+                            <Box key={index} sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime' }}>
+                              <Typography variant="body2">{detalhe}</Typography>
+                            </Box>
+                          ))}
+                        </Box>
+                      )}
+                    </Collapse>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Accordion headerstyle={{ width: '100%' }}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
+                      Regras acionadas
+                    </Typography>
+                    <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+                      <i>Mais detalhes de diagnóstico</i>
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List>
+                      {triggeredRules.length > 0 ? (
+                        triggeredRules.map((regra, index) => (
+                          <ListItem key={index}>
+                            <Typography variant="body1">{regra}</Typography>
+                          </ListItem>
+                        ))
+                      ) : (
+                        <ListItem>Nenhuma regra acionada.</ListItem>
+                      )}
+                    </List>
                   </AccordionDetails>
                 </Accordion>
               </Grid>
@@ -322,29 +368,6 @@ const ConclusionPage = () => {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion headerstyle={{ width: '100%' }}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
-            Regras acionadas
-          </Typography>
-          <Typography variant="h6" sx={{ color: 'text.secondary' }}>
-            <i>Mais detalhes de diagnóstico</i>
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <List>
-            {triggeredRules.length > 0 ? (
-              triggeredRules.map((regra, index) => (
-                <ListItem key={index}>
-                  <Typography variant="body1">{regra}</Typography>
-                </ListItem>
-              ))
-            ) : (
-              <ListItem>Nenhuma regra acionada.</ListItem>
-            )}
-          </List>
-        </AccordionDetails>
-      </Accordion>
     </CardWrapper>
   );
 };

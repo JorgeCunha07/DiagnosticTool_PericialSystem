@@ -123,11 +123,11 @@ const DiagnosticoConclusaoProlog = () => {
     }
   };
 
-  const handleFalhasChange = async (event, newValue) => {
+  const handleFalhasChange = async (event, value) => {
     //const selectedFalha = event.target.value; // Usar se for componente Select
-    const selectedFalha = newValue;
+    const selectedFalha = value;
 
-    if (newValue){
+    if (selectedFalha){
       setFalha(selectedFalha);
 
       const body = { facto: `diagnostico(Veiculo, '${selectedFalha}')` };
@@ -145,7 +145,7 @@ const DiagnosticoConclusaoProlog = () => {
           setFalhaResponseTextVisible(false);
           setTimeout(() => setFalhaResponseTextVisible(true), 100);
         } else {
-          console.error('Erro buscando porqueNao:', response.statusText);
+          console.error('Erro buscando detalhes porqueNao:', response.statusText);
         }
       } catch (error) {
         console.error('Fetch error:', error);
@@ -212,125 +212,139 @@ const DiagnosticoConclusaoProlog = () => {
 
       <Accordion defaultExpanded variant="outlined">
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <SvgIcon component={InfoIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
+          <SvgIcon component={InfoIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
             Explicações
           </Typography>
           <Typography variant="h6" sx={{ color: 'text.secondary' }}><i>Entenda o diagnóstico</i></Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <List>
-            <ListItem>O diagnóstico foi obtido com os seguintes factos. Veja o porque de cada evidência.</ListItem>
-            {como.length > 0 ? (
-              como.map((evidencia, index) => (
-                evidencia.pergunta ? (
-                  <ListItem key={index} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item xs>
-                        <Typography variant="body1">
-                          Pergunta: {evidencia.pergunta}<br/>
-                          Resposta: {evidencia.resposta}
-                        </Typography>
-                        {/* <Collapse in={responseTextVisible} timeout={500}> */}
-                        {activeButtonIndex === index && responseText && (
-                          <Box
-                          sx={{
-                            mt: 2,
-                            pl: 2,
-                            opacity: responseTextVisible ? 1 : 0,
-                            visibility: responseTextVisible ? 'visible' : 'hidden',
-                            //display: responseTextVisible ? 'block' : 'none',
-                            transition: 'opacity 0.8s ease-in-out, visibility 0.8s ease-in-out',
-                            borderLeft: '3px solid lime',
-                          }}
-                        >
-                            <Typography variant="body2" sx={{
-                              mt: 1,
-                              color: 'lime',
-                              whiteSpace: 'pre-line'
-                              }}
-                            >
-                            {responseText}
-                          </Typography>
-                        </Box>
-                        )}
-                        {/* </Collapse> */}
-                      </Grid>
-                      <Grid item>
-                        <Button
-                          variant="contained"
-                          endIcon={<Help />}
-                          onClick={() => handlePorque(evidencia.fato, index)}
-                        >
-                          Porque
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </ListItem>
-                ) : null
-              ))
-            ) : (
-              <ListItem>Nenhuma evidência encontrada.</ListItem>
-            )}
-          </List>
-        </AccordionDetails>
-      </Accordion>
-      
-      <Accordion variant="outlined">
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
-              <em>Porque Não</em> Outro Diagnóstico?
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          {falhas.length > 0 && (
-            <FormControl fullWidth>
-              <Autocomplete
-                options={falhas.filter((f) => f !== diagnostico)} // Filtra o diagnostico final
-                value={falha}
-                onChange={handleFalhasChange}
-                renderInput={(params) => (
-                  <TextField {...params} label="Todos outros diagnósticos possíveis" variant="outlined" />
-                )}
-              />
-            </FormControl>
-          )}
-          
-          <Collapse in={falhaResponseTextVisible} timeout={500}>
-          {falhaDetalhes && falhaResponseTextVisible && (
-            <Box sx={{ mt: 2 }}>
-              {Array.isArray(falhaDetalhes) ? (
-                [...falhaDetalhes]
-                  .sort((a, b) => a.explicacao.localeCompare(b.explicacao))
-                  .map((detalhe, index) => (
-                    <Box key={index} sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime' }}>
-                      <Typography variant="body2">
-                        {detalhe.explicacao} {detalhe.regra_id}:
-                      </Typography>
-                      <List>
-                        {detalhe.detalhes.map((det, idx) => (
-                          <ListItem key={idx} sx={{ pl: 2 }}>
-                            <Typography variant="body1" sx={{ color: 'lime' }}>
-                              {det.explicacao} - {det.premissa} {det.condicao}
+
+          <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12}>
+                <Accordion variant="elevation" defaultExpanded>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="h6"><em>Como</em> chegou-se ao diagnóstico? <em>Porque</em> estas evidências?</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List>
+                      <ListItem>O diagnóstico foi obtido com os seguintes factos. Veja o porque de cada evidência.</ListItem>
+                      {como.length > 0 ? (
+                        como.map((evidencia, index) => (
+                          evidencia.pergunta ? (
+                            <ListItem key={index} sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                              <Grid container spacing={2} alignItems="center">
+                                <Grid item xs>
+                                  <Typography variant="body1">
+                                    Pergunta: {evidencia.pergunta}<br/>
+                                    Resposta: {evidencia.resposta}
+                                  </Typography>
+                                  {/* <Collapse in={responseTextVisible} timeout={500}> */}
+                                  {activeButtonIndex === index && responseText && (
+                                    <Box
+                                    sx={{
+                                      mt: 2,
+                                      pl: 2,
+                                      opacity: responseTextVisible ? 1 : 0,
+                                      visibility: responseTextVisible ? 'visible' : 'hidden',
+                                      //display: responseTextVisible ? 'block' : 'none',
+                                      transition: 'opacity 0.8s ease-in-out, visibility 0.8s ease-in-out',
+                                      borderLeft: '3px solid lime',
+                                    }}
+                                  >
+                                      <Typography variant="body2" sx={{
+                                        mt: 1,
+                                        color: 'lime',
+                                        whiteSpace: 'pre-line'
+                                        }}
+                                      >
+                                      {responseText}
+                                    </Typography>
+                                  </Box>
+                                  )}
+                                  {/* </Collapse> */}
+                                </Grid>
+                                <Grid item>
+                                  <Button
+                                    variant="contained"
+                                    endIcon={<Help />}
+                                    onClick={() => handlePorque(evidencia.fato, index)}
+                                  >
+                                    Porque
+                                  </Button>
+                                </Grid>
+                              </Grid>
+                            </ListItem>
+                          ) : null
+                        ))
+                      ) : (
+                        <ListItem>Nenhuma evidência encontrada.</ListItem>
+                      )}
+                    </List>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+              
+              <Grid item xs={12}>
+              <Accordion variant="elevation" defaultExpanded>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left' }}>
+                        <em>Porque Não</em> Outro Diagnóstico?
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {falhas.length > 0 && (
+                      <FormControl fullWidth>
+                        <Autocomplete
+                          options={falhas.filter((f) => f !== diagnostico)} // Filtra o diagnostico final
+                          value={falha}
+                          onChange={handleFalhasChange}
+                          renderInput={(params) => (
+                            <TextField {...params} label="Todos outros diagnósticos possíveis" variant="outlined" />
+                          )}
+                        />
+                      </FormControl>
+                    )}
+                    
+                    <Collapse in={falhaResponseTextVisible} timeout={500}>
+                    {falhaDetalhes && falhaResponseTextVisible && (
+                      <Box sx={{ mt: 2 }}>
+                        {Array.isArray(falhaDetalhes) ? (
+                          [...falhaDetalhes]
+                            .sort((a, b) => a.explicacao.localeCompare(b.explicacao))
+                            .map((detalhe, index) => (
+                              <Box key={index} sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime' }}>
+                                <Typography variant="body2">
+                                  {detalhe.explicacao} {detalhe.regra_id}:
+                                </Typography>
+                                <List>
+                                  {detalhe.detalhes.map((det, idx) => (
+                                    <ListItem key={idx} sx={{ pl: 2 }}>
+                                      <Typography variant="body1" sx={{ color: 'lime' }}>
+                                        {det.explicacao} - {det.premissa} {det.condicao}
+                                      </Typography>
+                                    </ListItem>
+                                  ))}
+                                </List>
+                              </Box>
+                            ))
+                        ) : (
+                          <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid red' }}>
+                            <Typography variant="body2">
+                              {falhaDetalhes.explicacao}
                             </Typography>
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Box>
-                  ))
-              ) : (
-                <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid red' }}>
-                  <Typography variant="body2">
-                    {falhaDetalhes.explicacao}
-                  </Typography>
-                  <Typography variant="body2">
-                    Selecione outro diagnóstico
-                  </Typography>
-                </Box>
-              )}
-            </Box>
-          )}
-          </Collapse>
+                            <Typography variant="body2">
+                              Selecione outro diagnóstico
+                            </Typography>
+                          </Box>
+                        )}
+                      </Box>
+                    )}
+                    </Collapse>
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+          </Grid>
         </AccordionDetails>
       </Accordion>
     </CardWrapper>

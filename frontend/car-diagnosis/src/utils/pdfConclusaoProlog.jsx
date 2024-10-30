@@ -23,7 +23,8 @@ export const generatePDF = (
   const margem_esquerda = 10;
   const margem_topo_pagina = 10;
   const margem_baixo_pagina = 20;
-  const lineWidth = largura_pagina - margem_esquerda * 2;  // Adjust width based on both left and right margins
+  const posicao_entrelinhas = 9;
+  const lineWidth = largura_pagina - margem_esquerda;
 
   const fontsize_body = 12;
   const fontsize_h1 = 18;
@@ -35,13 +36,11 @@ export const generatePDF = (
   let paginaAtual = 1;
 
   const x_position = (() => {
-    let x = margem_esquerda;
-    return (identar) => (typeof identar === 'number' ? (x = identar * (margem_esquerda / 2) + margem_esquerda) : margem_esquerda);
+    return (identar) => (typeof identar === 'number' ? (identar * (margem_esquerda / 2) + margem_esquerda) : margem_esquerda);
   })();
 
   const y_position = (() => {
     let y = margem_topo_pagina;
-    const posicao_inicial_entrelinhas = 9;
 
     return (posicao_diferente) => {
       if (y >= altura_pagina - margem_baixo_pagina) {
@@ -50,39 +49,44 @@ export const generatePDF = (
         addFooter();
         y = margem_topo_pagina;
       }
-      y += typeof posicao_diferente === 'number' ? posicao_diferente : posicao_inicial_entrelinhas;
+      y += typeof posicao_diferente === 'number' ? posicao_diferente : posicao_entrelinhas;
       return y;
     };
   })();
 
   const drawHorizontalLine = () => {
     const y_line = y_position();
-    doc.line(x_position(), y_line, largura_pagina - margem_esquerda, y_line);
+    doc.line(x_position(), y_line, lineWidth, y_line);
   };
 
   const addFooter = () => {
-    doc.setFontSize(10);
+    doc.setFontSize(fontsize_small);
     const footerText = `Página ${paginaAtual}`;
     const textWidth = doc.getTextWidth(footerText);
     const xPosition = lineWidth - textWidth;
     doc.text(footerText, xPosition, altura_pagina - margem_baixo_pagina + 10);
-    doc.setFontSize(12);
+    doc.setFontSize(fontsize_body);
   };
 
-  addFooter();
-
   const addWrappedText = (text, fontsize=fontsize_body, identation = 0) => {
-    const wrappedText = doc.splitTextToSize(text, lineWidth - (identation * margem_esquerda));
+    //const wrappedText = doc.splitTextToSize(text, lineWidth - (4*margem_esquerda));
+    const wrappedText = doc.splitTextToSize(text, lineWidth - (4*margem_esquerda) - (identation*(margem_esquerda/2)));
     wrappedText.forEach((line) => {
       doc.setFontSize(fontsize);
       doc.text(line, x_position(identation), y_position());
     });
   };
 
+  addFooter();
+
+  //// INICIO
+
   // Titulo
   addWrappedText('Diagnóstico Veicular Innov8', fontsize_h1);
 
   addWrappedText(`Data: ${timestamp}`, fontsize_small);
+
+  //addWrappedText('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut molestie luctus mi vitae porta. Phasellus a urna semper, vehicula justo in, lacinia sapien. Fusce dictum interdum augue eu varius. Praesent rhoncus mauris sit amet libero suscipit, ut elementum ipsum pellentesque. Vivamus volutpat pulvinar arcu. Vestibulum hendrerit efficitur orci, vel ornare velit hendrerit vitae. Morbi iaculis lorem id eleifend vulputate. Pellentesque placerat ac odio vitae hendrerit. Donec pharetra non dui et condimentum.', fontsize_body, 2);
 
   drawHorizontalLine();
 
@@ -113,7 +117,7 @@ export const generatePDF = (
 
           if (index === activeButtonIndex && responseTextVisible) {
             addWrappedText(`Porque esta evidência?`, fontsize_body, 2);
-            responseText.split('\n').forEach((line) => addWrappedText(line, fontsize_body, 3));
+            responseText.split('\n').forEach((line) => addWrappedText(line, fontsize_small, 3));
           }
       }
       });
@@ -138,7 +142,6 @@ export const generatePDF = (
     }
   }
 
-  // Triggered Rules
   if (triggeredRules) {
     drawHorizontalLine();
     addWrappedText('Regras acionadas', fontsize_h2);
@@ -151,6 +154,8 @@ export const generatePDF = (
       addWrappedText('Nenhuma regra acionada.', fontsize_body, 1);
     }
   }
+
+//// FIM
 
   const pdfData = doc.output('bloburl');
   window.open(pdfData, '_blank');
