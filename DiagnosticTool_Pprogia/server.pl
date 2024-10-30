@@ -210,7 +210,7 @@ http_handler_whynot(Request) :-
 
 % Handler for the '/whynot' endpoint
 http_handler_whynot(Request) :-
-    cors_enable,
+    cors_headers,
     http_read_json_dict(Request, JsonIn),
     (   _{facto: FactoString} :< JsonIn
     ->  atom_string(FactoAtom, FactoString),
