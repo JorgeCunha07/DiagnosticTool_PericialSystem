@@ -130,6 +130,18 @@ const DiagnosticoConclusaoProlog = () => {
     if (selectedFalha){
       setFalha(selectedFalha);
 
+    //   {
+    //     "explanation": "Porque pela regra 55:\n
+    //      A premissa filtro_combustivel_entupido(_6452,sim) é falsa\n
+    //           Porque pela regra 46:\n
+    //                A premissa falta_combustivel_ou_bomba_defeito(_6604,nao) é falsa\n
+    //                     Porque pela regra 34:\n
+    //                          A premissa motor_sobreaquece(_6756,nao) é falsa\n
+    //                               Porque pela regra 23:\n
+    //                                    A premissa vai_abaixo(_6908,sim) é falsa\n
+    //                                         Parou no nivel9"
+    // }
+
       const body = { facto: `diagnostico(Veiculo, '${selectedFalha}')` };
       try {
         const response = await fetch('http://localhost:4040/porqueNao', {
@@ -309,7 +321,12 @@ const DiagnosticoConclusaoProlog = () => {
                     <Collapse in={falhaResponseTextVisible} timeout={500}>
                     {falhaDetalhes && falhaResponseTextVisible && (
                       <Box sx={{ mt: 2 }}>
-                        {Array.isArray(falhaDetalhes) ? (
+                        <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime', whiteSpace:'pre-line' }}>
+                            <Typography variant="body2">
+                              {falhaDetalhes.explanation}
+                            </Typography>
+                          </Box>
+                        {/* {Array.isArray(falhaDetalhes) ? (
                           [...falhaDetalhes]
                             .sort((a, b) => a.explicacao.localeCompare(b.explicacao))
                             .map((detalhe, index) => (
@@ -328,16 +345,17 @@ const DiagnosticoConclusaoProlog = () => {
                                 </List>
                               </Box>
                             ))
-                        ) : (
+                        ) : 
+                        (
                           <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid red' }}>
                             <Typography variant="body2">
-                              {falhaDetalhes.explicacao}
+                              {falhaDetalhes}
                             </Typography>
                             <Typography variant="body2">
                               Selecione outro diagnóstico
                             </Typography>
                           </Box>
-                        )}
+                        )} */}
                       </Box>
                     )}
                     </Collapse>
