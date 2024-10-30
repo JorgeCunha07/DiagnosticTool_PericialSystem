@@ -286,7 +286,7 @@ ultimo_facto(1).
 % ultima_regra(8).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% As regras estão relacionadas com o diagrama 'FlowChartDiagnostico_final_regras.puml' 
+% As regras estão relacionadas com o diagrama 'FlowChartDiagnostico_final_regras_pprogia.puml'
 % adjacente à solução proposta.
 % As regras estão organizadas por nível de profundidade da árvore, para ajudar 
 % a uma melhor identificação das mesmas no fluxograma.
