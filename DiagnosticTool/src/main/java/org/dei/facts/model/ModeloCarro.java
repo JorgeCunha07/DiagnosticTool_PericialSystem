@@ -4,7 +4,9 @@ import lombok.*;
 
 import java.util.List;
 
-
+/**
+ * The ModeloCarro class represents a car model with a name.
+ */
 @Data
 @Getter
 @Setter
@@ -12,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ModeloCarro {
-    private String nome;
+    private String nome; // The name of the car model
 }

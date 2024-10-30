@@ -40,6 +40,11 @@ public class KnowledgeBase {
     private final List<String> drlPaths;
     private Map<String, RuleWM> rules;
 
+    /**
+     * Constructor for KnowledgeBase.
+     *
+     * @param factsPackage the package containing the facts
+     */
     protected KnowledgeBase(String factsPackage) {
         this.factsPackage = factsPackage;
         this.drlPaths = findDrlFiles();
@@ -49,18 +54,40 @@ public class KnowledgeBase {
         this.kieBase = createKieBase();
     }
 
+    /**
+     * Gets the facts package.
+     *
+     * @return the facts package
+     */
     protected String getFactsPackage() {
         return factsPackage;
     }
 
+    /**
+     * Gets the KieBase.
+     *
+     * @return the KieBase
+     */
     public KieBase getKieBase() {
         return this.kieBase;
     }
 
+    /**
+     * Gets the dynamic queries.
+     *
+     * @return a map of dynamic queries
+     */
     protected Map<String, String> getDynamicQueries() {
         return dynamicQueries;
     }
 
+    /**
+     * Gets a rule by its name.
+     *
+     * @param ruleName the name of the rule
+     * @return the RuleWM object
+     * @throws RuntimeException if the rule is not found
+     */
     protected RuleWM getRuleByName(String ruleName) {
         RuleWM rule = rules.get(ruleName);
         if (rule == null) {
@@ -69,6 +96,12 @@ public class KnowledgeBase {
         return rule;
     }
 
+    /**
+     * Creates the KieBase.
+     *
+     * @return the created KieBase
+     * @throws RuntimeException if there is an error creating the KieBase
+     */
     private KieBase createKieBase() {
         try {
             KieServices ks = KieServices.Factory.get();
@@ -103,12 +136,23 @@ public class KnowledgeBase {
         }
     }
 
+    /**
+     * Finds the DRL files.
+     *
+     * @return a list of DRL file paths
+     */
     private List<String> findDrlFiles() {
         List<String> lst = new ArrayList<>();
         lst.add("org/dei/diagnostic.drl");
         return lst;
     }
 
+    /**
+     * Gets the rules description from the DRL files.
+     *
+     * @return a list of RuleDescr objects
+     * @throws RuntimeException if there is an error parsing the DRL files
+     */
     private List<RuleDescr> getRulesDescriptionFromDRL() {
         try {
             StringBuilder drlContent = new StringBuilder();
@@ -135,6 +179,11 @@ public class KnowledgeBase {
         }
     }
 
+    /**
+     * Gets the rules working memory.
+     *
+     * @return a map of RuleWM objects
+     */
     private Map<String, RuleWM> getRulesWM() {
         this.rules = new HashMap<>();
         for (RuleDescr rule : rulesDescr) {
@@ -144,6 +193,11 @@ public class KnowledgeBase {
         return rules;
     }
 
+    /**
+     * Generates the queries.
+     *
+     * @return the generated queries as a string
+     */
     private String generateQueries() {
         Set<String> condSet = getAllRuleConditionsList();
         Set<String> concSet = getAllRuleActionsList();
@@ -170,6 +224,11 @@ public class KnowledgeBase {
         return drl.toString();
     }
 
+    /**
+     * Gets all rule conditions as a set of strings.
+     *
+     * @return a set of rule conditions
+     */
     private Set<String> getAllRuleConditionsList() {
         return rulesDescr.stream()
                 .map(RuleDescr::getLhs)
@@ -187,6 +246,11 @@ public class KnowledgeBase {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Gets all rule actions as a set of strings.
+     *
+     * @return a set of rule actions
+     */
     private Set<String> getAllRuleActionsList() {
         return rulesDescr.stream()
                 .map(RuleDescr::getConsequence)
@@ -195,6 +259,12 @@ public class KnowledgeBase {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Gets the constructor calls from a string.
+     *
+     * @param consequent the string containing the constructor calls
+     * @return a set of constructor calls
+     */
     private Set<String> getConstructorCalls(String consequent) {
         Set<String> set = new HashSet<>();
         Pattern pattern = Pattern.compile("new\\s+([\\w\\.<>]+)\\s*\\(([^;]*)\\)");
@@ -207,6 +277,12 @@ public class KnowledgeBase {
         return set;
     }
 
+    /**
+     * Gets the imports string.
+     *
+     * @return the imports string
+     * @throws RuntimeException if there is an error getting the imports
+     */
     private String getImportsString() {
         Reflections reflections = new Reflections(this.factsPackage, new SubTypesScanner(false));
         try {
@@ -222,23 +298,30 @@ public class KnowledgeBase {
         }
     }
 
+    /**
+     * Converts a constructor to a DRL string.
+     *
+     * @param constructor the constructor string
+     * @return the DRL string
+     * @throws Exception if there is an error converting the constructor
+     */
     protected String convertConstructorToDRL(String constructor) throws Exception {
         String objectType = constructor.substring(0, constructor.indexOf('(')).replaceAll("\\s+", "");
         objectType = objectType.replaceAll("<.*>", "");
 
-        // Extrair os argumentos do construtor
+        // Extract the constructor arguments
         String[] constructorArgs = constructor.substring(constructor.indexOf('(') + 1, constructor.lastIndexOf(')'))
                 .replaceAll("\\s+", "").split(",");
 
-        // Obter os parâmetros do construtor da classe Evidence
+        // Get the constructor parameters of the class
         String[] parameters = getConstructorParameters(Class.forName(this.factsPackage + "." + objectType));
 
         if (parameters != null) {
-             if (parameters.length != constructorArgs.length) {
+            if (parameters.length != constructorArgs.length) {
                 throw new Exception("Invalid number of parameters in conclusion " + objectType);
             }
 
-            // Concatena os parâmetros e valores para formar a string DRL corretamente
+            // Concatenate the parameters and values to form the DRL string correctly
             String args = IntStream.range(0, parameters.length)
                     .mapToObj(i -> parameters[i] + " == " + constructorArgs[i])
                     .collect(Collectors.joining(" , "));
@@ -249,7 +332,13 @@ public class KnowledgeBase {
         return objectType + "()";
     }
 
-
+    /**
+     * Gets the constructor parameters of a class.
+     *
+     * @param c the class
+     * @return an array of parameter names
+     * @throws Exception if there is an error getting the parameters
+     */
     private String[] getConstructorParameters(Class<?> c) throws Exception {
         Constructor<?>[] allConstructors = c.getConstructors();
         if (allConstructors.length == 0) {
@@ -259,6 +348,12 @@ public class KnowledgeBase {
         return Arrays.stream(params).map(Parameter::getName).toArray(String[]::new);
     }
 
+    /**
+     * Checks if a fact is a basic fact.
+     *
+     * @param fact the fact to check
+     * @return true if the fact is a basic fact, false otherwise
+     */
     protected boolean isBasicFact(String fact) {
         final String functor = fact.replaceAll("\\s+", "").split("\\(")[0];
         return rulesDescr.stream()
@@ -266,6 +361,12 @@ public class KnowledgeBase {
                 .noneMatch(s -> s.toString().contains(functor));
     }
 
+    /**
+     * Gets the rules that obtain a conclusion.
+     *
+     * @param conclusion the conclusion to check
+     * @return a list of rule names
+     */
     protected List<String> getRulesObtainingConclusion(String conclusion) {
         String regex = "(?s).*" + conclusion + "\\(" + ".*" + "\\)" + ".*";
         return rulesDescr.stream()
@@ -276,6 +377,13 @@ public class KnowledgeBase {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Converts a DRL pattern to a constructor string.
+     *
+     * @param patt the pattern description
+     * @return the constructor string
+     * @throws Exception if there is an error converting the pattern
+     */
     protected String convertDRLPatternToConstructor(PatternDescr patt) throws Exception {
         final String objectType = patt.getObjectType();
         StringBuilder conclusion = new StringBuilder(objectType + "(");

@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for handling diagnostic operations.
+ */
 @Slf4j
 @Service
 public class DiagnosticService {
@@ -24,16 +27,32 @@ public class DiagnosticService {
     private DroolsWithWhyNot drools;
     private final DiagnosticParserService diagnosticParserService;
 
+    /**
+     * Constructor for DiagnosticService.
+     *
+     * @param diagnosticParserService the service for parsing diagnostic files
+     */
     public DiagnosticService(DiagnosticParserService diagnosticParserService) {
         this.diagnosticParserService = diagnosticParserService;
     }
 
+    /**
+     * Obtains the diagnostic paths by processing the diagnostic file.
+     *
+     * @return a list of DiagnosticPath objects
+     */
     public List<DiagnosticPath> obterDiagnosticPaths() {
         String filePath = "src/main/resources/org/dei/diagnostic.drl";
         diagnosticParserService.processDiagnosticFile(filePath);
         return diagnosticParserService.getDiagnosticPaths();
     }
 
+    /**
+     * Initiates the diagnostic process for the selected car.
+     *
+     * @param selectedCar the car selected for diagnosis
+     * @return a Resposta object containing the diagnostic response
+     */
     public Resposta iniciarDiagnostico(Carro selectedCar) {
         try {
             if (selectedCar == null) {
@@ -85,6 +104,12 @@ public class DiagnosticService {
         }
     }
 
+    /**
+     * Processes the response for the diagnostic.
+     *
+     * @param diagResposta the diagnostic response to process
+     * @return the updated Resposta object
+     */
     public Resposta processarResposta(Resposta diagResposta) {
         try {
             log.info("Processing response for the diagnostic...");
@@ -117,7 +142,13 @@ public class DiagnosticService {
         }
     }
 
-    public Map<String, List<String>> getMissingRulesForAlternativeDiagnoses(Resposta resposta ) {
+    /**
+     * Retrieves the missing rules for alternative diagnoses.
+     *
+     * @param resposta the diagnostic response
+     * @return a map of missing rules by diagnosis
+     */
+    public Map<String, List<String>> getMissingRulesForAlternativeDiagnoses(Resposta resposta) {
         if (diagnosticParserService.getDiagnosticPaths().isEmpty()) {
             obterDiagnosticPaths();
         }

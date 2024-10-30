@@ -4,13 +4,27 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
+/**
+ * The DiagnosticParser class is responsible for parsing diagnostic rules from a file
+ * and constructing a state graph based on the parsed rules.
+ */
 public class DiagnosticParser {
-    private Map<String, StateNode> stateNodes;
+    private Map<String, StateNode> stateNodes; // A map of state names to StateNode objects
 
+    /**
+     * Constructs a DiagnosticParser with the specified state nodes.
+     *
+     * @param stateNodes a map of state names to StateNode objects
+     */
     public DiagnosticParser(Map<String, StateNode> stateNodes) {
         this.stateNodes = stateNodes;
     }
 
+    /**
+     * Parses a file containing diagnostic rules and constructs the state graph.
+     *
+     * @param filePath the path to the file containing diagnostic rules
+     */
     public void parseFile(String filePath) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -58,6 +72,12 @@ public class DiagnosticParser {
         }
     }
 
+    /**
+     * Parses the "when" section of a rule and updates the RuleInfo object.
+     *
+     * @param line the line of text in the "when" section
+     * @param rule the RuleInfo object to update
+     */
     private void parseWhenSection(String line, RuleInfo rule) {
         Matcher estadoMatcher = Pattern.compile("\\$resposta\\s*:\\s*Resposta\\s*\\(\\s*estado\\s*==\\s*\"(.*?)\"").matcher(line);
         if (estadoMatcher.find()) {
@@ -70,11 +90,23 @@ public class DiagnosticParser {
         }
     }
 
+    /**
+     * Parses the "then" block of a rule and updates the RuleInfo object.
+     *
+     * @param rule the RuleInfo object to update
+     * @param thenBlockLines the lines of text in the "then" block
+     */
     private void parseThenBlock(RuleInfo rule, List<String> thenBlockLines) {
         ThenNode root = parseThenNodes(new ArrayList<>(thenBlockLines).listIterator());
         rule.thenRootNode = root;
     }
 
+    /**
+     * Parses the nodes in the "then" block and constructs a ThenNode tree.
+     *
+     * @param iterator an iterator over the lines in the "then" block
+     * @return the root ThenNode of the parsed tree
+     */
     private ThenNode parseThenNodes(ListIterator<String> iterator) {
         ThenSequenceNode sequenceNode = new ThenSequenceNode();
         while (iterator.hasNext()) {
@@ -102,12 +134,25 @@ public class DiagnosticParser {
         return sequenceNode;
     }
 
+    /**
+     * Adds a parsed rule to the state graph.
+     *
+     * @param rule the RuleInfo object representing the parsed rule
+     */
     private void addRuleToGraph(RuleInfo rule) {
         if (rule.currentEstado == null) return;
         StateNode currentState = stateNodes.computeIfAbsent(rule.currentEstado, StateNode::new);
         processThenNode(currentState, rule.thenRootNode, rule.textoConditions, rule.ruleName);
     }
 
+    /**
+     * Processes a ThenNode and updates the state graph accordingly.
+     *
+     * @param currentState the current StateNode
+     * @param thenNode the ThenNode to process
+     * @param parentConditions the conditions from the parent nodes
+     * @param ruleName the name of the rule
+     */
     private void processThenNode(StateNode currentState, ThenNode thenNode, List<String> parentConditions, String ruleName) {
         if (thenNode instanceof ThenSequenceNode) {
             for (ThenNode childNode : ((ThenSequenceNode) thenNode).nodes) {
@@ -129,10 +174,28 @@ public class DiagnosticParser {
         }
     }
 
+    /**
+     * Traverses the state graph starting from the given node and collects diagnostic paths.
+     *
+     * @param currentNode the starting StateNode
+     * @param path the current path of state names
+     * @param diagnosticPaths the list to collect diagnostic paths
+     * @param visited the set of visited state names to avoid cycles
+     */
     public void traverseGraph(StateNode currentNode, List<String> path, List<DiagnosticPath> diagnosticPaths, Set<String> visited) {
         traverseGraphHelper(currentNode, path, diagnosticPaths, visited, new ArrayList<>(), null);
     }
 
+    /**
+     * Helper method to traverse the state graph and collect diagnostic paths.
+     *
+     * @param currentNode the current StateNode
+     * @param path the current path of state names
+     * @param diagnosticPaths the list to collect diagnostic paths
+     * @param visited the set of visited state names to avoid cycles
+     * @param rules the list of rules applied along the path
+     * @param diagnosis the current diagnosis
+     */
     private void traverseGraphHelper(StateNode currentNode, List<String> path, List<DiagnosticPath> diagnosticPaths, Set<String> visited, List<String> rules, String diagnosis) {
         if (visited.contains(currentNode.getEstadoName())) return; // Avoid cycles
 

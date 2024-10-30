@@ -7,6 +7,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * The Why class represents a collection of evidences and provides a method to obtain the previous question
+ * that led to the current suggested question.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,7 +18,12 @@ import java.util.List;
 public class Why {
     private List<Evidence<?,?>> evidencias;
 
-    // Obter a pergunta anterior que guiou para a pergunta sugerida
+    /**
+     * Obtains the previous question that guided to the current suggested question.
+     *
+     * @param perguntaAtual the current question
+     * @return the previous question as a string, or a message indicating the question was not found
+     */
     public String obterPerguntaAnterior(String perguntaAtual) {
         for (int i = 1; i < evidencias.size(); i++) {
             if (evidencias.get(i).toString().contains(perguntaAtual)) {

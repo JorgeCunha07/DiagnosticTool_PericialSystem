@@ -9,10 +9,16 @@ import java.util.List;
 
 public class ImportFile {
 
+    /**
+     * Loads the car database from a CSV file.
+     *
+     * @param caminhoArquivo the path to the CSV file
+     * @return a list of Carro objects
+     */
     public static List<Carro> carregarBaseDados(String caminhoArquivo) {
         List<Carro> carros = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo))) {
-            br.readLine();
+            br.readLine(); // Skip header line
             String linha;
             while ((linha = br.readLine()) != null) {
                 processarLinha(linha, carros);
@@ -23,7 +29,12 @@ public class ImportFile {
         return carros;
     }
 
-    // Process each line from CSV
+    /**
+     * Processes each line from the CSV file and adds the car data to the list.
+     *
+     * @param linha the line from the CSV file
+     * @param carros the list of Carro objects
+     */
     private static void processarLinha(String linha, List<Carro> carros) {
         String[] valores = linha.split(",");
         String nomeMarca = valores[0].trim();
@@ -45,6 +56,15 @@ public class ImportFile {
         carro.adicionarComponente(componente);
     }
 
+    /**
+     * Retrieves an existing Carro object or creates a new one if it does not exist.
+     *
+     * @param marca the Marca object
+     * @param modeloCarro the ModeloCarro object
+     * @param motor the Motor object
+     * @param carros the list of Carro objects
+     * @return the existing or newly created Carro object
+     */
     private static Carro obterOuCriarCarro(Marca marca, ModeloCarro modeloCarro, Motor motor, List<Carro> carros) {
         return carros.stream()
                 .filter(c -> c.getMarca().equals(marca) && c.getModelo().equals(modeloCarro) && c.getMotor().equals(motor))

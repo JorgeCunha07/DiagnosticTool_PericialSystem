@@ -3,14 +3,28 @@ package org.dei.whynot;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Singleton class for handling "Why Not" explanations in the diagnostic process.
+ */
 public class WhyNot {
     private static WhyNot instance;
     private DroolsWithWhyNot droolsWithWhyNot;
 
+    /**
+     * Constructor for WhyNot.
+     *
+     * @param droolsWithWhyNot the DroolsWithWhyNot instance to be used
+     */
     public WhyNot(DroolsWithWhyNot droolsWithWhyNot) {
         this.droolsWithWhyNot = droolsWithWhyNot;
     }
 
+    /**
+     * Initializes the WhyNot singleton instance.
+     *
+     * @param droolsWithWhyNot the DroolsWithWhyNot instance to be used
+     * @return the initialized WhyNot instance
+     */
     public synchronized static WhyNot init(DroolsWithWhyNot droolsWithWhyNot) {
         if (instance == null) {
             instance = new WhyNot(droolsWithWhyNot);
@@ -18,6 +32,12 @@ public class WhyNot {
         return instance;
     }
 
+    /**
+     * Provides an explanation for why a specific conclusion was not reached.
+     *
+     * @param expectedConclusion the expected conclusion that was not reached
+     * @return a string explanation detailing the untriggered rules
+     */
     public String getWhyNotExplanation(String expectedConclusion) {
         List<String> untriggeredRules = droolsWithWhyNot.getUntriggeredRules();
         List<String> triggeredRules = droolsWithWhyNot.getTriggeredRules();
