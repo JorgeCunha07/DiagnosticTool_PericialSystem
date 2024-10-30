@@ -110,3 +110,4 @@ nb-configuration.xml
 .DS_Store
 
 /frontend/car-diagnosis/node_modules/
+/DiagnosticTool_FrontEnd/node_modules/
