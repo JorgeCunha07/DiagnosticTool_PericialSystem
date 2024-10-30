@@ -1,4 +1,5 @@
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { PrimeReactProvider } from 'primereact/api';
 import React from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
@@ -32,6 +33,7 @@ const App = () => {
   const location = useLocation();
 
   return (
+    <PrimeReactProvider>
     <TransitionGroup>
       <CSSTransition key={location.key} classNames="fade" timeout={300}>
         <ThemeProvider theme={darkTheme}>
@@ -49,6 +51,7 @@ const App = () => {
         </ThemeProvider>
       </CSSTransition>
     </TransitionGroup>
+    </PrimeReactProvider>
   );
 }
 

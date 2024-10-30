@@ -1,139 +1,11 @@
-import { Alert, Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
 import axios from 'axios';
+import { InputNumber } from 'primereact/inputnumber';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import CardWrapper from "../components/CardWrapper";
 import TituloLinha from "../components/TituloLinha";
 import { getApiUrl } from '../config/apiConfig';
-
-// const useDiagnostico = (initialData) => {
-//   const [diagnostico, setDiagnostico] = useState(initialData);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-//   const navigate = useNavigate();
-//   const API_URL = getApiUrl();
-
-//   const handleAnswer = async (answer) => {
-//     setLoading(true);
-
-//     let requestBody = {};
-//     let endpoint = '';
-//     let prolog_response;
-
-//     if (sistemaSelecionado === 'Drools') {
-
-//       endpoint = '/diagnostico/responder';
-
-//       requestBody = {
-//         texto: answer,
-//         estado: diagnostico.estado,
-//         pergunta: diagnostico.pergunta,
-//         carroSelecionado: diagnostico.carroSelecionado,
-//         marcaSelecionada: diagnostico.carroSelecionado.marca.nome,
-//         modeloSelecionado: diagnostico.carroSelecionado.modelo.nome,
-//         motorSelecionado: diagnostico.carroSelecionado.motor.nome,
-//         diagnostico: diagnostico.diagnostico,
-//         solucao: diagnostico.solucao,
-//         explicacaoGeral: diagnostico.explicacaoGeral,
-//         explicacaoGeralNao: diagnostico.explicacaoGeralNao,
-//         como: diagnostico.como,
-//         evidencias: diagnostico.evidencias,
-//         triggeredRules: diagnostico.triggeredRules,
-//       };
-
-//       try {
-//         const response = await axios.post(`${API_URL}${endpoint}`, requestBody);
-  
-//         if (response.data.estado === 'finalizado') {
-//           navigate('/conclusao', { state: { responseData: response.data } });
-//         } else if (
-//           !response.data ||
-//           !response.data.carroSelecionado.marca ||
-//           !response.data.carroSelecionado.hasOwnProperty("marca")
-//         ) {
-//           navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
-//         } else {
-//           setDiagnostico(response.data);
-//         }
-//       } catch (err) {
-//         setError('Falha ao enviar resposta.');
-//       } finally {
-//         setLoading(false);
-//       }
-
-//     } else if (sistemaSelecionado === 'PROLOG') {
-
-//       endpoint = '/pergunta';
-
-//       requestBody = {
-//         texto: answer,
-//         estado: diagnostico?.estado || 'N/A',
-//         pergunta: diagnostico?.pergunta || 'N/A',
-//         carroSelecionado: diagnostico?.carroSelecionado || 'N/A',
-//         marcaSelecionada: 'N/A',
-//         modeloSelecionado: 'N/A',
-//         motorSelecionado: 'N/A',
-//         diagnostico: 'N/A',
-//         solucao: 'N/A',
-//         explicacaoGeral: 'N/A',
-//         explicacaoGeralNao: 'N/A',
-//         como: 'N/A',
-//         evidencias: 'N/A',
-//         triggeredRules: 'N/A',
-//       };
-
-//       prolog_response = await axios.get(`${API_URL}${endpoint}`);
-
-//       const estado = prolog_response.data.estado;
-//       const pergunta = prolog_response.data.pergunta;
-//       const respostas = prolog_response.data.respostas;
-      
-//       console.log(">>>> DiagnosticoCarro: estado: " + estado);
-//       console.log(">>>> DiagnosticoCarro: pergunta: " + pergunta);
-//       console.log(">>>> DiagnosticoCarro: respostas: " + respostas);
-
-//       try {
-//         const response = await axios.post(`${API_URL}${endpoint}`, requestBody);
-  
-//         if (response.data.estado === 'finalizado') {
-//           navigate('/conclusao', { state: { responseData: response.data } });
-//         } else if (
-//           !response.data
-//         ) {
-//           navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
-//         } else {
-//           setDiagnostico(response.data);
-//         }
-//       } catch (err) {
-//         setError('Falha ao enviar resposta.');
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
-
-//     // try {
-//     //   const response = await axios.post(`${API_URL}${endpoint}`, requestBody);
-
-//     //   if (response.data.estado === 'finalizado') {
-//     //     navigate('/conclusao', { state: { responseData: response.data } });
-//     //   } else if (
-//     //     !response.data ||
-//     //     !response.data.carroSelecionado.marca ||
-//     //     !response.data.carroSelecionado.hasOwnProperty("marca")
-//     //   ) {
-//     //     navigate('/error', { state: { responseData: response.data || 'Não recebeu dados válidos.' } });
-//     //   } else {
-//     //     setDiagnostico(response.data);
-//     //   }
-//     // } catch (err) {
-//     //   setError('Falha ao enviar resposta.');
-//     // } finally {
-//     //   setLoading(false);
-//     // }
-//   };
-
-//   return { diagnostico, loading, error, handleAnswer };
-// };
 
 const tamanho_img = '240px';
 
@@ -186,7 +58,6 @@ const useDiagnostico = (initialData) => {
 
 const DiagnosticoCarro = () => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const [nivelOleo, setNivelOleo] = useState(0.0);
   
@@ -232,84 +103,99 @@ const DiagnosticoCarro = () => {
 
       <Box sx={{ height: '0.5px', width: "100%", background: 'white', marginBottom: '30px'}} />
 
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-          <CircularProgress />
-        </Box>
-      )}
-
-      {error && (
-        <Box sx={{ mt: 2 }}>
-          <Alert severity="error">{error}</Alert>
-        </Box>
-      )}
-
       <Box sx={{ mt: 3 , display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      {diagnostico.pergunta && !loading && (
-        <Box sx={{ mt: 3 }}>
-          {diagnostico.pergunta.includes("(Sim/Não)") && (
-            <>
-              <Button onClick={() => handleAnswer("Sim")} variant="contained" color="primary" sx={{ mr: 2 }}>Sim</Button>
-              <Button onClick={() => handleAnswer("Não")} variant="contained" color="secondary">Não</Button>
-            </>
-          )}
+        {loading && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <CircularProgress />
+          </Box>
+        )}
 
-          {diagnostico.pergunta.includes("(Baixo/Alto/Normal)") && (
-            <>
-              <Button onClick={() => handleAnswer("Baixo")} variant="contained" color="primary" sx={{ mr: 2 }}>Baixo</Button>
-              <Button onClick={() => handleAnswer("Normal")} variant="contained" color="primary" sx={{ mr: 2 }}>Normal</Button>
-              <Button onClick={() => handleAnswer("Alto")} variant="contained" color="primary">Alto</Button>
-            </>
-          )}
+        {error && (
+          <Box sx={{ mt: 2 }}>
+            <Alert severity="error">{error}</Alert>
+          </Box>
+        )}
 
-          {diagnostico.pergunta.includes("(Minimo/Maximo/Normal)") && (
-            <>
-              <Button onClick={() => handleAnswer("Minimo")} variant="contained" color="primary" sx={{ mr: 2 }}>Minimo</Button>
-              <Button onClick={() => handleAnswer("Normal")} variant="contained" color="primary" sx={{ mr: 2 }}>Normal</Button>
-              <Button onClick={() => handleAnswer("Maximo")} variant="contained" color="primary">Maximo</Button>
-            </>
-          )}
-          
-          {diagnostico.pergunta.match(/\s+\((\d+\.\d+) \/ (\d+\.\d+)\)Litros/) && (
-            <>
-              {(() => {
-                const match = diagnostico.pergunta.match(/\s+\((\d+\.\d+) \/ (\d+\.\d+)\)Litros/);
-                const minValue = match ? parseFloat(match[1]) : 0;
-                const maxValue = match ? parseFloat(match[2]) : 0;
+      
+        {diagnostico.pergunta && !loading && (
+          <Box sx={{ mt: 3 }}>
+            {diagnostico.pergunta.includes("(Sim/Não)") && (
+              <>
+                <Button onClick={() => handleAnswer("Sim")} variant="contained" color="primary" sx={{ mr: 2 }}>Sim</Button>
+                <Button onClick={() => handleAnswer("Não")} variant="contained" color="secondary">Não</Button>
+              </>
+            )}
 
-                return (
-                  <>
-                    <TextField 
-                      type="number" 
-                      step="0.1" 
-                      min={minValue} 
-                      max={maxValue} 
-                      value={nivelOleo !== null ? nivelOleo : minValue}
-                      onChange={(e) => setNivelOleo(parseFloat(e.target.value))}
-                      style={{ width:"100px" }}
-                      InputProps={{ inputProps: { max: maxValue, min: minValue } }}
-                    />
+            {diagnostico.pergunta.includes("(Baixo/Alto/Normal)") && (
+              <>
+                <Button onClick={() => handleAnswer("Baixo")} variant="contained" color="primary" sx={{ mr: 2 }}>Baixo</Button>
+                <Button onClick={() => handleAnswer("Normal")} variant="contained" color="primary" sx={{ mr: 2 }}>Normal</Button>
+                <Button onClick={() => handleAnswer("Alto")} variant="contained" color="primary">Alto</Button>
+              </>
+            )}
+
+            {diagnostico.pergunta.includes("(Minimo/Maximo/Normal)") && (
+              <>
+                <Button onClick={() => handleAnswer("Minimo")} variant="contained" color="primary" sx={{ mr: 2 }}>Minimo</Button>
+                <Button onClick={() => handleAnswer("Normal")} variant="contained" color="primary" sx={{ mr: 2 }}>Normal</Button>
+                <Button onClick={() => handleAnswer("Maximo")} variant="contained" color="primary">Maximo</Button>
+              </>
+            )}
+
+            {diagnostico.pergunta.match(/\s+\((\d+\.\d+) \/ (\d+\.\d+)\)Litros/) && (
+              <>
+                {(() => {
+                  const match = diagnostico.pergunta.match(/\s+\((\d+\.\d+) \/ (\d+\.\d+)\)Litros/);
+                  const minValue = match ? parseFloat(match[1]) : 0;
+                  const maxValue = match ? parseFloat(match[2]) : 0;
+
+                  return (
+                    <>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 2 }}>
+                        <InputNumber
+                          value={nivelOleo}
+                          onValueChange={(e) => setNivelOleo(e.value)}
+                          min={minValue}
+                          max={maxValue}
+                          step={0.1}
+                          showButtons
+                          buttonLayout="vertical"
+                          style={{ height:'5rem', width: '5rem' }}
+                          //decrementButtonClassName="p-button-secondary" incrementButtonClassName="p-button-secondary"
+                          //incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                          //suffix=" unidade"
+                        />
+
+                        <Button onClick={() => handleAnswer(nivelOleo)} variant="contained" color="primary" sx={{ ml: 2 }}>Enviar resposta</Button>
+                      </Box>
+                      {/* <TextField 
+                        type="number" 
+                        step="0.1" 
+                        min={minValue} 
+                        max={maxValue} 
+                        value={nivelOleo !== null ? nivelOleo : minValue}
+                        onChange={(e) => setNivelOleo(parseFloat(e.target.value))}
+                        style={{ width:"100px" }}
+                        InputProps={{ inputProps: { max: maxValue, min: minValue } }}
+                      /> */}
+                    </>
                     
-                    <Button onClick={() => handleAnswer(nivelOleo)} variant="contained" color="primary" sx={{ ml: 2, mt: 2 }}>
-                      Enviar resposta
-                    </Button>
-                  </>
-                );
-              })()}
-            </>
-          )}
-          
-          {diagnostico.pergunta.match(/Verifique os seguintes componentes\:/) && (
-            <>
-              {diagnostico.pergunta.match(/\d+/g).map((num, index) => (
-                <Button key={index} onClick={() => handleAnswer(num)} variant="contained" color="primary" sx={{ mr: 2 }}>
-                  {num}
-                </Button>
-              ))}
-            </>
-          )}
-        </Box>
-      )}
+                  );
+                })()}
+              </>
+            )}
+            
+            {diagnostico.pergunta.match(/Verifique os seguintes componentes\:/) && (
+              <>
+                {diagnostico.pergunta.match(/\d+/g).map((num, index) => (
+                  <Button key={index} onClick={() => handleAnswer(num)} variant="contained" color="primary" sx={{ mr: 2 }}>
+                    {num}
+                  </Button>
+                ))}
+              </>
+            )}
+          </Box>
+        )}
       </Box>
     </CardWrapper>
   );
