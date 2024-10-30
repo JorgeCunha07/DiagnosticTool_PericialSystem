@@ -107,13 +107,21 @@ tratar_problema2(Id, Veiculo, Teste, Resposta) :-
     TesteTermo =.. [Teste, Veiculo, _],
     perguntavel(TesteTermo),
     opcoes_validas(TesteTermo, OpcoesValidas),
-    member(Resposta, OpcoesValidas),
+    validar_resposta(OpcoesValidas, Resposta),
     NovoFacto =.. [Teste, Veiculo, Resposta],
     retract(ultimo_facto(N1)),
     N is N1 + 1,
     asserta(ultimo_facto(N)),
     assertz(facto(N, NovoFacto)),
     retract(facto(Id, proximo_teste(Veiculo, Teste))).
+
+validar_resposta([sim, nao], Resposta) :-
+    member(Resposta, [sim, nao]).
+
+validar_resposta([Min, Max], Resposta) :-
+    number(Resposta),
+    Resposta >= Min,
+    Resposta =< Max.
 
 % Exibir o diagnostico final
 mostrar_diagnostico :-
