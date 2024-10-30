@@ -1,6 +1,7 @@
 import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { InputNumber } from 'primereact/inputnumber';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CardWrapper from '../components/CardWrapper';
 import TituloLinha from "../components/TituloLinha";
@@ -13,7 +14,7 @@ const useDiagnostico = (initialData) => {
   const navigate = useNavigate();
   const API_URL = getApiUrl();
 
-  const fetchPergunta = async () => {
+  const fetchPergunta = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API_URL}/pergunta`);
@@ -28,7 +29,7 @@ const useDiagnostico = (initialData) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL, navigate]);
 
   const handleAnswer = async (answer) => {
     setLoading(true);
@@ -49,15 +50,36 @@ const useDiagnostico = (initialData) => {
 
   useEffect(() => {
     fetchPergunta();
-  }, []);
+  }, [fetchPergunta]);
 
   return { diagnostico, loading, error, handleAnswer };
 };
 
 const DiagnosticoCarroProlog = () => {
+
   const { diagnostico, loading, error, handleAnswer } = useDiagnostico();
+  const [numericAnswer, setNumericAnswer] = useState();
 
   if (!diagnostico) return null;
+
+  const isNumericInput = 
+    Array.isArray(diagnostico.respostas) && 
+    diagnostico.respostas.length === 2 &&
+    typeof diagnostico.respostas[0] === 'number' && 
+    typeof diagnostico.respostas[1] === 'number';
+
+  const handleNumericInputChange = (e) => {
+    setNumericAnswer(e.target.value);
+  };
+
+  const submitNumericAnswer = () => {
+    const answer = parseFloat(numericAnswer);
+    if (answer >= diagnostico.respostas[0] && answer <= diagnostico.respostas[1]) {
+      handleAnswer(answer);
+    } else {
+      alert(`Please enter a value between ${diagnostico.respostas[0]} and ${diagnostico.respostas[1]}`);
+    }
+  };
 
   return (
     <CardWrapper titulo={`Questionário Diagnóstico`}>
@@ -85,8 +107,43 @@ const DiagnosticoCarroProlog = () => {
 
       <Box sx={{ height: '0.5px', width: "100%", background: 'white', marginBottom: '30px'}} />
 
-      {diagnostico.respostas && !loading && (
+      {/* {diagnostico.respostas && !loading && (
         <Box sx={{ mt: 3 , display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {diagnostico.respostas.map((resposta, index) => (
+            <Button
+              key={index}
+              onClick={() => handleAnswer(resposta)}
+              variant="contained"
+              color="primary"
+              sx={{ mr: 2 }}
+            >
+              {resposta}
+            </Button>
+          ))}
+        </Box>
+      )} */}
+
+      {isNumericInput ? (
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: 2 }}>
+          <InputNumber
+            value={numericAnswer}
+            onValueChange={handleNumericInputChange}
+            //onChange={handleNumericInputChange}
+            min={diagnostico.respostas[0]}
+            max={diagnostico.respostas[1]}
+            step={0.1}
+            showButtons
+            buttonLayout="vertical"
+            style={{ height:'5rem', width: '5rem' }}
+            //decrementButtonClassName="p-button-secondary" incrementButtonClassName="p-button-secondary"
+            //incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            //suffix=" unidade"
+          />
+
+        <Button onClick={submitNumericAnswer} variant="contained" color="primary" sx={{ ml: 2 }}>Enviar resposta</Button>
+      </Box>
+      ) : (
+        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           {diagnostico.respostas.map((resposta, index) => (
             <Button
               key={index}
