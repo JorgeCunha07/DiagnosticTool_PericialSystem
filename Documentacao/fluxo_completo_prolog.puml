@@ -1,0 +1,149 @@
+Push@startuml
+actor Utilizador
+participant UI
+participant MotorInferencia
+participant MotorDiagnostico
+participant Como
+participant Porque
+participant PorqueNao
+participant BaseConhecimento
+
+BaseConhecimento -> BaseConhecimento: carregar base de conhecimento (valores minimos e maximos dos carros)
+BaseConhecimento -> BaseConhecimento: carregar regras para factos
+BaseConhecimento -> BaseConhecimento: carregar metaconhecimento (factos que disparam as regras)
+
+Utilizador -> UI : Quer escolher o seu carro
+opt obter_numero_carro
+UI -> MotorInferencia : listar_marcas()
+MotorInferencia -> BaseConhecimento : findall(Marca, carro(_, Marca, _, _), Marcas)
+BaseConhecimento --> MotorInferencia : Marcas
+MotorInferencia -> UI : listar_opcoes_numeradas(Marcas)
+
+Utilizador -> UI : Selecionar marca
+UI -> MotorInferencia : listar_modelos(Marca)
+MotorInferencia -> BaseConhecimento : findall(Modelo, carro(_, Marca, Modelo, _), Modelos)
+BaseConhecimento --> MotorInferencia : Modelos
+MotorInferencia -> UI : listar_opcoes_numeradas(Modelos)
+
+Utilizador -> UI : Selecionar modelo
+UI -> MotorInferencia : listar_motores(Marca, Modelo)
+MotorInferencia -> BaseConhecimento : findall(Motor, carro(_, Marca, Modelo, Motor), Motores)
+BaseConhecimento --> MotorInferencia : Motores
+MotorInferencia -> UI : listar_opcoes_numeradas(Motores)
+
+Utilizador -> UI : Selecionar motor
+UI -> MotorInferencia : obter_numero_carro()
+
+alt Foi feito algum diagnostico anteriormente
+MotorInferencia -> MotorInferencia: apaga carro selecionado anteriormente
+MotorInferencia -> MotorInferencia: apaga todos factos anteriores
+MotorInferencia -> MotorInferencia: apaga justificacoes anteriores
+end
+end
+Utilizador -> UI : Iniciar diagnostico
+UI -> MotorDiagnostico : diagnostico()
+
+    MotorDiagnostico -> MotorDiagnostico : diagnostico_loop()
+loop diagnostico_loop()
+
+    MotorDiagnostico -> BaseConhecimento : diagnostico=diagnostico_finalizado()
+    MotorDiagnostico -> BaseConhecimento : problemas=problemas_pendentes()
+alt diagnostico = true
+    BaseConhecimento -> BaseConhecimento : mostrar_diagnostico()
+    BaseConhecimento -> BaseConhecimento : mostrar_solucao()
+    BaseConhecimento -> MotorDiagnostico : Exibir diagnóstico final e solução
+    MotorDiagnostico -> UI : Exibir diagnóstico final e solução
+    UI -> Utilizador : Mostrar resultados
+    break
+    end
+else diagnostico_finalizado = false & problemas = true
+    MotorDiagnostico -> BaseConhecimento : diag_problemas()
+    BaseConhecimento -> BaseConhecimento : findall((Id, Veiculo, Teste), facto(Id, proximo_teste(Veiculo, Teste)), Tests)
+    BaseConhecimento -> BaseConhecimento : processar_testes(Testes)
+    BaseConhecimento -> BaseConhecimento : tratar_problema() (cria o novo facto) = Facto
+    BaseConhecimento -> MotorDiagnostico : Exibir pergunta de diagnóstico
+    MotorDiagnostico -> UI : Fazer pergunta de diagnóstico
+    UI -> Utilizador : Exibir pergunta
+    Utilizador -> UI : Fornecer resposta
+    UI -> MotorDiagnostico : Encaminhar resposta
+    MotorDiagnostico -> MotorInferencia: arranca_motor (usa o Facto e a resposta)
+    MotorInferencia -> MotorInferencia: dispara_regras(Facto, LRegras) (obtem as regras que tem de ser disparadas e usa o concluir para criar um facto proximo_teste)
+else
+    MotorDiagnostico -> UI : Notificar Utilizador que o diagnóstico não pode ser determinado.
+    UI -> Utilizador : Notificar
+    break
+    end
+end
+end
+
+alt Diagnóstico Completo
+    Utilizador -> UI : Solicitar factos
+    UI -> MotorInferencia : mostra_factos()
+    MotorInferencia -> BaseConhecimento : findall(N, facto(N, _), LFactos)
+    BaseConhecimento --> MotorInferencia : LFactos
+    MotorInferencia --> UI : Mostrar factos
+    UI --> Utilizador : Mostrar factos
+
+    Utilizador -> UI : Solicitar diagnostico
+    UI -> MotorDiagnostico : mostrar_diagnostico()
+    MotorDiagnostico -> BaseConhecimento : facto(N, diagnostico(N, Diagnostico))
+    BaseConhecimento --> MotorDiagnostico : Diagnostico
+    MotorDiagnostico --> UI : Mostrar diagnostico
+    UI --> Utilizador : Mostrar diagnostico
+
+    Utilizador -> UI : Solicitar solução
+    UI -> MotorDiagnostico : mostrar_solucao()
+    MotorDiagnostico -> BaseConhecimento : facto(N, solucao(N, Solucao))
+    BaseConhecimento --> MotorDiagnostico : Solucao
+    MotorDiagnostico --> UI : Mostrar solucao
+    UI --> Utilizador : Mostrar solucao
+    opt Solicitação Como
+        Utilizador -> UI : Solicitar explicação (Como)
+        UI -> Como : como()
+        loop até o proximo facto ser um diagnostico
+        Como -> BaseConhecimento : facto(N, F)
+        BaseConhecimento --> Como : Pergunta, Resposta, Facto e a regra que disparou
+        end
+        BaseConhecimento --> Como : Diagnostico
+        Como -> UI : Exibir explicação "como"
+        UI -> Utilizador : Mostrar explicação "como"
+    end
+    opt Solicitação Porquê
+        Utilizador -> UI : Solicitar explicação (Porquê)
+        UI -> Porque : porque(X)
+        Porque -> BaseConhecimento : facto(N,X)
+        alt facto X não existe
+        BaseConhecimento --> Porque : false
+        Porque --> UI : O facto X não existe
+        UI --> Utilizador : O facto X não existe
+        else facto X existe e nao é o primeiro
+        Porque -> BaseConhecimento : justifica(NAnterior, ID, _) : NAnterior é o numero do facto anterior
+        BaseConhecimento --> Porque : ID da regra anterior
+        Porque -> BaseConhecimento : facto(NAnterior, FactoAnterior) obtem o facto anterior
+        BaseConhecimento --> Porque : FactoAnterior onde tem a pergunta e a resposta anterior
+        Porque --> UI: Mostra regra que despoletou a Pergunta e Resposta anterior e fez com que outra pergunta fosse feita para gerar o facto perguntado
+        UI --> Utilizador : Mostra regra que despoletou a Pergunta e Resposta anterior e fez com que outra pergunta fosse feita para gerar o facto perguntado
+        else facto X existe e é o primeiro
+        Porque -> BaseConhecimento : facto(1,X)
+        BaseConhecimento --> Porque : X
+        Porque --> UI : O facto é verdadeiro porque é a resposta à primeira regra
+        UI --> Utilizador : O facto é verdadeiro porque é a resposta à primeira regra
+        end
+    end
+    opt Solicitação Porquê Não
+        Utilizador -> UI : Solicitar explicação (Porquê Não)
+        UI -> PorqueNao : porque_nao()
+        PorqueNao -> MotorDiagnostico : verifica_falha()
+        MotorDiagnostico -> BaseConhecimento : findall(Condicao, (facto(_, Condicao), \+ Condicao), CondicoesFalhadas)
+        BaseConhecimento --> MotorDiagnostico : Condições Falhadas
+        MotorDiagnostico -> PorqueNao : Recuperar condições falhadas
+        PorqueNao -> UI : Exibir explicação "porquê não"
+        UI -> Utilizador : Mostrar explicação "porquê não"
+    end
+
+else Diagnóstico Incompleto
+    MotorInferencia -> UI : Notificar Utilizador que o diagnóstico não pode ser determinado
+    UI -> Utilizador : Notificar
+end
+
+@enduml

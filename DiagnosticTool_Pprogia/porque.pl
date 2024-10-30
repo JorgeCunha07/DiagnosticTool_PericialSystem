@@ -15,12 +15,12 @@ porque(Facto):-
     pergunta(FactoAnterior, PerguntaAnteriorFormatada),
     write('O facto '), write(Facto),
     write(' e verdadeiro porque pela regra '), write(ID),
-    write(' foi possivel concluir que o utilizador respondeu: '), write(RespostaAnterior),
-    write(' a pergunta: '), write(PerguntaAnteriorFormatada), nl,
+    write(' foi possivel concluir que o utilizador respondeu: "'), write(RespostaAnterior),
+    write('" a pergunta: '), write(PerguntaAnteriorFormatada), nl,
     write('Com isto foi necessario realizar a seguinte pergunta: '),
     pergunta(Facto, PerguntaFormatada),
-    write(PerguntaFormatada), write(' ao qual o mesmo respondeu: '), write(Resposta),
-    write(' mostrando que o facto '), write(Facto), write(' e verdadeiro').
+    write(PerguntaFormatada), write(' ao qual o mesmo respondeu: "'), write(Resposta),
+    write('" mostrando que o facto '), write(Facto), write(' e verdadeiro').
 
 porque(Facto):-
     write('O facto '), write(Facto), write(' nao existe.').

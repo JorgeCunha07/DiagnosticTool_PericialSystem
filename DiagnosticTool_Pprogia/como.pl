@@ -12,8 +12,8 @@ como(N) :-
             pergunta(F, PerguntaFormatada),
             write('Pergunta: '), write(PerguntaFormatada), nl,
             write('Resposta: '), write(Regra), nl,
-            write('gerou o facto numero '), write(N), write(' -> '), write(F), nl,
-            write('disparando assim a regra '), write(ID), nl,
+            write('Gerou o facto numero '), write(N), write(' -> '), write(F), nl,
+            write('Disparando assim a regra '), write(ID), nl,
             % proximo facto
             facto(NSeguinte, FSeguinte),
             FSeguinte =.. [PerguntaSeguinte, _, RespostaSeguinte],
