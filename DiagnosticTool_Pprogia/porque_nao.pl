@@ -16,8 +16,8 @@ whynot(Facto, Nivel) :-
     ;
         formata(Nivel),
         %write('Porque: O facto '), write(Facto),
-        %write(' não está definido na base de conhecimento'), nl
-		write('Parou no nivel'), write(Nivel)
+        %write(' não esta definido na base de conhecimento'), nl
+		write('Parou no nivel: '), write(Nivel)
     ).
 
 
@@ -82,7 +82,7 @@ encontra_premissas_falsas([]).
 explica_porque_nao([], _).
 explica_porque_nao([P | _], Nivel) :-
     formata(Nivel),
-    write('A premissa '), write(P), write(' é falsa'), nl,
+    write('A premissa '), write(P), write(' e falsa'), nl,
     functor(P, TesteAnterior, _),
     Nivel1 is Nivel + 1,
     

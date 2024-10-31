@@ -134,6 +134,11 @@ mostrar_solucao :-
     facto(_, solucao(_, Solucao)),
     carro_selecionado(Info),
     format('Solucao para ~w: ~w~n', [Info, Solucao]).
+	
+% Exibir o diagnostico e a solucao
+mostra_diagnostico_solucao(Diagnostico, Solucao) :-
+	findall(D, facto(_, diagnostico(_, D)), Diagnostico),
+    findall(S, facto(_, solucao(_, S)), Solucao).
 
 % Predicado que retorna todos os diagnósticos possíveis
 listar_diagnosticos_possiveis(Diagnosticos) :-

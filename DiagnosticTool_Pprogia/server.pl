@@ -168,160 +168,35 @@ http_handler_pergunta(_Request) :-
 facto_to_text(Facto, Texto) :-
     term_to_atom(Facto, Texto).
 
-% Handler para todos os factos filtrados
+% Handler para mostrar todos os factos filtrados
 http_handler_factos(_Request) :-
     % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
     mostra_factos_filtrados(Factos),
 	maplist(facto_to_text, Factos, FactosJson),
     reply_json(FactosJson).
 
-
-
-
-
-
-
-
-
-
-
-% Handler para escolher 
-http_handler_porque(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
-    !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
-    format('~n').
-
-http_handler_porque(Request) :-
-	cors_headers,
-    http_read_json_dict(Request, JsonIn),
-    atom_string(FactoAtom, JsonIn.facto),      % Convertendo o fato JSON em átomo
-    term_to_atom(FactoTerm, FactoAtom),        % Convertendo o átomo em termo Prolog
-    porque_response(FactoTerm, Explicacao),
-    reply_json(Explicacao).
-
-porque_response(Facto, Explicacao) :-
-    (   call(facto(N, Facto))
-    ->  (N == 1
-        ->  term_to_atom(Facto, FactoAtom),
-            Explicacao = _{fato: FactoAtom, explicacao: "O facto é verdadeiro visto ser a primeira pergunta"}
-        ;   Facto =.. [_, _, Resposta],
-            NAnterior is N - 1,
-            justifica(NAnterior, ID, _),
-            call(facto(NAnterior, FactoAnterior)),
-            FactoAnterior =.. [_, _, RespostaAnterior],
-            pergunta(FactoAnterior, PerguntaAnteriorFormatada),
-            pergunta(Facto, PerguntaFormatada),
-            % Converter termos compostos em átomos para JSON
-            term_to_atom(Facto, FactoAtom),
-            term_to_atom(Resposta, RespostaAtom),
-            term_to_atom(RespostaAnterior, RespostaAnteriorAtom),
-            Explicacao = _{
-                fato: FactoAtom,
-                explicacao: "O facto é verdadeiro",
-                regra: ID,
-                resposta_anterior: RespostaAnteriorAtom,
-                pergunta_anterior: PerguntaAnteriorFormatada,
-                pergunta: PerguntaFormatada,
-                resposta: RespostaAtom
-            }
-        )
-    ;   term_to_atom(Facto, FactoAtom),
-        Explicacao = _{fato: FactoAtom, explicacao: "O facto não é verdadeiro"}
-    ).
-	
-http_handler_whynot(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
-    !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
-    format('~n').
-
-% Handler for the '/whynot' endpoint
-http_handler_whynot(Request) :-
-    cors_headers,
-    http_read_json_dict(Request, JsonIn),
-    (   _{facto: FactoString} :< JsonIn
-    ->  atom_string(FactoAtom, FactoString),
-        safe_term_string(FactoTerm, FactoAtom)
-    ;   reply_json_dict(_{error: 'Missing "facto" field in JSON input'}, [status(400)])
-    ),
-    with_output_to(string(Output), whynot(FactoTerm)),
-    reply_json_dict(_{explanation: Output}).
-
-% Safe parsing of terms to prevent code injection
-safe_term_string(Term, String) :-
-    catch(read_from_chars(String, Term), _, fail), !.
-safe_term_string(_, _) :-
-    throw(error(syntax_error('Invalid term in "facto" field'), _)).
-
-
+% Handler para mostrar todos os factos
 http_handler_factos_todos(_Request) :-
-    % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
-    findall(Descricao, facto(_, Descricao), Factos),
+	mostra_factos(Factos),
 	maplist(facto_to_text, Factos, FactosJson),
     reply_json(FactosJson).
 
-
-	
-
-
-	
-http_handler_como(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
-    !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
-    format('~n').
-
-http_handler_como(_Request) :-
-    cors_headers, 
-    como_response(1, Response),
-    reply_json(Response).
-
-como_response(N, Response) :-
-    NSeguinte is N + 1,
-    (   justifica(N, ID, _)
-    ->  facto(N, F),
-        F =.. [_, _, Regra],
-        pergunta(F, PerguntaFormatada),
-        % Transformar o termo composto em um átomo para JSON
-        term_to_atom(F, FAtom),
-        term_to_atom(Regra, RegraAtom),
-        % Criação de uma estrutura de resposta em JSON para a pergunta atual
-        Current = _{
-            pergunta: PerguntaFormatada,
-            resposta: RegraAtom,
-            fato: FAtom,
-            regra: ID
-        },
-        facto(NSeguinte, FSeguinte),
-        FSeguinte =.. [PerguntaSeguinte, _, RespostaSeguinte],
-        (   PerguntaSeguinte == diagnostico
-        ->  term_to_atom(RespostaSeguinte, DiagnosticoAtom),
-            Response = [Current, _{diagnostico: DiagnosticoAtom}]
-        ;   como_response(NSeguinte, NextResponse),
-            Response = [Current | NextResponse]
-        )
-    ;   Response = []
-    ).
-
 http_handler_responder(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    memberchk(method(options), Request),
     !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    cors_headers,
     format('~n').
 
+% Handler para resposta
 http_handler_responder(Request) :-
     cors_headers,
-    % Verifica se há perguntas por responder
-    findall(P, facto(_, proximo_teste(_, P)), Perguntas),
+    obter_perguntas(Perguntas),
     length(Perguntas, N),
-    
     (   N = 0
     ->  % Se a lista está vazia, retornar erro
         reply_json(_{estado: "finalizado", message: "Não há perguntas para responder"})
     ;   % Caso contrário, continuar
         http_read_json_dict(Request, JsonIn),
-        
         (   (string(JsonIn.resposta) ; atom(JsonIn.resposta))
         ->  % Se for uma string ou átomo, converte para átomo se necessário
             atom_string(Resposta, JsonIn.resposta),
@@ -340,28 +215,74 @@ http_handler_responder(Request) :-
         )
     ).
 
-	
+% Handler para obter diagnostico possivel solucao
 http_handler_diagnostico(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+    memberchk(method(options), Request),
     !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    cors_headers,
     format('~n').
 
 http_handler_diagnostico(_Request) :-
 	cors_headers,
     % Filtrar factos diagnostico e solucao
-    findall(D, facto(_, diagnostico(_, D)), Diagnostico),
-    findall(S, facto(_, solucao(_, S)), Solucao),
+    mostra_diagnostico_solucao(Diagnostico, Solucao),
     Resposta = _{
         diagnostico: Diagnostico,
         solucao: Solucao
     },
     reply_json(Resposta).
 	
-http_handler_diagnostico_possiveis(Request) :-
-    memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
+% Handler para explicacao como
+http_handler_como(Request) :-
+    memberchk(method(options), Request),
     !,                                    
-    cors_headers,                         % Enviar cabeçalhos de CORS para pré-voo
+    cors_headers,
+    format('~n').
+
+http_handler_como(_Request) :-
+    cors_headers, 
+    como_response(1, Response),
+    reply_json(Response).
+
+% Handler para explicacao porque
+http_handler_porque(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
+    format('~n').
+
+http_handler_porque(Request) :-
+	cors_headers,
+    http_read_json_dict(Request, JsonIn),
+    atom_string(FactoAtom, JsonIn.facto),      % Convertendo o fato JSON em átomo
+    term_to_atom(FactoTerm, FactoAtom),        % Convertendo o átomo em termo Prolog
+    porque_response(FactoTerm, Explicacao),
+    reply_json(Explicacao).
+
+% Handler para explicacao porque nao
+http_handler_whynot(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
+    format('~n').
+
+http_handler_whynot(Request) :-
+    cors_headers,
+    http_read_json_dict(Request, JsonIn),
+    (   _{facto: FactoString} :< JsonIn
+    ->  atom_string(FactoAtom, FactoString),
+        term_to_atom(FactoTerm, FactoAtom)  % Conversão direta da string para termo
+    ;   reply_json_dict(_{error: 'Erro ao criar o porque nao'}, [status(400)])
+    ),
+    with_output_to(string(Output), whynot(FactoTerm)),
+    reply_json_dict(_{explanation: Output}).
+
+
+% Handler para diagnosticos possiveis
+http_handler_diagnostico_possiveis(Request) :-
+    memberchk(method(options), Request),
+    !,                                    
+    cors_headers,
     format('~n').
 
 http_handler_diagnostico_possiveis(_Request) :-

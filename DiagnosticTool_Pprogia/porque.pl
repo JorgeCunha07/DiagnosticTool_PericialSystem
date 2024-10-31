@@ -24,3 +24,33 @@ porque(Facto):-
 
 porque(Facto):-
     write('O facto '), write(Facto), write(' nao existe.').
+
+porque_response(Facto, Explicacao) :-
+    (   call(facto(N, Facto))
+    ->  (N == 1
+        ->  term_to_atom(Facto, FactoAtom),
+            Explicacao = _{fato: FactoAtom, explicacao: "O facto é verdadeiro visto ser a primeira pergunta"}
+        ;   Facto =.. [_, _, Resposta],
+            NAnterior is N - 1,
+            justifica(NAnterior, ID, _),
+            call(facto(NAnterior, FactoAnterior)),
+            FactoAnterior =.. [_, _, RespostaAnterior],
+            pergunta(FactoAnterior, PerguntaAnteriorFormatada),
+            pergunta(Facto, PerguntaFormatada),
+            % Converter termos compostos em átomos para JSON
+            term_to_atom(Facto, FactoAtom),
+            term_to_atom(Resposta, RespostaAtom),
+            term_to_atom(RespostaAnterior, RespostaAnteriorAtom),
+            Explicacao = _{
+                fato: FactoAtom,
+                explicacao: "O facto é verdadeiro",
+                regra: ID,
+                resposta_anterior: RespostaAnteriorAtom,
+                pergunta_anterior: PerguntaAnteriorFormatada,
+                pergunta: PerguntaFormatada,
+                resposta: RespostaAtom
+            }
+        )
+    ;   term_to_atom(Facto, FactoAtom),
+        Explicacao = _{fato: FactoAtom, explicacao: "O facto não é verdadeiro"}
+    ).
