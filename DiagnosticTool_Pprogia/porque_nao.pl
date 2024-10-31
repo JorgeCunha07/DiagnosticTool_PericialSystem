@@ -90,14 +90,14 @@ explica_porque_nao([P | _], Nivel) :-
     ( TesteAnterior == avalia ->
         P =.. [_, InnerTerm | _],      % Decompor para obter o termo dentro de avalia(...)
         functor(InnerTerm, Functor, _), % Extrair o nome do functor (e.g., fluido_transmissao)
-        NextFact = proximo_teste(_, Functor)  % Define NextFact com o functor extraído
+        ProximoFacto = proximo_teste(_, Functor)  % Define ProximoFacto com o functor extraído
     ;
         % Caso contrário, usa TesteAnterior diretamente
-        NextFact = proximo_teste(_, TesteAnterior)
+        ProximoFacto = proximo_teste(_, TesteAnterior)
     ),
     
     % Continua com o próximo diagnóstico
-    whynot(NextFact, Nivel1).
+    whynot(ProximoFacto, Nivel1).
 
 
 % Formatar saida

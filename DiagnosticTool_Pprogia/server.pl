@@ -201,14 +201,14 @@ http_handler_responder(Request) :-
         ->  % Se for uma string ou átomo, converte para átomo se necessário
             atom_string(Resposta, JsonIn.resposta),
             reply_json(_{estado: "OK", message: "Respondido"}),
-            % Chamar diagnostico2/1 após responder
-            catch(diagnostico2(Resposta), Erro, log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
+            % Chamar diagnostico_passo_passo/1 após responder
+            catch(diagnostico_passo_passo(Resposta), Erro, log_message("Erro ao chamar diagnostico_passo_passo: ~w", [Erro]))
         ;   number(JsonIn.resposta)
         ->  % Se for um número, atribuir diretamente
             Resposta = JsonIn.resposta,
             reply_json(_{estado: "OK", message: "Respondido"}),
-            % Chamar diagnostico2/1 após responder
-            catch(diagnostico2(Resposta), Erro, log_message("Erro ao chamar diagnostico2: ~w", [Erro]))
+            % Chamar diagnostico_passo_passo/1 após responder
+            catch(diagnostico_passo_passo(Resposta), Erro, log_message("Erro ao chamar diagnostico_passo_passo: ~w", [Erro]))
         ;   % Se não for nem string nem número, falhar com uma mensagem de erro
             reply_json(_{estado: "erro", message: "O campo 'resposta' deve ser string ou número"}),
             fail  % Usar fail para parar a execução neste caso

@@ -3,13 +3,13 @@ diagnostico :-
     retractall(factos_processados(_)),
     diagnostico_loop.
 	
-diagnostico3 :-
+diagnostico_passo_passo_con :-
     diag_problemas,
 	arranca_motor.
 	
 % Predicado que inicia APENAS uma pergunta do diagnostico
-diagnostico2(Resposta) :-
-    diag_problemas2(Resposta),
+diagnostico_passo_passo(Resposta) :-
+    diag_problemas_passo_passo(Resposta),
 	arranca_motor.
 
 % Loop que processa testes pendentes ou exibe o diagnostico final
@@ -43,9 +43,9 @@ diag_problemas :-
     processar_testes(Tests).
 
 % Processar todos os factos 'proximo_teste' pendentes
-diag_problemas2(Resposta) :-
+diag_problemas_passo_passo(Resposta) :-
     findall((Id, Veiculo, Teste), facto(Id, proximo_teste(Veiculo, Teste)), Tests),
-    processar_testes2(Tests, Resposta).
+    processar_testes_passo_passo(Tests, Resposta).
 
 % Processar cada teste
 processar_testes([]).
@@ -54,8 +54,8 @@ processar_testes([(Id, Veiculo, Teste) | Resto]) :-
     processar_testes(Resto).
 
 % Processar cada teste
-processar_testes2([(Id, Veiculo, Teste) | _], Resposta) :-
-    tratar_problema2(Id, Veiculo, Teste, Resposta).
+processar_testes_passo_passo([(Id, Veiculo, Teste) | _], Resposta) :-
+    tratar_problema_passo_passo(Id, Veiculo, Teste, Resposta).
 
 % Tratar cada problema individualmente
 tratar_problema(Id, Veiculo, Teste) :-
@@ -103,7 +103,7 @@ tratar_problema(Id, Veiculo, Teste) :-
     ).
 
 % Tratar cada problema individualmente
-tratar_problema2(Id, Veiculo, Teste, Resposta) :-
+tratar_problema_passo_passo(Id, Veiculo, Teste, Resposta) :-
     TesteTermo =.. [Teste, Veiculo, _],
     perguntavel(TesteTermo),
     opcoes_validas(TesteTermo, OpcoesValidas),

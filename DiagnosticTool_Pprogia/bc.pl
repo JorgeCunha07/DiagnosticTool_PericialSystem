@@ -236,7 +236,7 @@ texto_pergunta(tensores(_, _), Pergunta, Carro) :-
 texto_pergunta(oleo_motor(_, _), Pergunta, Carro) :-
     format(atom(Pergunta), 'Qual e o nivel de oleo do motor do veiculo ~w?', [Carro]).
 texto_pergunta(sistema_escape(_, _), Pergunta, Carro) :-
-    format(atom(Pergunta), '0 veiculo ~w tem problema no sistema de escape?', [Carro]).
+    format(atom(Pergunta), 'O veiculo ~w tem problema no sistema de escape?', [Carro]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -862,4 +862,3 @@ fluido_transmissao(16, 1.8, 2.5, 3).
 fluido_transmissao(17, 2, 2.5, 3).
 fluido_transmissao(18, 1.8, 2.5, 3).
 fluido_transmissao(19, 2, 2.5, 3).
-
