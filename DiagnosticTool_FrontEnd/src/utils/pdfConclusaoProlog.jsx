@@ -117,7 +117,14 @@ export const generatePDF = (
 
           if (index === activeButtonIndex && responseTextVisible) {
             addWrappedText(`Porque esta evidência?`, fontsize_body, 2);
-            responseText.split('\n').forEach((line) => addWrappedText(line, fontsize_small, 3));
+
+            if (responseText) {
+              addWrappedText(`${responseText[0]}`, fontsize_body, 3);
+              
+              // nem todas respostas porque tem um motivo. exemplo: primeiro porque.
+              if(responseText[1])
+                addWrappedText(`${responseText[1]}`, fontsize_body, 3);
+            }
           }
       }
       });
@@ -129,16 +136,11 @@ export const generatePDF = (
     addWrappedText(`Porque não: ${falha}`, fontsize_h2);
   
     if (falhaResponseTextVisible) {
-      if (Array.isArray(falhaDetalhes)) {
-        falhaDetalhes.forEach((detalhe) => {
-          addWrappedText(`${detalhe.explicacao} ${detalhe.regra_id}:`, fontsize_body, 1);
-          detalhe.detalhes.forEach((det) => {
-            addWrappedText(`${det.explicacao} - ${det.premissa} ${det.condicao}`, fontsize_body, 2);
-          });
-        });
-      } else {
-        addWrappedText(falhaDetalhes.explicacao, fontsize_body, 1);
-      }
+
+      falhaDetalhes.forEach((detalhe) => {
+        addWrappedText(detalhe.porque, fontsize_body, 1);
+        addWrappedText(detalhe.motivo, fontsize_body, 2);
+      })
     }
   }
 

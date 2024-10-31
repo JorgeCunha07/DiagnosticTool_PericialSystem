@@ -25,13 +25,14 @@ const DiagnosticoConclusaoProlog = () => {
   const [diagnostico, setDiagnostico] = useState([]);
   const [solucao, setSolucao] = useState([]);
   const [como, setComo] = useState([]);
-  const [responseText, setResponseText] = useState('');
+  const [responseText, setResponseText] = useState(null);
   const [activeButtonIndex, setActiveButtonIndex] = useState(null);
   const [responseTextVisible, setResponseTextVisible] = useState(false);
   const [falhaResponseTextVisible, setFalhaResponseTextVisible] = useState(false);
   const [falhas, setFalhas] = useState([]);
   const [falha, setFalha] = useState('');
   const [falhaDetalhes, setFalhaDetalhes] = useState(null);
+  const [parsedFalhaDetalhes, setParsedFalhaDetalhes] = useState(null);
 
   useEffect(() => {
     fetchDiagnostico();
@@ -105,11 +106,18 @@ const DiagnosticoConclusaoProlog = () => {
 
       if (response.ok) {
         const data = await response.json();
+        const resultado = [];
         const formattedResponse = data.pergunta_anterior
           ? `${data.explicacao}.\nNa pergunta "${data.pergunta_anterior}" a resposta foi "${data.resposta_anterior}".`
           : `${data.explicacao}.`;
 
-        setResponseText(formattedResponse);
+        const porque = data.explicacao;
+        const motivo = data.pergunta_anterior ? `Na pergunta "${data.pergunta_anterior}" a resposta foi "${data.resposta_anterior}".`
+          : null;
+        resultado.push({ porque, motivo });
+
+        setResponseText([ porque, motivo ]);
+        //setResponseText(formattedResponse);
         setActiveButtonIndex(index);
 
         setResponseTextVisible(false);
@@ -130,18 +138,6 @@ const DiagnosticoConclusaoProlog = () => {
     if (selectedFalha){
       setFalha(selectedFalha);
 
-    //   {
-    //     "explanation": "Porque pela regra 55:\n
-    //      A premissa filtro_combustivel_entupido(_6452,sim) é falsa\n
-    //           Porque pela regra 46:\n
-    //                A premissa falta_combustivel_ou_bomba_defeito(_6604,nao) é falsa\n
-    //                     Porque pela regra 34:\n
-    //                          A premissa motor_sobreaquece(_6756,nao) é falsa\n
-    //                               Porque pela regra 23:\n
-    //                                    A premissa vai_abaixo(_6908,sim) é falsa\n
-    //                                         Parou no nivel9"
-    // }
-
       const body = { facto: `diagnostico(Veiculo, '${selectedFalha}')` };
       try {
         const response = await fetch('http://localhost:4040/porqueNao', {
@@ -153,6 +149,8 @@ const DiagnosticoConclusaoProlog = () => {
         if (response.ok) {
           const data = await response.json();
           setFalhaDetalhes(data);
+
+          setParsedFalhaDetalhes(parseExplanation(falhaDetalhes.explanation));
 
           setFalhaResponseTextVisible(false);
           setTimeout(() => setFalhaResponseTextVisible(true), 100);
@@ -167,6 +165,40 @@ const DiagnosticoConclusaoProlog = () => {
   }
   };
 
+    //   {
+    //     "explanation": "Porque pela regra 55:\n
+    //      A premissa filtro_combustivel_entupido(_6452,sim) é falsa\n
+    //           Porque pela regra 46:\n
+    //                A premissa falta_combustivel_ou_bomba_defeito(_6604,nao) é falsa\n
+    //                     Porque pela regra 34:\n
+    //                          A premissa motor_sobreaquece(_6756,nao) é falsa\n
+    //                               Porque pela regra 23:\n
+    //                                    A premissa vai_abaixo(_6908,sim) é falsa\n
+    //                                         Parou no nivel9"
+    // }
+
+  const parseExplanation = (value) => {
+    const lines = value.split('\n');
+    const results = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      
+      if (line.startsWith("Porque")) {
+        const porque = line;
+        const nextLine = lines[i + 1] ? lines[i + 1].trim() : '';
+        
+        if (nextLine) {
+          const motivo = nextLine;
+          results.push({ porque, motivo });
+          i++;
+        }
+      }
+    }
+
+    return results;
+  };
+
   return (
     <CardWrapper titulo={`Diagnóstico Concluído`}>
       <Box sx={{ position: 'absolute', top: 16, right: 70 }}>
@@ -174,19 +206,19 @@ const DiagnosticoConclusaoProlog = () => {
           variant="contained"
           onClick={() =>
             generatePDF(
-              null, 
-              diagnostico, 
-              solucao, 
-              null, 
-              null, 
-              como, 
-              null, 
-              null, 
-              responseText, 
-              activeButtonIndex, 
-              responseTextVisible, 
+              null,
+              diagnostico,
+              solucao,
+              null,
+              null,
+              como,
+              null,
+              null,
+              responseText, // porque
+              activeButtonIndex,
+              responseTextVisible,
               falha,
-              falhaDetalhes, 
+              parsedFalhaDetalhes, // falhaDetalhes, // porque nao
               falhaResponseTextVisible ? falhaDetalhes : null
             )
             //generatePDF(null, diagnostico, solucao, null, null, como, null, null)
@@ -266,11 +298,12 @@ const DiagnosticoConclusaoProlog = () => {
                                   >
                                       <Typography variant="body2" sx={{
                                         mt: 1,
-                                        color: 'lime',
+                                        //color: 'lime',
                                         whiteSpace: 'pre-line'
                                         }}
                                       >
-                                      {responseText}
+                                      <strong>Porque: {responseText[0]}</strong><br/>
+                                      {responseText[1] && (<em>{responseText[1]}</em>)}
                                     </Typography>
                                   </Box>
                                   )}
@@ -321,41 +354,14 @@ const DiagnosticoConclusaoProlog = () => {
                     <Collapse in={falhaResponseTextVisible} timeout={500}>
                     {falhaDetalhes && falhaResponseTextVisible && (
                       <Box sx={{ mt: 2 }}>
-                        <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime', whiteSpace:'pre-line' }}>
-                            <Typography variant="body2">
-                              {falhaDetalhes.explanation}
-                            </Typography>
-                          </Box>
-                        {/* {Array.isArray(falhaDetalhes) ? (
-                          [...falhaDetalhes]
-                            .sort((a, b) => a.explicacao.localeCompare(b.explicacao))
-                            .map((detalhe, index) => (
-                              <Box key={index} sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime' }}>
-                                <Typography variant="body2">
-                                  {detalhe.explicacao} {detalhe.regra_id}:
-                                </Typography>
-                                <List>
-                                  {detalhe.detalhes.map((det, idx) => (
-                                    <ListItem key={idx} sx={{ pl: 2 }}>
-                                      <Typography variant="body1" sx={{ color: 'lime' }}>
-                                        {det.explicacao} - {det.premissa} {det.condicao}
-                                      </Typography>
-                                    </ListItem>
-                                  ))}
-                                </List>
-                              </Box>
-                            ))
-                        ) : 
-                        (
-                          <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid red' }}>
-                            <Typography variant="body2">
-                              {falhaDetalhes}
-                            </Typography>
-                            <Typography variant="body2">
-                              Selecione outro diagnóstico
-                            </Typography>
-                          </Box>
-                        )} */}
+                        {parsedFalhaDetalhes.map((item, index) => (
+                          <Box sx={{ mt: 2, pl: 2, borderLeft: '3px solid lime', whiteSpace:'pre-line' }}>
+                              <Typography variant="body2" key={index}>
+                                  <strong>{item.porque}</strong><br />
+                                  {item.motivo.length>0 && (<em>{item.motivo}</em>)}
+                              </Typography>
+                            </Box>
+                          ))}
                       </Box>
                     )}
                     </Collapse>

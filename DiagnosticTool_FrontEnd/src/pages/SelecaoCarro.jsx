@@ -225,10 +225,11 @@ const SelecaoCarro = () => {
                   <Grid item xs={12} md={3} key={idx}>
                     {/* Se valores Drools forem undefined (??), mostra os valores Prolog */}
                     <Gauge
-                      value={comp.valorMinimoIdeal ?? comp.minIdeal}
+                      //value={comp.valorMinimoIdeal ?? comp.minIdeal}
                       min={comp.valorMinimo ?? comp.min}
                       max={comp.valorMaximo ?? comp.max}
-                      max_ideal={comp.valorMaximoIdeal ?? comp.maxIdeal}
+                      minIdeal={comp.valorMinimoIdeal ?? comp.minIdeal}
+                      maxIdeal={comp.valorMaximoIdeal ?? comp.maxIdeal}
                       label={comp.nome.replace(/_/g, " ") ?? "N/A"} // substitui o "_" por " " (espaço)
                       units={comp.unidade ?? "N/A"}
                     />
