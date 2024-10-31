@@ -1,7 +1,7 @@
 % Predicado que inicia o processo de diagnostico
 diagnostico :-
     retractall(factos_processados(_)),
-    diagnostico_loop.
+    diagnostico_continuo.
 	
 diagnostico_passo_passo_con :-
     diag_problemas,
@@ -13,20 +13,20 @@ diagnostico_passo_passo(Resposta) :-
 	arranca_motor.
 
 % Loop que processa testes pendentes ou exibe o diagnostico final
-diagnostico_loop :-
+diagnostico_continuo :-
     diagnostico_finalizado,
     !,
     mostrar_diagnostico,
     mostrar_solucao.
 
-diagnostico_loop :-
+diagnostico_continuo :-
     problemas_pendentes,
     !,
     diag_problemas,
     ( arranca_motor -> true ; true ),
-    diagnostico_loop.
+    diagnostico_continuo.
 
-diagnostico_loop :-
+diagnostico_continuo :-
     write('Nao foi possivel chegar a um diagnostico final.'), nl.
 
 % Verificar se um diagnostico final foi alcancado
