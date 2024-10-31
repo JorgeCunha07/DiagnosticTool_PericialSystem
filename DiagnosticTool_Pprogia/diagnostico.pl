@@ -159,3 +159,13 @@ retirar_lista_factos([K1 | LK1]) :-
     retract(justifica(K1, _, _)),
     retirar_facto(K1),
     retirar_lista_factos(LK1).
+
+% Predicado para obter todas as perguntas
+obter_perguntas(Testes) :-
+ findall(P, facto(_, proximo_teste(_, P)), Testes).
+ 
+% Predicado para criar uma pergunta com as respostas validas
+criacao_pergunta(Teste, Pergunta, OpcoesValidas) :-
+	functor(TesteTermo, Teste, 2),
+    pergunta(TesteTermo, Pergunta),
+    opcoes_validas(TesteTermo, OpcoesValidas).

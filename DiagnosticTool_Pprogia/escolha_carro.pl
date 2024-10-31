@@ -104,7 +104,7 @@ obter_numero_carro(Numero, Carro) :-
 	
     cria_facto_server(proximo_teste(Numero, problemas), 0, 0).
 
-
+% Predicado para procurar o carro e formatar o nome no carro
 procurar_carro(Numero, Carro) :-
     carro(Numero, Marca, Modelo, Motor),
     format(atom(Carro), '~w ~w ~w', [Marca, Modelo, Motor]).

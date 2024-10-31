@@ -222,6 +222,9 @@ mostra_factos :-
     findall(N, facto(N, _), LFactos),
     escreve_factos(LFactos).
 
+mostra_factos_filtrados(Factos) :-
+    findall(Descricao, (facto(_, Descricao), \+ (Descricao = proximo_teste(_, _); Descricao = diagnostico(_, _); Descricao = solucao(_, _))), Factos).
+
 % Visualizacao das justificacoes
 mostra_justificacoes :-
     findall([N,ID], justifica(N, ID, _), LJustifica),

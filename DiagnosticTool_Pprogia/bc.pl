@@ -157,7 +157,7 @@ perguntavel(sistema_escape(_, _)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mapeamento de perguntas
-pergunta(FactoPergunta,Pergunta):-
+pergunta(FactoPergunta, Pergunta) :-
     carro_selecionado(Carro),
     texto_pergunta(FactoPergunta, Pergunta, Carro).
 

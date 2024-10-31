@@ -29,6 +29,7 @@ servidor(Port) :-
 :- http_handler(root(factosTodos), http_handler_factos_todos, [method(get)]).
 :- http_handler(root(responder), http_handler_responder, [methods([post, options])]).
 :- http_handler(root(diagnostico), http_handler_diagnostico, [method(get)]).
+
 % Esclarecimentos
 :- http_handler(root(como), http_handler_como, [methods([get, options])]).
 :- http_handler(root(porque), http_handler_porque, [methods([post, options])]).
@@ -146,7 +147,7 @@ http_handler_escolher_carro(Request) :-
 
 % Predicados para Diagnostico
 
-% Handler para escolher o carro
+% Handler para pergunta
 http_handler_pergunta(Request) :-
     memberchk(method(options), Request),
     !,                                    
@@ -155,22 +156,36 @@ http_handler_pergunta(Request) :-
 	
 http_handler_pergunta(_Request) :-
 	cors_headers,
-    findall(P, facto(_, proximo_teste(_, P)), Testes),
+    obter_perguntas(Testes),
     ( Testes = [Teste|_] ->  % Verifica se há mais testes
-        functor(TesteTermo, Teste, 2),
-        pergunta(TesteTermo, Pergunta),
-        opcoes_validas(TesteTermo, OpcoesValidas),
-		log_message(OpcoesValidas),
+        criacao_pergunta(Teste, Pergunta, OpcoesValidas),
         reply_json(json{pergunta: Pergunta, respostas: OpcoesValidas, estado: "ongoing"})
     ;   % Caso não haja mais perguntas
         reply_json(json{estado: "finalizado"})
     ).
 
+% Converter cada facto para texto sem mutação
+facto_to_text(Facto, Texto) :-
+    term_to_atom(Facto, Texto).
+
+% Handler para todos os factos filtrados
+http_handler_factos(_Request) :-
+    % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
+    mostra_factos_filtrados(Factos),
+	maplist(facto_to_text, Factos, FactosJson),
+    reply_json(FactosJson).
 
 
 
 
-% Handler para escolher o carro
+
+
+
+
+
+
+
+% Handler para escolher 
 http_handler_porque(Request) :-
     memberchk(method(options), Request),  % Verificar se é uma requisição OPTIONS
     !,                                    
@@ -239,11 +254,6 @@ safe_term_string(Term, String) :-
 safe_term_string(_, _) :-
     throw(error(syntax_error('Invalid term in "facto" field'), _)).
 
-http_handler_factos(_Request) :-
-    % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
-    findall(Descricao, (facto(_, Descricao), \+ (Descricao = proximo_teste(_, _); Descricao = diagnostico(_, _); Descricao = solucao(_, _))), Factos),
-    maplist(facto_to_text, Factos, FactosJson),
-    reply_json(FactosJson).
 
 http_handler_factos_todos(_Request) :-
     % Filtrar factos que não contenham proximo_teste, diagnostico ou solucao
@@ -251,9 +261,7 @@ http_handler_factos_todos(_Request) :-
 	maplist(facto_to_text, Factos, FactosJson),
     reply_json(FactosJson).
 
-% Converter cada facto para texto sem mutação
-facto_to_text(Facto, Texto) :-
-    term_to_atom(Facto, Texto).
+
 	
 
 
