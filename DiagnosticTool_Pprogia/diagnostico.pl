@@ -27,7 +27,7 @@ diagnostico_continuo :-
     diagnostico_continuo.
 
 diagnostico_continuo :-
-    write('Nao foi possivel chegar a um diagnostico final.'), nl.
+    write('Não foi possivel chegar a um diagnóstico final.'), nl.
 
 % Verificar se um diagnostico final foi alcancado
 diagnostico_finalizado :-
@@ -127,13 +127,13 @@ validar_resposta([Min, Max], Resposta) :-
 mostrar_diagnostico :-
     facto(_, diagnostico(_, Diagnostico)),
     carro_selecionado(Info),
-    format('Diagnostico para ~w: ~w~n', [Info, Diagnostico]).
+    format('Diagnóstico para ~w: ~w~n', [Info, Diagnostico]).
 
 % Exibir a solução final
 mostrar_solucao :-
     facto(_, solucao(_, Solucao)),
     carro_selecionado(Info),
-    format('Solucao para ~w: ~w~n', [Info, Solucao]).
+    format('Solução para ~w: ~w~n', [Info, Solucao]).
 	
 % Exibir o diagnostico e a solucao
 mostra_diagnostico_solucao(Diagnostico, Solucao) :-

@@ -33,7 +33,7 @@ servidor(Port) :-
 % Esclarecimentos
 :- http_handler(root(como), http_handler_como, [methods([get, options])]).
 :- http_handler(root(porque), http_handler_porque, [methods([post, options])]).
-:- http_handler(root(porqueNao), http_handler_whynot, [methods([post, options])]).
+:- http_handler(root(porqueNao), http_handler_porque_nao, [methods([post, options])]).
 :- http_handler(root(diagnosticoPossiveis), http_handler_diagnostico_possiveis, [method(get)]).
 
 
@@ -260,13 +260,13 @@ http_handler_porque(Request) :-
     reply_json(Explicacao).
 
 % Handler para explicacao porque nao
-http_handler_whynot(Request) :-
+http_handler_porque_nao(Request) :-
     memberchk(method(options), Request),
     !,                                    
     cors_headers,
     format('~n').
 
-http_handler_whynot(Request) :-
+http_handler_porque_nao(Request) :-
     cors_headers,
     http_read_json_dict(Request, JsonIn),
     (   _{facto: FactoString} :< JsonIn
@@ -274,7 +274,7 @@ http_handler_whynot(Request) :-
         term_to_atom(FactoTerm, FactoAtom)  % Conversão direta da string para termo
     ;   reply_json_dict(_{error: 'Erro ao criar o porque nao'}, [status(400)])
     ),
-    with_output_to(string(Output), whynot(FactoTerm)),
+    with_output_to(string(Output), porque_nao(FactoTerm)),
     reply_json_dict(_{explanation: Output}).
 
 

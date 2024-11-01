@@ -1,4 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+:- encoding(utf8).
 % Geracao de explicacoes do tipo "Como" para o diagnostico
 como():-
     como(1).
@@ -10,10 +11,10 @@ como(N) :-
             % unifica o F
             F =.. [_, _, Regra],
             pergunta(F, PerguntaFormatada),
-            write('Pergunta: '), write(PerguntaFormatada), nl,
-            write('Resposta: '), write(Regra), nl,
-            write('Gerou o facto numero '), write(N), write(' -> '), write(F), nl,
-            write('Disparando assim a regra '), write(ID), nl,
+            formata(N),write('Pergunta: '), write(PerguntaFormatada), nl,
+            formata(N),write('Resposta: '), write(Regra), nl,
+            formata(N),write('Gerou o facto número '), write(N), write(' -> '), write(F), nl,
+            formata(N),write('Disparando assim a regra '), write(ID), nl,
             % proximo facto
             facto(NSeguinte, FSeguinte),
             FSeguinte =.. [PerguntaSeguinte, _, RespostaSeguinte],
@@ -25,7 +26,7 @@ como(N) :-
 % caso o proximo facto seja diagnostico o "como" acaba
 continua_como(NSeguinte, PerguntaSeguinte, RespostaSeguinte):-
     PerguntaSeguinte == diagnostico
-        -> write('Diagnostico: '), write(RespostaSeguinte)
+        -> write('Diagnóstico: '), write(RespostaSeguinte)
         ;  como(NSeguinte).
 		
 como_response(N, Response) :-

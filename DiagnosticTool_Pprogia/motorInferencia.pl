@@ -1,5 +1,5 @@
 % Motor de inferencia
-
+:- encoding(utf8).
 :- op(220, xfx, entao).
 :- op(35, xfy, se).
 :- op(240, fx, regra).
@@ -33,6 +33,7 @@ carrega_bc :-
 %                dispara_regras(N, Facto, LRegras),
 %                ultimo_facto(N).
 
+% Iniciar o motor de inferencia
 arranca_motor :-
     retractall(regra_disparadas(_, _)),
     arranca_motor_processar_novos_factos.
@@ -156,14 +157,14 @@ cria_facto(F, ID, LFactos) :-
         ultimo_facto(N),
         assertz(facto(N, F)),
         assertz(justifica(N, ID, LFactos)),
-        write('Foi concluido o facto proximo_teste numero '), write(N), write(' -> '), write(F), nl
+        write('Foi concluído o facto proximo_teste número '), write(N), write(' -> '), write(F), nl
     ;
     F = solucao(_, _) ->
         retract(ultimo_facto(N1)),
         N is N1 + 1,
         asserta(ultimo_facto(N)),
         assertz(facto(N, F)),
-        write('Foi concluido o facto numero '), write(N), write(' -> '), write(F), nl
+        write('Foi concluído o facto número '), write(N), write(' -> '), write(F), nl
     ;
     % caso crie um facto diagnostico
         retract(ultimo_facto(N1)),
@@ -171,7 +172,7 @@ cria_facto(F, ID, LFactos) :-
         asserta(ultimo_facto(N)),
         assertz(justifica(N1, ID, LFactos)),
         assertz(facto(N, F)),
-        write('Foi concluido o facto numero '), write(N), write(' -> '), write(F), nl
+        write('Foi concluído o facto número '), write(N), write(' -> '), write(F), nl
     ),
     !.
 
@@ -237,9 +238,9 @@ mostra_justificacoes :-
 escreve_factos([I | R]) :-
     facto(I, F),
     !,
-    write('O facto numero '), write(I), write(' -> '), write(F), write(' e verdadeiro'), nl,
+    write('O facto número '), write(I), write(' -> '), write(F), write(' é verdadeiro'), nl,
     escreve_factos(R).
 escreve_factos([I | R]) :-
-    write('A condicao '), write(I), write(' e verdadeira'), nl,
+    write('A condição '), write(I), write(' é verdadeira'), nl,
     escreve_factos(R).
 escreve_factos([]).

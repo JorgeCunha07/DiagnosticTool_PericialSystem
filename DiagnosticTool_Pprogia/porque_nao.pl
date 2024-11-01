@@ -1,37 +1,38 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Geracao de explicacoes do tipo "Porque nao"
-% Exemplo: ?- whynot(classe(meu_veiculo,ligeiro)).
-whynot(Facto) :-
-    whynot(Facto, 1).
+:- encoding(utf8).
+% Geração de explicacões do tipo "Porque não"
+% Exemplo: ?- porque_nao(classe(meu_veiculo,ligeiro)).
+porque_nao(Facto) :-
+    porque_nao(Facto, 1).
 
-whynot(Facto, _) :-
+porque_nao(Facto, _) :-
     facto(_, Facto),
     !,
-    write('O facto '), write(Facto), write(' nao e falso!'), nl.
-whynot(Facto, Nivel) :-
-    encontra_regras_whynot(Facto, LLPF),
+    write('O facto '), write(Facto), write(' não é falso!'), nl.
+porque_nao(Facto, Nivel) :-
+    encontra_regras_porque_nao(Facto, LLPF),
     (
         LLPF \= [] ->
-        whynot1(LLPF, Nivel)
+        porque_nao1(LLPF, Nivel)
     ;
         formata(Nivel),
         %write('Porque: O facto '), write(Facto),
-        %write(' não esta definido na base de conhecimento'), nl
-		write('Parou no nivel: '), write(Nivel)
+        %write(' não está definido na base de conhecimento'), nl
+		write('Parou no nível: '), write(Nivel)
     ).
 
 
-whynot(nao Facto, Nivel) :-
+porque_nao(nao Facto, Nivel) :-
     formata(Nivel),
     write('Porque:'), write(' O facto '), write(Facto),
-    write(' e verdadeiro'), nl.
-whynot(Facto, Nivel) :-
+    write(' é verdadeiro'), nl.
+porque_nao(Facto, Nivel) :-
     formata(Nivel),
     write('Porque:'), write(' O facto '), write(Facto),
-    write(' nao esta definido na base de conhecimento'), nl.
+    write(' não esta definido na base de conhecimento'), nl.
 
-%  As explicacoes do whynot(Facto) devem considerar todas as regras que poderiam dar origem a conclusao relativa ao facto Facto
-encontra_regras_whynot(Facto, LLPF) :-
+%  As explicacoes do porque_nao(Facto) devem considerar todas as regras que poderiam dar origem a conclusao relativa ao facto Facto
+encontra_regras_porque_nao(Facto, LLPF) :-
     findall(
         (ID, LPF),
         (
@@ -43,9 +44,9 @@ encontra_regras_whynot(Facto, LLPF) :-
         LLPF
     ).
 
-% Explicar "whynot"
-whynot1([], _).
-whynot1([(ID, LPF) | _], Nivel) :-
+% Explicar "porque_nao"
+porque_nao1([], _).
+porque_nao1([(ID, LPF) | _], Nivel) :-
     formata(Nivel),
     write('Porque pela regra '), write(ID), write(':'), nl,
     Nivel1 is Nivel + 1,
@@ -82,7 +83,7 @@ encontra_premissas_falsas([]).
 explica_porque_nao([], _).
 explica_porque_nao([P | _], Nivel) :-
     formata(Nivel),
-    write('A premissa '), write(P), write(' e falsa'), nl,
+    write('A premissa '), write(P), write(' é falsa'), nl,
     functor(P, TesteAnterior, _),
     Nivel1 is Nivel + 1,
     
@@ -97,7 +98,7 @@ explica_porque_nao([P | _], Nivel) :-
     ),
     
     % Continua com o próximo diagnóstico
-    whynot(ProximoFacto, Nivel1).
+    porque_nao(ProximoFacto, Nivel1).
 
 
 % Formatar saida

@@ -1,9 +1,10 @@
+:-encoding(utf8).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Geracao de explicacoes do tipo "Porque"
 % Exemplo: ?- porque(classe(meu_veiculo,ligeiro)).
 porque(Facto):-
     facto(1, Facto),
-    write('O facto '), write(Facto), write(' e verdadeiro visto ser a resposta a primeira pergunta').
+    write('O facto '), write(Facto), write(' é verdadeiro visto ser a resposta a primeira pergunta').
 
 porque(Facto):-
     facto(N, Facto),
@@ -14,16 +15,16 @@ porque(Facto):-
     FactoAnterior =.. [_, _, RespostaAnterior],
     pergunta(FactoAnterior, PerguntaAnteriorFormatada),
     write('O facto '), write(Facto),
-    write(' e verdadeiro porque pela regra '), write(ID),
+    write(' é verdadeiro porque pela regra '), write(ID),
     write(' foi possivel concluir que o utilizador respondeu: "'), write(RespostaAnterior),
-    write('" a pergunta: '), write(PerguntaAnteriorFormatada), nl,
-    write('Com isto foi necessario realizar a seguinte pergunta: '),
+    write('" à pergunta: '), write(PerguntaAnteriorFormatada), nl,
+    write('Com isto foi necessário realizar a seguinte pergunta: '),
     pergunta(Facto, PerguntaFormatada),
     write(PerguntaFormatada), write(' ao qual o mesmo respondeu: "'), write(Resposta),
-    write('" mostrando que o facto '), write(Facto), write(' e verdadeiro').
+    write('" mostrando que o facto '), write(Facto), write(' é verdadeiro').
 
 porque(Facto):-
-    write('O facto '), write(Facto), write(' nao existe.').
+    write('O facto '), write(Facto), write(' não existe.').
 
 porque_response(Facto, Explicacao) :-
     (   call(facto(N, Facto))
@@ -43,7 +44,7 @@ porque_response(Facto, Explicacao) :-
             term_to_atom(RespostaAnterior, RespostaAnteriorAtom),
             Explicacao = _{
                 fato: FactoAtom,
-                explicacao: "O facto é verdadeiro",
+                explicacao: "O facto e verdadeiro",
                 regra: ID,
                 resposta_anterior: RespostaAnteriorAtom,
                 pergunta_anterior: PerguntaAnteriorFormatada,
