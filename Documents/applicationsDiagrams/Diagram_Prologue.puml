@@ -1,0 +1,137 @@
+@startuml
+' Define colors and styles for a more visually appealing diagram
+skinparam class {
+    BackgroundColor #F9F9F9
+    ArrowColor #333399
+    BorderColor #000000
+    FontColor #333333
+    FontSize 12
+}
+
+' Define arrow style
+skinparam linetype ortho
+
+class Bc #CCCCFF {
+  +oleo_motor()
+  +pergunta()
+  +ultimo_facto()
+  +opcoes_validas()
+  +fluido_transmissao()
+  +texto_pergunta()
+  +motor_arranque()
+  +bateria()
+  +bloco_motor()
+  +liquido_arrefecimento()
+  +fluido_travao()
+  +facto_dispara_regras()
+  +carro()
+  +perguntavel()
+}
+
+
+class Como #FFCC99 {
+  +continua_como()
+  +como()
+  +como_response()
+}
+
+
+class Diagnostico #CCFFCC{
+  +listar_diagnosticos_possiveis()
+  +listar_diagnosticos_possiveis_aux()
+  +validar_resposta()
+  +diagnostico_passo_passo()
+  +mostra_diagnostico_solucao()
+  +processar_testes()
+  +criacao_pergunta()
+  +diag_problemas_passo_passo()
+  +tratar_problema_passo_passo()
+  +retirar_lista_factos()
+  +tratar_problema()
+  +obter_perguntas()
+  +retirar_facto()
+  +processar_testes_passo_passo()
+}
+
+
+class Escolha_carro #FFCCCC{
+  +obter_opcao_por_indice()
+  +listar_marcas()
+  +listar_opcoes_numeradas()
+  +procurar_carro()
+  +listar_motores()
+  +obter_numero_carro()
+  +listar_modelos()
+}
+
+
+class Motorinferencia #FFFFCC{
+  +facto_esta_numa_condicao()
+  +escreve_factos()
+  +facto_dispara_regras1()
+  +dispara_regras()
+  +avalia()
+  +mostra_factos()
+  +mostra_factos_filtrados()
+  +concluir()
+  +cria_facto_server()
+  +cria_facto()
+  +verifica_condicoes()
+  +compara()
+}
+
+
+class Porque #99CCFF{
+  +porque_response()
+  +porque()
+}
+
+
+class Porque_nao #FFCCFF{
+  +formata()
+  +explica_porque_nao()
+  +encontra_premissas_falsas()
+  +encontra_regras_whynot()
+  +whynot()
+  +whynot1()
+}
+
+
+class Server #CCFFFF{
+  +http_handler_diagnostico_possiveis()
+  +http_handler_listar_modelos()
+  +prolog_to_json()
+  +http_handler_pergunta()
+  +servidor()
+  +veiculo_json()
+  +veiculos_json()
+  +http_handler_factos_todos()
+  +http_handler_responder()
+  +http_handler_factos()
+  +componentes_json()
+  +http_handler_veiculos()
+  +http_handler_porque()
+  +http_handler_listar_motores()
+  +http_handler_diagnostico()
+  +http_handler_procurar_numero_carro()
+  +http_handler_como()
+  +http_handler_listar_marcas()
+  +http_handler_escolher_carro()
+  +http_handler_whynot()
+  +log_message()
+  +facto_to_text()
+}
+
+' Define relationships
+Server --> Motorinferencia
+Server --> Bc
+Server --> Diagnostico
+Server --> Escolha_carro
+Diagnostico --> Bc
+Diagnostico --> Motorinferencia
+Porque --> Bc
+Porque_nao --> Bc
+Porque_nao --> Motorinferencia
+Como --> Bc
+
+@enduml
