@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import CardWrapper from "../components/CardWrapper";
+import { getApiUrl } from '../config/apiConfig';
 import { generatePDF } from '../utils/pdfConclusaoProlog';
 
 const DiagnosticoConclusaoProlog = () => {
@@ -33,6 +34,15 @@ const DiagnosticoConclusaoProlog = () => {
   const [falha, setFalha] = useState('');
   const [falhaDetalhes, setFalhaDetalhes] = useState(null);
   const [parsedFalhaDetalhes, setParsedFalhaDetalhes] = useState([]);
+  // let arvorePerguntas = {
+  //   label: '',
+  //   expanded: 'true',
+  //   data: {
+  //     pecaCarro:
+      
+  //   }
+  //   children: []
+  // }
 
   useEffect(() => {
     fetchDiagnostico();
@@ -42,7 +52,7 @@ const DiagnosticoConclusaoProlog = () => {
 
   const fetchDiagnostico = async () => {
     try {
-      const response = await fetch('http://localhost:4040/diagnostico');
+      const response = await fetch(`${getApiUrl()}/diagnostico`);
       if (response.ok) {
         const data = await response.json();
         setDiagnostico(data.diagnostico || []);
@@ -57,7 +67,7 @@ const DiagnosticoConclusaoProlog = () => {
 
   const fetchComo = async () => {
     try {
-      const response = await fetch('http://localhost:4040/como');
+      const response = await fetch(`${getApiUrl()}/como`);
       if (response.ok) {
         const data = await response.json();
         setComo(data || []);
@@ -71,7 +81,7 @@ const DiagnosticoConclusaoProlog = () => {
 
   const fetchFalhas = async () => {
     try {
-      const response = await fetch('http://localhost:4040/diagnosticoPossiveis');
+      const response = await fetch(`${getApiUrl()}/diagnosticoPossiveis`);
       if (response.ok) {
 
         const data = await response.json();
@@ -98,7 +108,7 @@ const DiagnosticoConclusaoProlog = () => {
   const handlePorque = async (fact, index) => {
     const body = { facto: fact };
     try {
-      const response = await fetch('http://localhost:4040/porque', {
+      const response = await fetch(`${getApiUrl()}/porque`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -140,7 +150,7 @@ const DiagnosticoConclusaoProlog = () => {
 
       const body = { facto: `diagnostico(Veiculo, '${selectedFalha}')` };
       try {
-        const response = await fetch('http://localhost:4040/porqueNao', {
+        const response = await fetch(`${getApiUrl()}/porqueNao`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -153,8 +163,6 @@ const DiagnosticoConclusaoProlog = () => {
             setFalhaDetalhes(data);
 
             if(data.explanation){
-
-              //console.log(">>> falhaDetalhes:" + data.explanation);
               setParsedFalhaDetalhes(parseExplanation(data.explanation));
             }
 
@@ -171,18 +179,6 @@ const DiagnosticoConclusaoProlog = () => {
     setFalhaResponseTextVisible(false);
   }
   };
-
-    //   {
-    //     "explanation": "Porque pela regra 55:\n
-    //      A premissa filtro_combustivel_entupido(_6452,sim) é falsa\n
-    //           Porque pela regra 46:\n
-    //                A premissa falta_combustivel_ou_bomba_defeito(_6604,nao) é falsa\n
-    //                     Porque pela regra 34:\n
-    //                          A premissa motor_sobreaquece(_6756,nao) é falsa\n
-    //                               Porque pela regra 23:\n
-    //                                    A premissa vai_abaixo(_6908,sim) é falsa\n
-    //                                         Parou no nivel9"
-    // }
 
   const parseExplanation = (value) => {
     const lines = value.split('\n');
@@ -208,7 +204,7 @@ const DiagnosticoConclusaoProlog = () => {
 
   return (
     <CardWrapper titulo={`Diagnóstico Concluído`}>
-      <Box sx={{ position: 'absolute', top: 16, right: 70 }}>
+      <Box sx={{ position: 'absolute', top: 16, right: 80 }}>
         <IconButton
           variant="contained"
           onClick={() =>
@@ -238,7 +234,7 @@ const DiagnosticoConclusaoProlog = () => {
         </IconButton>
       </Box>
       <Accordion defaultExpanded variant="outlined">
-        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ color: 'lime' }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <SvgIcon component={LightbulbCircleIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left', color: 'inherit' }}>
             Diagnóstico Geral
@@ -248,12 +244,12 @@ const DiagnosticoConclusaoProlog = () => {
         <AccordionDetails>
           <List>
             <ListItem>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: 'lime' }}>
                 Diagnóstico: {diagnostico}
               </Typography>
             </ListItem>
             <ListItem>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: 'lime' }}>
                 Solução: {solucao}
               </Typography>
             </ListItem>

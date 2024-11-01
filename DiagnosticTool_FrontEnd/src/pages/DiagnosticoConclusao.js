@@ -279,10 +279,29 @@ const ConclusionPage = () => {
                               <Grid item xs>
                                 {evidencia.fact}
                                 {activeButtonIndex === index && responseText && (
-                                  <Typography variant="body2" sx={{ mt: 1, color: 'lime' }}>
-                                    {responseText}
-                                  </Typography>
+                                  <><Box
+                                    sx={{
+                                      mt: 2,
+                                      pl: 2,
+                                      borderLeft: '3px solid lime',
+                                    }}
+                                  >
+                                      <Typography variant="body2" sx={{
+                                        mt: 1,
+                                        //color: 'lime',
+                                        whiteSpace: 'pre-line'
+                                      }}
+                                      >
+                                        {responseText}
+                                      </Typography>
+                                    </Box></>
+                                  
                                 )}
+
+
+
+
+
                               </Grid>
                               <Grid item>
                                 <Button
