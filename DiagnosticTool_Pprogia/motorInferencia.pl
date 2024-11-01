@@ -35,17 +35,17 @@ carrega_bc :-
 
 arranca_motor :-
     retractall(regra_disparadas(_, _)),
-    arranca_motor_loop.
+    arranca_motor_processar_novos_factos.
 
 % Loop para processar novos factos
-arranca_motor_loop :-
+arranca_motor_processar_novos_factos :-
     facto(N, Facto),
     \+ factos_processados(N),
     asserta(factos_processados(N)),
     facto_dispara_regras1(Facto, LRegras),
     dispara_regras(N, Facto, LRegras),
     fail.
-arranca_motor_loop.
+arranca_motor_processar_novos_factos.
 
 % Verificar se o facto dispara regras
 facto_dispara_regras1(Facto, LRegras) :-
