@@ -91,9 +91,9 @@ class Porque_nao #FFCCFF{
   +formata()
   +explica_porque_nao()
   +encontra_premissas_falsas()
-  +encontra_regras_whynot()
-  +whynot()
-  +whynot1()
+  +encontra_regras_porque_nao()
+  +porque_nao()
+  +porque_nao1()
 }
 
 
@@ -117,7 +117,7 @@ class Server #CCFFFF{
   +http_handler_como()
   +http_handler_listar_marcas()
   +http_handler_escolher_carro()
-  +http_handler_whynot()
+  +http_handler_porque_nao()
   +log_message()
   +facto_to_text()
 }
@@ -126,12 +126,14 @@ class Server #CCFFFF{
 Server --> Motorinferencia
 Server --> Bc
 Server --> Diagnostico
-Server --> Escolha_carro
+Escolha_carro <-- Server
 Diagnostico --> Bc
-Diagnostico --> Motorinferencia
-Porque --> Bc
-Porque_nao --> Bc
-Porque_nao --> Motorinferencia
-Como --> Bc
+Diagnostico -left-> Motorinferencia
+Porque_nao -> Motorinferencia
+Bc <--- Escolha_carro
+Porque -> Bc
+Bc <-- Porque_nao
+Como -up> Bc
+Bc <--- Motorinferencia
 
 @enduml
