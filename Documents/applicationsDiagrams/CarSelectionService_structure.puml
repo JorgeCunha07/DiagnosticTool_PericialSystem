@@ -1,0 +1,288 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": false,
+    "cutInterfaceStructures": false,
+    "cutDataStructures": false,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 6,
+    "backwardDepth": 6,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "org.dei.service.CarSelectionService",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_99336 { 
+   	label=dei
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1665640770 { 
+   	label=controller
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   CarSelectionController1900735884[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)CarSelectionController</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   carSelectionService: CarSelectionService [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   carros: List&lt;Carro&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ buscarListaCarros(): ResponseEntity&lt;List&lt;Carro&gt;&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ iniciarSelecao(): ResponseEntity&lt;Resposta&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ processarResposta(value: String): ResponseEntity&lt;Resposta&gt;</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_2065355471 { 
+   	label=service
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   CarSelectionService1587872453[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)CarSelectionService</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   kSession: KieSession [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   resposta: Resposta [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   respostaHandle: FactHandle [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ getCarroSelecionado(carros: List&lt;Carro&gt;, resposta: Resposta): Carro</TD></TR>
+<TR><TD ALIGN="LEFT" >+ processarResposta(carros: List&lt;Carro&gt;, inputTexto: String): Resposta</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_313900511 { 
+   	label=facts
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   Carro2116644334[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Carro</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   componentes: List&lt;Componente&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   marca: Marca [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   modelo: ModeloCarro [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   motor: Motor [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ adicionarComponente(componente: Componente)</TD></TR>
+<TR><TD ALIGN="LEFT" ># canEqual(other: Object): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Componente2116644334[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Componente</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   nome: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   unidade: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   valorMaximo: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   valorMaximoIdeal: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   valorMinimo: double [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   valorMinimoIdeal: double [1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># canEqual(other: Object): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Evidence1838418025[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Evidence&lt;T, V&gt;</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   description: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   fact: T [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   value: V [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Marca2116644334[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Marca</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   nome: String [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># canEqual(other: Object): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+ModeloCarro2116644334[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)ModeloCarro</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   nome: String [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># canEqual(other: Object): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Motor2116644334[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Motor</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   nome: String [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># canEqual(other: Object): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Resposta1838418025[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Resposta</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   carroSelecionado: Carro [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   como: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   diagnostico: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   estado: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   evidencias: List&lt;Evidence&lt;?, ?&gt;&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   explicacaoGeral: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   explicacaoGeralNao: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   marcaSelecionada: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   modeloSelecionado: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   motorSelecionado: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   pergunta: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   solucao: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   texto: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   triggeredRules: List&lt;String&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addEvidencia(evidencia: Evidence&lt;?, ?&gt;)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ addRegraDisparada(regra: String)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+} 
+
+'edges    
+CarSelectionController1900735884 -> CarSelectionService1587872453[label="carSelectionService
+[0..1]"];
+CarSelectionService1587872453 -> Resposta1838418025[label="resposta
+[0..1]"];
+Carro2116644334 -> Componente2116644334[label="componentes
+[0..*]"];
+Carro2116644334 -> Marca2116644334[label="marca
+[0..1]"];
+Carro2116644334 -> ModeloCarro2116644334[label="modelo
+[0..1]"];
+Carro2116644334 -> Motor2116644334[label="motor
+[0..1]"];
+Resposta1838418025 -> Carro2116644334[label="carroSelecionado
+[0..1]"];
+Resposta1838418025 -> Evidence1838418025[label="evidencias
+[0..*]"];
+    
+}
+@enduml

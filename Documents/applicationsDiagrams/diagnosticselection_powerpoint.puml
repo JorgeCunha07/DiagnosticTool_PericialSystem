@@ -1,0 +1,124 @@
+@startuml
+left to right direction
+
+package "Controller" #LightBlue {
+    class DiagnosticController {
+        - diagnosticService: DiagnosticService
+        --
+        + iniciarDiagnostico(selectedCar: Carro): ResponseEntity<Resposta>
+        + obterCaminhosDiagnostico(): ResponseEntity<List<DiagnosticPath>>
+        + obterPerguntaAnterior(resposta: Resposta, perguntaAtual: String): ResponseEntity<String>
+        + obterRegrasFaltantesParaDiagnosticosAlternativos(resposta: Resposta): ResponseEntity<Map<String, List<String>>>
+        + processarResposta(resposta: Resposta): ResponseEntity<Resposta>
+    }
+}
+
+package "Service" #LightGreen {
+    class DiagnosticService {
+        - diagSession: KieSession
+        - diagnosticParserService: DiagnosticParserService
+        - drools: DroolsWithWhyNot
+        - respostaHandle: FactHandle
+        --
+        + getMissingRulesForAlternativeDiagnoses(resposta: Resposta): Map<String, List<String>>
+        + iniciarDiagnostico(selectedCar: Carro): Resposta
+        + obterDiagnosticPaths(): List<DiagnosticPath>
+        + processarResposta(diagResposta: Resposta): Resposta
+    }
+
+    class DiagnosticParserService {
+        - diagnosticPaths: List<DiagnosticPath>
+        - stateNodes: Map<String, StateNode>
+        --
+        + processDiagnosticFile(filePath: String)
+    }
+}
+
+package "Facts" #LightYellow {
+    class DiagnosticPath {
+        + diagnosis: String
+        + path: List<String>
+        + rules: List<String>
+    }
+
+    class Evidence {
+        - description: String
+        - fact: T
+        - value: V
+    }
+
+    class StateNode {
+        - diagnosis: String
+        - estadoName: String
+        - isDiagnosisState: boolean
+        - transitions: List<Transition>
+        --
+        + addTransition(transition: Transition)
+    }
+
+    class Transition {
+        - conditions: List<String>
+        - ruleName: String
+        - targetState: StateNode
+    }
+}
+
+package "Why_Not" #LightCoral {
+    class DroolsWithWhyNot {
+        - LOG: Logger
+        - factsPackage: String
+        - kb: KnowledgeBase
+        - session: KieSession
+        - triggeredRules: List<String>
+        - untriggeredRules: List<String>
+        --
+        + createKieSession(): KieSession
+        + dispose()
+        + getWhyNotExplanation(expectedConclusion: String): String
+        + init(factsPackage: String): DroolsWithWhyNot
+    }
+
+    class KnowledgeBase {
+        - LOG: Logger
+        - drlPaths: List<String>
+        - dynamicQueries: Map<String, String>
+        - factsPackage: String
+        - kieBase: KieBase
+        - rules: Map<String, RuleWM>
+        - rulesDescr: List<RuleDescr>
+        --
+        - convertConstructorToDRL(constructor: String): String
+        - createKieBase(): KieBase
+        - findDrlFiles(): List<String>
+        - generateQueries(): String
+    }
+
+    class RuleWM {
+        - ruleConditions: List<PatternDescr>
+        - ruleConsequence: String
+        - ruleDescr: RuleDescr
+        - ruleName: String
+        --
+        - getAllMatches(text: String, regex: String): List<String>
+    }
+
+    class WhyNot {
+        - droolsWithWhyNot: DroolsWithWhyNot
+        --
+        + getWhyNotExplanation(expectedConclusion: String): String
+        + init(droolsWithWhyNot: DroolsWithWhyNot): WhyNot
+    }
+}
+
+DiagnosticController -left-> DiagnosticService : diagnosticService
+DiagnosticService --> DiagnosticParserService : diagnosticParserService
+DiagnosticParserService --> DiagnosticPath : diagnosticPaths
+DiagnosticParserService --> StateNode : stateNodes
+DiagnosticService --> DroolsWithWhyNot : drools
+DroolsWithWhyNot --> KnowledgeBase : kb
+KnowledgeBase --> RuleWM : rules
+StateNode --> Transition : transitions
+Transition --> StateNode : targetState
+WhyNot --> DroolsWithWhyNot : droolsWithWhyNot
+
+@enduml

@@ -1,0 +1,62 @@
+@startuml
+left to right direction
+
+package "Controller" #LightSkyBlue {
+    class CarSelectionController {
+        - carSelectionService: CarSelectionService
+        - carros: List<Carro>
+        --
+        + buscarListaCarros(): ResponseEntity<List<Carro>>
+        + iniciarSelecao(): ResponseEntity<Resposta>
+        + processarResposta(value: String): ResponseEntity<Resposta>
+    }
+}
+
+package "Service" #LightGreen {
+    class CarSelectionService {
+        - kSession: KieSession
+        - resposta: Resposta
+        - respostaHandle: FactHandle
+        --
+        + getCarroSelecionado(carros: List<Carro>, resposta: Resposta): Carro
+        + processarResposta(carros: List<Carro>, inputTexto: String): Resposta
+    }
+}
+
+package "Facts" #LightGoldenRodYellow {
+    class Carro {
+        - componentes: List<Componente>
+        - marca: Marca
+        - modelo: ModeloCarro
+        - motor: Motor
+        --
+        + adicionarComponente(componente: Componente)
+    }
+
+    class Resposta {
+        - carroSelecionado: Carro
+        - diagnostico: String
+        - estado: String
+        - evidencias: List<Evidence>
+        --
+        + addEvidencia(evidencia: Evidence)
+        + addRegraDisparada(regra: String)
+    }
+
+    class Componente {
+        - nome: String
+        - unidade: String
+        - valorMaximo: double
+        - valorMaximoIdeal: double
+        - valorMinimo: double
+        - valorMinimoIdeal: double
+    }
+}
+
+CarSelectionController --> CarSelectionService : carSelectionService
+CarSelectionService --> Resposta : resposta
+Carro -> Componente : componentes
+Resposta --> Carro : carroSelecionado
+Resposta -> Evidence : evidencias
+
+@enduml

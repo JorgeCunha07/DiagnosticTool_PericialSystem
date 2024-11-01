@@ -1,0 +1,381 @@
+@startuml
+
+/' diagram meta data start
+config=StructureConfiguration;
+{
+  "projectClassification": {
+    "searchMode": "OpenProject", // OpenProject, AllProjects
+    "includedProjects": "",
+    "pathEndKeywords": "*.impl",
+    "isClientPath": "",
+    "isClientName": "",
+    "isTestPath": "",
+    "isTestName": "",
+    "isMappingPath": "",
+    "isMappingName": "",
+    "isDataAccessPath": "",
+    "isDataAccessName": "",
+    "isDataStructurePath": "",
+    "isDataStructureName": "",
+    "isInterfaceStructuresPath": "",
+    "isInterfaceStructuresName": "",
+    "isEntryPointPath": "",
+    "isEntryPointName": "",
+    "treatFinalFieldsAsMandatory": false
+  },
+  "graphRestriction": {
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "removeByInheritance": "", // inheritance/annotation based filtering is done in a second step
+    "removeByAnnotation": "",
+    "removeByClassPackage": "", // cleanup the graph after inheritance/annotation based filtering is done
+    "removeByClassName": "",
+    "cutMappings": false,
+    "cutEnum": true,
+    "cutTests": true,
+    "cutClient": true,
+    "cutDataAccess": false,
+    "cutInterfaceStructures": false,
+    "cutDataStructures": false,
+    "cutGetterAndSetter": true,
+    "cutConstructors": true
+  },
+  "graphTraversal": {
+    "forwardDepth": 6,
+    "backwardDepth": 6,
+    "classPackageExcludeFilter": "",
+    "classPackageIncludeFilter": "",
+    "classNameExcludeFilter": "",
+    "classNameIncludeFilter": "",
+    "methodNameExcludeFilter": "",
+    "methodNameIncludeFilter": "",
+    "hideMappings": false,
+    "hideDataStructures": false,
+    "hidePrivateMethods": true,
+    "hideInterfaceCalls": true, // indirection: implementation -> interface (is hidden) -> implementation
+    "onlyShowApplicationEntryPoints": false, // root node is included
+    "useMethodCallsForStructureDiagram": "ForwardOnly" // ForwardOnly, BothDirections, No
+  },
+  "details": {
+    "aggregation": "GroupByClass", // ByClass, GroupByClass, None
+    "showClassGenericTypes": true,
+    "showMethods": true,
+    "showMethodParameterNames": true,
+    "showMethodParameterTypes": true,
+    "showMethodReturnType": true,
+    "showPackageLevels": 2,
+    "showDetailedClassStructure": true
+  },
+  "rootClass": "org.dei.service.DiagnosticService",
+  "extensionCallbackMethod": "" // qualified.class.name#methodName - signature: public static String method(String)
+}
+diagram meta data end '/
+
+
+
+digraph g {
+    rankdir="TB"
+    splines=polyline
+    
+
+'nodes 
+subgraph cluster_99336 { 
+   	label=dei
+	labeljust=l
+	fillcolor="#ececec"
+	style=filled
+   
+   subgraph cluster_1665640770 { 
+   	label=controller
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   DiagnosticController1900735884[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DiagnosticController</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   diagnosticService: DiagnosticService [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ iniciarDiagnostico(selectedCar: Carro): ResponseEntity&lt;Resposta&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ obterCaminhosDiagnostico(): ResponseEntity&lt;List&lt;DiagnosticPath&gt;&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ obterPerguntaAnterior(resposta: Resposta, perguntaAtual: String): ResponseEntity&lt;String&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ obterRegrasFaltantesParaDiagnosticosAlternativos(resposta: Resposta): ResponseEntity&lt;Map&lt;String, List&lt;String&gt;&gt;&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ processarResposta(resposta: Resposta): ResponseEntity&lt;Resposta&gt;</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_2065355471 { 
+   	label=service
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   DiagnosticParserService1587872453[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DiagnosticParserService</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   diagnosticPaths: List&lt;DiagnosticPath&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   stateNodes: Map&lt;String, StateNode&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ processDiagnosticFile(filePath: String)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+DiagnosticService1587872453[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DiagnosticService</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   diagSession: KieSession [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   diagnosticParserService: DiagnosticParserService [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   drools: DroolsWithWhyNot [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   respostaHandle: FactHandle [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ getMissingRulesForAlternativeDiagnoses(resposta: Resposta): Map&lt;String, List&lt;String&gt;&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ iniciarDiagnostico(selectedCar: Carro): Resposta</TD></TR>
+<TR><TD ALIGN="LEFT" >+ obterDiagnosticPaths(): List&lt;DiagnosticPath&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >+ processarResposta(diagResposta: Resposta): Resposta</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_313900511 { 
+   	label=facts
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   DiagnosticParser1118076330[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DiagnosticParser</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   stateNodes: Map&lt;String, StateNode&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- addRuleToGraph(rule: RuleInfo)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ parseFile(filePath: String)</TD></TR>
+<TR><TD ALIGN="LEFT" >- parseThenBlock(rule: RuleInfo, thenBlockLines: List&lt;String&gt;)</TD></TR>
+<TR><TD ALIGN="LEFT" >- parseThenNodes(iterator: ListIterator&lt;String&gt;): ThenNode</TD></TR>
+<TR><TD ALIGN="LEFT" >- parseWhenSection(line: String, rule: RuleInfo)</TD></TR>
+<TR><TD ALIGN="LEFT" >- processThenNode(currentState: StateNode, thenNode: ThenNode, parentConditions: List&lt;String&gt;, ruleName: String)</TD></TR>
+<TR><TD ALIGN="LEFT" >+ traverseGraph(currentNode: StateNode, path: List&lt;String&gt;, diagnosticPaths: List&lt;DiagnosticPath&gt;, visited: Set&lt;String&gt;)</TD></TR>
+<TR><TD ALIGN="LEFT" >- traverseGraphHelper(currentNode: StateNode, path: List&lt;String&gt;, diagnosticPaths: List&lt;DiagnosticPath&gt;, visited: Set&lt;String&gt;, rules: List&lt;String&gt;, diagnosis: String)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+DiagnosticPath1118076330[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DiagnosticPath</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+   diagnosis: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >+   path: List&lt;String&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >+   rules: List&lt;String&gt; [0..*]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Evidence1838418025[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Evidence&lt;T, V&gt;</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   description: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   fact: T [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   value: V [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+How1838418025[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)How</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   evidencias: List&lt;Evidence&lt;?, ?&gt;&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ gerarExplicacao(): String</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+StateNode1118076330[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)StateNode</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   diagnosis: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   estadoName: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   isDiagnosisState: boolean [1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   transitions: List&lt;Transition&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ addTransition(transition: Transition)</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+Transition1118076330[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)Transition</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   conditions: List&lt;String&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   ruleName: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   targetState: StateNode [0..1]</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+
+subgraph cluster_647171407 { 
+   	label=whynot
+	labeljust=l
+	fillcolor="#d8d8d8"
+	style=filled
+   
+   DroolsWithWhyNot662574085[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)DroolsWithWhyNot</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   LOG: Logger [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   factsPackage: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   kb: KnowledgeBase [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   session: KieSession [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   triggeredRules: List&lt;String&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   untriggeredRules: List&lt;String&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- createKieSession(): KieSession</TD></TR>
+<TR><TD ALIGN="LEFT" >+ dispose()</TD></TR>
+<TR><TD ALIGN="LEFT" >+ getWhyNotExplanation(expectedConclusion: String): String</TD></TR>
+<TR><TD ALIGN="LEFT" >+ init(factsPackage: String): DroolsWithWhyNot</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+KnowledgeBase662574085[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)KnowledgeBase</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   LOG: Logger [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   drlPaths: List&lt;String&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   dynamicQueries: Map&lt;String, String&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   factsPackage: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   kieBase: KieBase [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   rules: Map&lt;String, RuleWM&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   rulesDescr: List&lt;RuleDescr&gt; [0..*]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" ># convertConstructorToDRL(constructor: String): String</TD></TR>
+<TR><TD ALIGN="LEFT" ># convertDRLPatternToConstructor(patt: PatternDescr): String</TD></TR>
+<TR><TD ALIGN="LEFT" >- createKieBase(): KieBase</TD></TR>
+<TR><TD ALIGN="LEFT" >- findDrlFiles(): List&lt;String&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >- generateQueries(): String</TD></TR>
+<TR><TD ALIGN="LEFT" >- getConstructorCalls(consequent: String): Set&lt;String&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" >- getConstructorParameters(c: Class&lt;?&gt;): String[]</TD></TR>
+<TR><TD ALIGN="LEFT" ># getRuleByName(ruleName: String): RuleWM</TD></TR>
+<TR><TD ALIGN="LEFT" ># getRulesObtainingConclusion(conclusion: String): List&lt;String&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" ># isBasicFact(fact: String): boolean</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+RuleWM662574085[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)RuleWM</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   ruleConditions: List&lt;PatternDescr&gt; [0..*]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   ruleConsequence: String [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   ruleDescr: RuleDescr [0..1]</TD></TR>
+<TR><TD ALIGN="LEFT" >-   ruleName: String [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >- getAllMatches(text: String, regex: String): List&lt;String&gt;</TD></TR>
+<TR><TD ALIGN="LEFT" ># getConclusionFromRhs(functor: String): List&lt;String&gt;</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+
+WhyNot662574085[
+	label=<<TABLE BORDER="1" CELLBORDER="0" CELLPADDING="4" CELLSPACING="0">
+<TR><TD ALIGN="LEFT" >(C)WhyNot</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >-   droolsWithWhyNot: DroolsWithWhyNot [0..1]</TD></TR>
+<HR/>
+<TR><TD ALIGN="LEFT" >+ getWhyNotExplanation(expectedConclusion: String): String</TD></TR>
+<TR><TD ALIGN="LEFT" >+ init(droolsWithWhyNot: DroolsWithWhyNot): WhyNot</TD></TR>
+</TABLE>>
+	style=filled
+	margin=0
+	shape=plaintext
+	fillcolor="#FFFFFF"
+];
+} 
+} 
+
+'edges    
+DiagnosticController1900735884 -> DiagnosticService1587872453[label="diagnosticService
+[0..1]"];
+DiagnosticParser1118076330 -> StateNode1118076330[label="stateNodes
+[0..*]"];
+DiagnosticParserService1587872453 -> DiagnosticPath1118076330[label="diagnosticPaths
+[0..*]"];
+DiagnosticParserService1587872453 -> StateNode1118076330[label="stateNodes
+[0..*]"];
+DiagnosticService1587872453 -> DiagnosticParserService1587872453[label="diagnosticParserService
+[0..1]"];
+DiagnosticService1587872453 -> DroolsWithWhyNot662574085[label="drools
+[0..1]"];
+DiagnosticService1587872453 -> How1838418025[label="processarResposta() -> gerarExplicacao()"];
+DroolsWithWhyNot662574085 -> KnowledgeBase662574085[label="kb
+[0..1]"];
+DroolsWithWhyNot662574085 -> WhyNot662574085[label="getWhyNotExplanation() -> getWhyNotExplanation()"];
+How1838418025 -> Evidence1838418025[label="evidencias
+[0..*]"];
+KnowledgeBase662574085 -> RuleWM662574085[label="rules
+[0..*]"];
+StateNode1118076330 -> Transition1118076330[label="transitions
+[0..*]"];
+Transition1118076330 -> StateNode1118076330[label="targetState
+[0..1]"];
+WhyNot662574085 -> DroolsWithWhyNot662574085[label="droolsWithWhyNot
+[0..1]"];
+    
+}
+@enduml
