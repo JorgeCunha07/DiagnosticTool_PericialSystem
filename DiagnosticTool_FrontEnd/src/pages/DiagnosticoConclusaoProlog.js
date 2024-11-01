@@ -110,7 +110,7 @@ const DiagnosticoConclusaoProlog = () => {
     try {
       const response = await fetch(`${getApiUrl()}/porque`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
         body: JSON.stringify(body),
       });
 
@@ -152,7 +152,7 @@ const DiagnosticoConclusaoProlog = () => {
       try {
         const response = await fetch(`${getApiUrl()}/porqueNao`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json; charset=utf-8' },
           body: JSON.stringify(body),
         });
 
