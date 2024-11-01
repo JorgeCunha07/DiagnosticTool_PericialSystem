@@ -32,7 +32,7 @@ const DiagnosticoConclusaoProlog = () => {
   const [falhas, setFalhas] = useState([]);
   const [falha, setFalha] = useState('');
   const [falhaDetalhes, setFalhaDetalhes] = useState(null);
-  const [parsedFalhaDetalhes, setParsedFalhaDetalhes] = useState(null);
+  const [parsedFalhaDetalhes, setParsedFalhaDetalhes] = useState([]);
 
   useEffect(() => {
     fetchDiagnostico();
@@ -107,9 +107,9 @@ const DiagnosticoConclusaoProlog = () => {
       if (response.ok) {
         const data = await response.json();
         const resultado = [];
-        const formattedResponse = data.pergunta_anterior
-          ? `${data.explicacao}.\nNa pergunta "${data.pergunta_anterior}" a resposta foi "${data.resposta_anterior}".`
-          : `${data.explicacao}.`;
+        // const formattedResponse = data.pergunta_anterior
+        //   ? `${data.explicacao}.\nNa pergunta "${data.pergunta_anterior}" a resposta foi "${data.resposta_anterior}".`
+        //   : `${data.explicacao}.`;
 
         const porque = data.explicacao;
         const motivo = data.pergunta_anterior ? `Na pergunta "${data.pergunta_anterior}" a resposta foi "${data.resposta_anterior}".`
@@ -148,12 +148,19 @@ const DiagnosticoConclusaoProlog = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setFalhaDetalhes(data);
 
-          setParsedFalhaDetalhes(parseExplanation(falhaDetalhes.explanation));
+          if (data){
+            setFalhaDetalhes(data);
 
-          setFalhaResponseTextVisible(false);
-          setTimeout(() => setFalhaResponseTextVisible(true), 100);
+            if(data.explanation){
+
+              //console.log(">>> falhaDetalhes:" + data.explanation);
+              setParsedFalhaDetalhes(parseExplanation(data.explanation));
+            }
+
+            setFalhaResponseTextVisible(false);
+            setTimeout(() => setFalhaResponseTextVisible(true), 100);
+          }
         } else {
           console.error('Erro buscando detalhes porqueNao:', response.statusText);
         }

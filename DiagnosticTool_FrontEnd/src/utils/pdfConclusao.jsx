@@ -164,7 +164,7 @@ if (explicacaoGeral){
         
         if (activeButtonIndex === index && responseText) {
           // apenas mostra a pergunta que há resposta
-          addWrappedText(`${index}. ${evidencia.fact}`, fontsize_body, 1);
+          addWrappedText(`${index + 1}. ${evidencia.fact}`, fontsize_body, 1);
 
           addWrappedText(`Resposta: ${responseText}`, fontsize_body, 1);
         }

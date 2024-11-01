@@ -35,7 +35,7 @@ const ConclusionPage = () => {
   useEffect(() => {
   const fetchFalhas = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/diagnostico/caminhosDiagnostico', {
+      const response = await fetch(`${getApiUrl()}/diagnostico/caminhosDiagnostico`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ triggeredRules: triggeredRules }),
@@ -138,7 +138,7 @@ const ConclusionPage = () => {
 
   return (
     <CardWrapper titulo="Diagnóstico Concluído">
-      <Box sx={{ position: 'absolute', top: 16, right: 70 }}>
+      <Box sx={{ position: 'absolute', top: 16, right: 80 }}>
         <IconButton
           variant="contained"
           onClick={() =>
@@ -198,7 +198,7 @@ const ConclusionPage = () => {
       </Accordion>
 
       <Accordion defaultExpanded variant="outlined">
-        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ color: 'lime' }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <SvgIcon component={LightbulbCircleIcon} sx={{ paddingLeft: '0px', marginRight: '5px', fontSize: '2rem', color: 'inherit' }} />
           <Typography variant="h6" sx={{ width: '400px', flexShrink: 0, textAlign: 'left', color: 'inherit' }}>
             Diagnóstico Geral
@@ -210,12 +210,12 @@ const ConclusionPage = () => {
         <AccordionDetails>
           <List>
             <ListItem>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: 'lime' }}>
                 Diagnóstico: {diagnostico}
               </Typography>
             </ListItem>
             <ListItem>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom sx={{ color: 'lime' }}>
                 Solução: {solucao}
               </Typography>
             </ListItem>

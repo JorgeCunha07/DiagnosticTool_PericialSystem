@@ -1,4 +1,5 @@
-import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
+import { Check, Close, Rule } from "@mui/icons-material";
+import { Alert, Box, Button, Chip, CircularProgress, IconButton, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 import axios from 'axios';
 import { InputNumber } from 'primereact/inputnumber';
 import { useCallback, useEffect, useState } from 'react';
@@ -11,6 +12,7 @@ const useDiagnostico = (initialData) => {
   const [diagnostico, setDiagnostico] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [history, setHistory] = useState([]);
   const navigate = useNavigate();
   const API_URL = getApiUrl();
 
@@ -34,6 +36,11 @@ const useDiagnostico = (initialData) => {
   const handleAnswer = async (answer) => {
     setLoading(true);
     try {
+      setHistory((prevHistory) => [
+        ...prevHistory,
+        { question: diagnostico.pergunta, answer }
+      ]);
+
       const response = await axios.post(`${API_URL}/responder`, { resposta: answer });
 
       if (response.data.estado === "finalizado") {
@@ -52,13 +59,15 @@ const useDiagnostico = (initialData) => {
     fetchPergunta();
   }, [fetchPergunta]);
 
-  return { diagnostico, loading, error, handleAnswer };
+  return { diagnostico, loading, error, handleAnswer, history };
 };
 
 const DiagnosticoCarroProlog = () => {
 
-  const { diagnostico, loading, error, handleAnswer } = useDiagnostico();
+  const { diagnostico, loading, error, handleAnswer, history } = useDiagnostico();
   const [numericAnswer, setNumericAnswer] = useState();
+  const [showStepper, setShowStepper] = useState(true);
+
 
   if (!diagnostico) return null;
 
@@ -81,8 +90,29 @@ const DiagnosticoCarroProlog = () => {
     }
   };
 
+  function formataPerguntaStepper(question) {
+    const strSize = 90;
+    const str = question.split('?')[0];
+    return str.length > strSize ? str.slice(0, strSize-40) + "(...)" : str;
+  }
+
   return (
     <CardWrapper titulo={`Questionário Diagnóstico`}>
+
+      <Box sx={{ position: 'absolute', top: 16, right: 80 }}>
+        <IconButton
+          variant="contained"
+          onClick={() => setShowStepper(!showStepper)}
+          //color='primary'
+          sx={{ color: 'lime', backgroundColor: '#1b5e20', marginLeft:'10px',
+          '&:hover': { backgroundColor: 'rgba(0, 255, 0, 0.1)' },
+
+          }}
+        >
+          <Rule />
+        </IconButton>
+      </Box>
+
       <TituloLinha title="Pergunta" lineColor="white" icon="HelpTwoTone" position="13px" />
       
       <Box sx={{ mt: 3 , display: 'flex', justifyContent: 'center', alignItems: 'center', whiteSpace:'pre-line', paddingBottom:'70px' }}>
@@ -157,6 +187,46 @@ const DiagnosticoCarroProlog = () => {
           ))}
         </Box>
       )}
+
+      {/* Painel da  direita com o follow-up do questionario */}
+
+      {showStepper && (
+        <Box
+          sx={{
+            width: '350px',
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            backgroundColor: '#212121',
+            padding: 5,
+            overflowY: 'auto',
+            transition: 'opacity 1000ms ease-in',
+          }}
+        >
+          <Typography variant="h6">Perguntas</Typography>
+          <Stepper nonLinear activeStep={history.length} orientation="vertical">
+            {history.map((step, index) => (
+              <Step key={index} expanded={true}>
+                <StepLabel>{`${formataPerguntaStepper(step.question)}?`}</StepLabel>
+                <StepContent>
+                  <Chip size="small" label={step.answer}
+                    icon={step.answer === "sim" ? <Check /> : (step.answer === "nao" ? <Close /> : "")}
+                    color={step.answer === "sim" ? "success" : (step.answer === "nao" ? "error" : "warning")}
+                  />
+                </StepContent>
+              </Step>
+            ))}
+            <Step key="current">
+              <StepLabel>{formataPerguntaStepper(diagnostico.pergunta)}?</StepLabel>
+              <StepContent>
+                <Typography variant="body2"><em>Aguardando resposta</em></Typography>
+              </StepContent>
+            </Step>
+          </Stepper>
+        </Box>
+      )}
+
     </CardWrapper>
   );
 };

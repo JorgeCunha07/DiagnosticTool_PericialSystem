@@ -33,7 +33,7 @@ const Gauge = ({
 
 
   // Arco: fundo
-  const backgroundArc = arc()
+  const bgArc = arc()
     .innerRadius(0.65)
     .outerRadius(1)
     .startAngle(-Math.PI / 2)
@@ -41,14 +41,14 @@ const Gauge = ({
     .cornerRadius(1)
     ()
 
-  // Arco:  min-minIdeal
-  const filledArcMinToIdeal = arc()
-    .innerRadius(0.65)
-    .outerRadius(1)
-    .startAngle(-Math.PI / 2)
-    .endAngle(angleMinIdeal)
-    .cornerRadius(1)
-    ()
+  // Arco:  min-minIdeal, abaixo do minimo ideal
+  // const filledArcMinToIdeal = arc()
+  //   .innerRadius(0.65)
+  //   .outerRadius(1)
+  //   .startAngle(-Math.PI / 2)
+  //   .endAngle(angleMinIdeal)
+  //   .cornerRadius(1)
+  //   ()
 
   // Arco: minIdeal-maxIdeal
   const filledArcIdealRange = arc()
@@ -59,14 +59,14 @@ const Gauge = ({
     .cornerRadius(1)
     ()
 
-  // Arco: maxIdeal-max
-  const filledArcIdealToMax = arc()
-    .innerRadius(0.65)
-    .outerRadius(1)
-    .startAngle(angleMaxIdeal)
-    .endAngle(Math.PI / 2)
-    .cornerRadius(1)
-    ()
+  // Arco: maxIdeal-max, em excesso ao maximo ideal
+  // const filledArcIdealToMax = arc()
+  //   .innerRadius(0.65)
+  //   .outerRadius(1)
+  //   .startAngle(angleMaxIdeal)
+  //   .endAngle(Math.PI / 2)
+  //   .cornerRadius(1)
+  //   ()
 
   const markerLocation = getCoordsOnArc(angleValue, 1 - ((1 - 0.65) / 2))
 
@@ -81,7 +81,7 @@ const Gauge = ({
         </linearGradient>
       </defs>
 
-        <path d={backgroundArc} fill="#dbdbe7" />
+        <path d={bgArc} fill="#dbdbe7" />
 
         {/* Arco: min-minIdeal */}
         {/* <path d={filledArcMinToIdeal} fill="#ffcdd2" /> */}

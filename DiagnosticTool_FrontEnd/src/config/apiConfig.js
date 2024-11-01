@@ -1,27 +1,20 @@
-// const API_URL = 'http://localhost:8080/api';
 
-// export default API_URL;
-// let API_URL = 'http://localhost:8080/api';
 
-// export const setApiUrl = (url) => {
-//     API_URL = url;
-// };
+// para correr numa rede local trocar o valor da variavel 'host' pelo resultado de:
+// ifconfig | grep "inet " | grep -v 127.0.0.1
+const host = 'localhost';
 
-// export const getApiUrl = () => API_URL;
-
-// export default API_URL;
-
-let API_URL = 'http://localhost:8080/api';
+let API_URL = `http://${host}:8080/api`;
 let sistemaSelecionado = 'Drools';
 
 export const setApiUrl = (identifier) => {
     sistemaSelecionado = identifier;
 
     if (sistemaSelecionado === "Drools") {
-        API_URL = 'http://localhost:8080/api'; // Sistema for Drools
+        API_URL = `http://${host}:8080/api`; // Sistema for Drools
     
     } else if (sistemaSelecionado === "PROLOG") { // Sistema for PROLOG
-        API_URL = 'http://localhost:4040';
+        API_URL = `http://${host}:4040`;
     } else {
         throw new Error("Sistema não é suportado: " + sistemaSelecionado);
     }
