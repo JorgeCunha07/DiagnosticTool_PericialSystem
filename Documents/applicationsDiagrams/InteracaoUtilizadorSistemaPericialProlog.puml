@@ -1,4 +1,4 @@
-Push@startuml
+@startuml
 actor Utilizador
 participant UI
 participant MotorInferencia
