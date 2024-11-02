@@ -123,17 +123,17 @@ class Server #CCFFFF{
 }
 
 ' Define relationships
-Server --> Motorinferencia
-Server --> Bc
-Server --> Diagnostico
-Escolha_carro <-- Server
+Server -left-> Motorinferencia
+Server -> Bc
+Server -> Diagnostico
+Escolha_carro <-left- Server
 Diagnostico --> Bc
-Diagnostico -left-> Motorinferencia
+Diagnostico -> Motorinferencia
 Porque_nao -> Motorinferencia
 Bc <--- Escolha_carro
 Porque -> Bc
 Bc <-- Porque_nao
-Como -up> Bc
+Como --up> Bc
 Bc <--- Motorinferencia
 
 @enduml
