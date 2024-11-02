@@ -153,18 +153,6 @@ listar_diagnosticos_possiveis_aux(Diagnosticos, Acumulador) :-
     listar_diagnosticos_possiveis_aux(Diagnosticos, [Diagnostico | Acumulador]).
 listar_diagnosticos_possiveis_aux(Diagnosticos, Diagnosticos).
 
-% Retirar um facto
-retirar_facto(F) :-
-    retract(facto(_, F)),
-    findall(K1, (justifica(K1, _, L), member(facto(_, F), L)), LK1),
-    retirar_lista_factos(LK1).
-
-retirar_lista_factos([]).
-retirar_lista_factos([K1 | LK1]) :-
-    retract(justifica(K1, _, _)),
-    retirar_facto(K1),
-    retirar_lista_factos(LK1).
-
 % Predicado para obter todas as perguntas
 obter_perguntas(Testes) :-
  findall(P, facto(_, proximo_teste(_, P)), Testes).

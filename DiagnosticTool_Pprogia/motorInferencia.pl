@@ -142,11 +142,6 @@ concluir([cria_facto(F) | Y], ID, LFactos) :-
     cria_facto(F, ID, LFactos),
     concluir(Y, ID, LFactos).
 
-concluir([remove_facto(F) | Y], ID, LFactos) :-
-    !,
-    retirar_facto(F),
-    concluir(Y, ID, LFactos).
-
 concluir([], _, _) :-
     !.
 
