@@ -46,10 +46,8 @@ class Diagnostico #CCFFCC{
   +criacao_pergunta()
   +diag_problemas_passo_passo()
   +tratar_problema_passo_passo()
-  +retirar_lista_factos()
   +tratar_problema()
   +obter_perguntas()
-  +retirar_facto()
   +processar_testes_passo_passo()
 }
 
