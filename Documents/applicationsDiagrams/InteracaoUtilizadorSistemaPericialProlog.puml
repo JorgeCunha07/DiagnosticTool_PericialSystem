@@ -130,15 +130,34 @@ alt Diagnóstico Completo
         UI --> Utilizador : O facto é verdadeiro porque é a resposta à primeira regra
         end
     end
-    opt Solicitação Porquê Não
-        Utilizador -> UI : Solicitar explicação (Porquê Não)
-        UI -> PorqueNao : porque_nao()
-        PorqueNao -> MotorDiagnostico : verifica_falha()
-        MotorDiagnostico -> BaseConhecimento : findall(Condicao, (facto(_, Condicao), \+ Condicao), CondicoesFalhadas)
-        BaseConhecimento --> MotorDiagnostico : Condições Falhadas
-        MotorDiagnostico -> PorqueNao : Recuperar condições falhadas
-        PorqueNao -> UI : Exibir explicação "porquê não"
-        UI -> Utilizador : Mostrar explicação "porquê não"
+    opt Solicitação PorqueNao
+        Utilizador -> UI : Solicitar explicação (PorqueNao)
+        UI -> PorqueNao : porque_nao(Facto)
+        PorqueNao -> BaseConhecimento : facto(_, Facto)
+        alt facto existe
+            BaseConhecimento --> PorqueNao : Facto não é falso
+            PorqueNao --> UI : O facto não é falso
+            UI --> Utilizador : O facto não é falso
+        else facto não existe
+            PorqueNao -> BaseConhecimento : encontra_regras_porque_nao(Facto, LLPF)
+            alt LLPF não está vazio
+                PorqueNao -> PorqueNao : porque_nao1(LLPF, 1)
+                loop para cada regra em LLPF
+                    PorqueNao -> PorqueNao : explica_porque_nao(LPF, 2)
+                    loop para cada premissa em LPF
+                        PorqueNao -> BaseConhecimento : verifica_condicoes(Premissa)
+                        alt Premissa é falsa
+                            BaseConhecimento --> PorqueNao : Premissa é falsa
+                            PorqueNao -> UI : A premissa é falsa
+                            UI --> Utilizador : A premissa é falsa
+                        end
+                    end
+                end
+            else LLPF está vazio
+                PorqueNao -> UI : Parou no nível: 1
+                UI --> Utilizador : Parou no nível: 1
+            end
+        end
     end
 
 else Diagnóstico Incompleto
